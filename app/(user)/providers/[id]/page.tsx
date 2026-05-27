@@ -131,7 +131,7 @@ export default async function ProviderProfilePage({ params }: Props) {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4 relative z-10">
         {/* Profile header — overlaps the hero */}
         <div className="-mt-14 sm:-mt-16 pb-6">
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-end">
