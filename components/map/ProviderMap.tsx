@@ -44,7 +44,7 @@ export function ProviderMap({ providers, onProviderSelect }: ProviderMapProps) {
       style: 'mapbox://styles/mapbox/light-v11',
       center: userLocation
         ? [userLocation.lng, userLocation.lat]
-        : [-3.7038, 40.4168],
+        : [-74.0721, 4.7110],
       zoom: 13,
     })
 
