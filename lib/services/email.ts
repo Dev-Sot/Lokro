@@ -1,6 +1,12 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function getResend(): Resend | null {
+  if (!process.env.RESEND_API_KEY) return null
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
+}
+
 const FROM = process.env.EMAIL_FROM ?? 'Lokro <noreply@lokro.app>'
 const APP_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lokro.app'
 
@@ -51,7 +57,8 @@ export async function sendRequestAcceptedEmail({
   providerName: string
   requestId: string
 }) {
-  if (!process.env.RESEND_API_KEY) return
+  const resend = getResend()
+  if (!resend) return
 
   const body = `
     ${p(`Hola ${esc(toName)},`)}
@@ -79,7 +86,8 @@ export async function sendPaymentReceivedEmail({
   amount: number
   requestId: string
 }) {
-  if (!process.env.RESEND_API_KEY) return
+  const resend = getResend()
+  if (!resend) return
 
   const formatted = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount)
   const body = `
@@ -106,7 +114,8 @@ export async function sendServiceCompletedEmail({
   providerName: string
   requestId: string
 }) {
-  if (!process.env.RESEND_API_KEY) return
+  const resend = getResend()
+  if (!resend) return
 
   const body = `
     ${p(`Hola ${esc(toName)},`)}

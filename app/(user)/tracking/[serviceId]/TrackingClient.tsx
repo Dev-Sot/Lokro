@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { StatusBadge } from '@/components/shared/StatusBadge'
@@ -9,7 +10,8 @@ import { UserAvatar } from '@/components/shared/UserAvatar'
 import { createClient } from '@/lib/supabase/client'
 import { PROVIDER_LOCATION_UPDATE_INTERVAL } from '@/constants'
 import { formatRelativeTime } from '@/lib/utils'
-import { CheckCircle2, Circle, Navigation } from 'lucide-react'
+import { CheckCircle2, Circle, Navigation, ArrowLeft, MessageCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import type { ServiceRequest, ServiceStatusHistory, User } from '@/types'
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
@@ -153,6 +155,25 @@ export function TrackingClient({
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+      {/* Nav */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <Link
+          href={`/chat/${request.id}`}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft size={16} />
+          Volver al chat
+        </Link>
+        <div className="ml-auto">
+          <Button asChild variant="outline" size="sm" className="gap-2">
+            <Link href={`/chat/${request.id}`}>
+              <MessageCircle size={15} />
+              Abrir chat
+            </Link>
+          </Button>
+        </div>
+      </div>
+
       <div>
         <h1 className="text-2xl font-bold">Seguimiento en tiempo real</h1>
         <div className="flex items-center gap-3 mt-1">

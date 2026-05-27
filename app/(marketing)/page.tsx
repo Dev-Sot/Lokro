@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   ArrowRight, Star, Shield, Zap, MapPin, Clock, CheckCircle2,
   Wallet, CalendarDays, TrendingUp, Lock, BadgeCheck, Headphones,
@@ -64,9 +65,9 @@ const PROVIDER_BENEFITS = [
 ]
 
 const TESTIMONIALS = [
-  { name: 'Ana Rodríguez', location: 'Chapinero, Bogotá',  initials: 'AR', bg: 'bg-blue-500',    text: 'Encontré un plomero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.' },
-  { name: 'Carlos M.',     location: 'El Chicó, Bogotá',   initials: 'CM', bg: 'bg-emerald-500', text: 'Uso Lokro cada semana para distintos servicios en mi oficina. La calidad es consistente.' },
-  { name: 'Laura Torres',  location: 'Suba, Bogotá',       initials: 'LT', bg: 'bg-rose-500',    text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Subió sus notas en menos de un mes.' },
+  { name: 'Ana Rodríguez', location: 'Chapinero, Bogotá',  initials: 'AR', bg: 'bg-blue-500',    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80', text: 'Encontré un plomero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.' },
+  { name: 'Carlos M.',     location: 'El Chicó, Bogotá',   initials: 'CM', bg: 'bg-emerald-500', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80', text: 'Uso Lokro cada semana para distintos servicios en mi oficina. La calidad es consistente.' },
+  { name: 'Laura Torres',  location: 'Suba, Bogotá',       initials: 'LT', bg: 'bg-rose-500',    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80', text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Subió sus notas en menos de un mes.' },
 ]
 
 const MOCK_PROVIDERS: { name: string; cat: string; icon: LucideIcon; rating: string; iconColor: string; bg: string; pos: string }[] = [
@@ -160,36 +161,22 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right — mapa estilizado */}
-          <div className="relative hidden lg:block h-[480px] rounded-3xl bg-blue-50 overflow-hidden border border-blue-100 shadow-xl">
-            <div
-              className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage:
-                  'linear-gradient(to right, #93c5fd 1px, transparent 1px), linear-gradient(to bottom, #93c5fd 1px, transparent 1px)',
-                backgroundSize: '40px 40px',
-              }}
+          {/* Right — foto real de profesional */}
+          <div className="relative hidden lg:block h-[480px] rounded-3xl overflow-hidden shadow-2xl">
+            <Image
+              src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&q=85"
+              alt="Profesionales trabajando"
+              fill
+              className="object-cover"
+              priority
             />
-            <div className="absolute top-1/4 left-0 right-0 h-2 bg-white/60 -rotate-[3deg] scale-110" />
-            <div className="absolute top-0 bottom-0 left-1/3 w-3 bg-white/60 rotate-[12deg] scale-110" />
-            <div className="absolute top-2/3 left-0 right-0 h-3 bg-white/60 rotate-[6deg] scale-110" />
-
-            {/* Pulsing center pin */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-              <div className="relative flex items-center justify-center">
-                <div className="absolute w-16 h-16 bg-primary rounded-full animate-ping opacity-30" />
-                <div className="absolute w-10 h-10 bg-primary rounded-full animate-ping opacity-50" style={{ animationDelay: '0.3s' }} />
-                <div className="relative w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                  <MapPin className="h-5 w-5 text-white" />
-                </div>
-              </div>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
             {/* Provider cards */}
             {MOCK_PROVIDERS.map(({ name, cat, icon: Icon, rating, iconColor, bg, pos }) => (
               <div
                 key={name}
-                className={`absolute ${pos} bg-white rounded-xl shadow-lg p-3 flex items-center gap-3 w-44 z-20`}
+                className={`absolute ${pos} bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-3 flex items-center gap-3 w-44 z-20`}
               >
                 <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center shrink-0`}>
                   <Icon size={18} className={iconColor} />
@@ -205,6 +192,32 @@ export default function LandingPage() {
                 </div>
               </div>
             ))}
+
+            {/* Badge inferior */}
+            <div className="absolute bottom-6 left-6 right-6 z-20">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-4 shadow-xl">
+                <div className="flex -space-x-2">
+                  {['photo-1494790108377-be9c29b29330','photo-1507003211169-0a1dd7228f2d','photo-1438761681033-6461ffad8d80'].map((id) => (
+                    <Image
+                      key={id}
+                      src={`https://images.unsplash.com/${id}?w=48&q=80`}
+                      alt="Usuario"
+                      width={36}
+                      height={36}
+                      className="rounded-full border-2 border-white object-cover"
+                    />
+                  ))}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">+2.000 profesionales</p>
+                  <p className="text-xs text-muted-foreground">listos para ayudarte hoy</p>
+                </div>
+                <div className="ml-auto flex items-center gap-1 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                  En línea
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -318,6 +331,28 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Foto de profesional trabajando ───────────────────────────────── */}
+      <section className="relative h-64 sm:h-80 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1400&q=80"
+          alt="Electricista profesional trabajando"
+          fill
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/40" />
+        <div className="relative z-10 h-full flex items-center max-w-7xl mx-auto px-4">
+          <div className="text-white space-y-3">
+            <p className="text-sm font-medium uppercase tracking-wider opacity-80">Calidad garantizada</p>
+            <h2 className="text-3xl sm:text-4xl font-bold leading-tight max-w-lg">
+              Profesionales reales,<br />resultados garantizados
+            </h2>
+            <Button size="lg" variant="secondary" asChild className="mt-4">
+              <Link href="/register">Comenzar ahora <ArrowRight size={16} className="ml-2" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* ── Para prestadores ──────────────────────────────────────────────── */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
@@ -404,7 +439,7 @@ export default function LandingPage() {
             <h2 className="text-4xl font-bold">Lo que dicen nuestros usuarios</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map(({ name, location, initials, bg, text }) => (
+            {TESTIMONIALS.map(({ name, location, initials, bg, image, text }) => (
               <div key={name} className="rounded-2xl border bg-background p-8 shadow-sm flex flex-col">
                 <div className="flex gap-1 mb-6">
                   {Array.from({ length: 5 }, (_, i) => (
@@ -413,9 +448,19 @@ export default function LandingPage() {
                 </div>
                 <p className="text-sm leading-relaxed italic flex-grow mb-8">"{text}"</p>
                 <div className="flex items-center gap-3 mt-auto">
-                  <div className={`w-11 h-11 rounded-full ${bg} text-white flex items-center justify-center font-bold text-sm shrink-0`}>
-                    {initials}
-                  </div>
+                  {image ? (
+                    <Image
+                      src={image}
+                      alt={name}
+                      width={44}
+                      height={44}
+                      className="rounded-full object-cover shrink-0 border-2 border-muted"
+                    />
+                  ) : (
+                    <div className={`w-11 h-11 rounded-full ${bg} text-white flex items-center justify-center font-bold text-sm shrink-0`}>
+                      {initials}
+                    </div>
+                  )}
                   <div>
                     <p className="font-semibold text-sm">{name}</p>
                     <p className="text-xs text-muted-foreground">{location}</p>
