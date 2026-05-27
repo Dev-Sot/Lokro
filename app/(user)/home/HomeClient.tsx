@@ -34,10 +34,11 @@ export function HomeClient() {
 
   // Fetch providers with realtime subscription
   useEffect(() => {
+    let mounted = true
     const supabase = createClient()
 
     async function fetchProviders() {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('provider_profiles')
         .select(`
           id,
@@ -48,7 +49,12 @@ export function HomeClient() {
           specialties:provider_specialties(category:categories(name))
         `)
 
-      if (!data) return
+      if (!mounted) return
+      if (error || !data) {
+        console.error('HomeClient: failed to fetch providers', error)
+        setLoading(false)
+        return
+      }
 
       const mapped: ProviderMapMarker[] = data
         .filter((p) => p.user && (p.user as unknown as { latitude?: number }).latitude)
@@ -73,7 +79,12 @@ export function HomeClient() {
       setLoading(false)
     }
 
-    fetchProviders()
+    fetchProviders().catch((err) => {
+      if (mounted) {
+        console.error('HomeClient: unexpected error', err)
+        setLoading(false)
+      }
+    })
 
     // Realtime subscription for provider availability changes
     const channel = supabase
@@ -91,6 +102,7 @@ export function HomeClient() {
       .subscribe()
 
     return () => {
+      mounted = false
       supabase.removeChannel(channel)
     }
   }, [setMarkers])
