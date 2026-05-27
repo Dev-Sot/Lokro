@@ -671,111 +671,139 @@
 <hr class="divider" />
 
 
-<!-- ══════════════ AUDITORÍA DE SEGURIDAD -->
+<!-- ══════════════ SEGURIDAD -->
 <div class="section break">
-  <div class="section-tag">Auditoría de seguridad</div>
-  <h2>Vulnerabilidades encontradas y corregidas</h2>
-  <p class="section-sub">Se realizó una auditoría completa de sanitización, autorización y validación de datos</p>
+  <div class="section-tag">Seguridad</div>
+  <h2>¿Cómo se protege la plataforma?</h2>
+  <p class="section-sub">Lokro implementa múltiples capas de seguridad independientes entre sí</p>
 
-  <div class="highlight hl-green" style="margin-bottom:24px;">
-    <strong>Resultado: 6 vulnerabilidades corregidas</strong>
-    <p>Se auditaron todas las rutas de API, Server Actions, formularios y subida de archivos. Ninguna vulnerabilidad quedó abierta.</p>
+  <div class="highlight hl-blue" style="margin-bottom:28px;">
+    <strong>Principio de defensa en profundidad</strong>
+    <p>Cada capa asume que la anterior puede fallar. Si el código tiene un bug, la base de datos bloquea el acceso. Si alguien falsifica un token, el middleware lo rechaza. Si alguien manipula un formulario, Zod lo invalida antes de llegar a la base de datos.</p>
   </div>
 
-  <h3>Vulnerabilidades críticas (2)</h3>
-
+  <h3>Capa 1 — Autenticación y sesión</h3>
   <div class="flow">
     <div class="step">
-      <div class="step-num" style="background:var(--red);">1</div>
+      <div class="step-num">1</div>
       <div class="step-body">
-        <strong>Webhook de pago aceptaba requests sin firma</strong>
-        <span><strong>Archivo:</strong> <code>app/api/webhooks/mercadopago/route.ts</code><br>
-        Si la variable de entorno <code>MERCADOPAGO_WEBHOOK_SECRET</code> no estaba configurada, <strong>cualquier atacante podía enviar una confirmación de pago falsa</strong> y activar servicios sin pagar. El código decía <code>if (!secret) return true</code> — se cambió a <code>return false</code> para que falle cerrado en lugar de abierto.</span>
+        <strong>JWT en cookie HttpOnly — protección contra XSS</strong>
+        <span>Cuando el usuario inicia sesión, Supabase emite un <strong>JWT</strong> (JSON Web Token) firmado que se guarda en una cookie con el flag <code>HttpOnly</code>. Esto significa que JavaScript del navegador <strong>nunca puede leer ni robar la cookie</strong>, eliminando el vector de ataque XSS más común.</span>
       </div>
     </div>
     <div class="step">
-      <div class="step-num" style="background:var(--red);">2</div>
+      <div class="step-num">2</div>
       <div class="step-body">
-        <strong>Cualquier prestador podía ver y manipular el tracking de cualquier servicio</strong>
-        <span><strong>Archivo:</strong> <code>app/(user)/tracking/[serviceId]/page.tsx</code><br>
-        El sistema verificaba si el usuario tenía el rol PROVIDER, pero no si era <em>el</em> prestador asignado a ese servicio. Un prestador podía entrar al tracking de cualquier solicitud y transmitir su GPS como si fuera el otro prestador. Se corrigió verificando que <code>providerProfile.id === request.provider_id</code> antes de dar acceso.</span>
+        <strong>OAuth 2.0 con Google — sin contraseñas que proteger</strong>
+        <span>La opción de "Iniciar con Google" delega completamente la autenticación a Google. Lokro nunca recibe ni almacena la contraseña del usuario. Google emite un token de acceso temporal que se intercambia por una sesión de Supabase.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Middleware verifica el JWT en cada request</strong>
+        <span>Antes de cargar cualquier página, el <strong>middleware</strong> de Next.js valida el JWT contra Supabase y revisa el campo <code>role</code>. Un usuario sin sesión válida es redirigido a <code>/login</code>. Un usuario con rol incorrecto es redirigido a su zona correspondiente.</span>
       </div>
     </div>
   </div>
 
-  <h3 style="margin-top:28px;">Vulnerabilidades altas (2)</h3>
+  <h3 style="margin-top:28px;">Capa 2 — Autorización en base de datos (RLS)</h3>
+  <div class="card-grid g2" style="margin-top:12px;">
+    <div class="highlight hl-purple" style="margin:0;border-radius:14px;">
+      <strong>¿Qué es RLS?</strong>
+      <p>Row Level Security son políticas que viven <em>dentro de PostgreSQL</em>. Cada query que llega a la base de datos pasa por estas reglas antes de devolver datos. Es una segunda línea de defensa independiente del código.</p>
+    </div>
+    <div class="highlight hl-green" style="margin:0;border-radius:14px;">
+      <strong>¿Qué garantiza?</strong>
+      <p>Un usuario nunca puede leer mensajes ajenos, ver solicitudes que no son suyas, ni modificar perfiles de otros. Incluso si hay un bug en el código, la base de datos rechaza la operación.</p>
+    </div>
+  </div>
 
+  <h3 style="margin-top:28px;">Capa 3 — Validación de inputs con Zod</h3>
+  <p>Todos los datos que entran al sistema son validados con <strong>esquemas Zod</strong> antes de tocar la base de datos:</p>
+  <table style="margin-top:12px;">
+    <tr>
+      <th>Punto de entrada</th>
+      <th>Qué se valida</th>
+    </tr>
+    <tr>
+      <td><strong>Formulario de solicitud</strong></td>
+      <td>UUID del prestador, descripción mín. 20 chars, coordenadas numéricas, fecha futura</td>
+    </tr>
+    <tr>
+      <td><strong>Cambio de rol (admin)</strong></td>
+      <td>El rol solo puede ser <code>USER</code> o <code>PROVIDER</code> — nunca <code>ADMIN</code> por esta vía</td>
+    </tr>
+    <tr>
+      <td><strong>Monto del pago</strong></td>
+      <td>Número finito, mínimo $100 COP, máximo $100.000.000 COP</td>
+    </tr>
+    <tr>
+      <td><strong>Búsqueda en admin</strong></td>
+      <td>Se eliminan caracteres <code>( ) ,</code> que podrían inyectar filtros en PostgREST</td>
+    </tr>
+    <tr>
+      <td><strong>Subida de archivos</strong></td>
+      <td>MIME type verificado contra <code>image/jpeg</code>, <code>image/png</code>, <code>image/webp</code> — no solo la extensión</td>
+    </tr>
+  </table>
+
+  <h3 style="margin-top:28px;">Capa 4 — Seguridad en pagos</h3>
   <div class="flow">
     <div class="step">
-      <div class="step-num" style="background:var(--amber);">3</div>
+      <div class="step-num">1</div>
       <div class="step-body">
-        <strong>Escalada de privilegios — se podía asignar rol ADMIN desde la acción de cambio de rol</strong>
-        <span><strong>Archivo:</strong> <code>app/actions/admin.ts</code><br>
-        El parámetro <code>role</code> solo estaba validado por TypeScript, que no protege en tiempo de ejecución. Un llamado directo a la Server Action podía pasar <code>role: "ADMIN"</code>. Se agregó validación con <strong>Zod</strong> que solo permite <code>USER</code> o <code>PROVIDER</code>, bloqueando la asignación de ADMIN por esta vía.</span>
+        <strong>Firma HMAC-SHA256 en webhooks de Mercado Pago</strong>
+        <span>Cada notificación de pago que llega al servidor incluye una firma criptográfica generada con <code>HMAC-SHA256</code> usando un secreto compartido. El servidor recalcula la firma y la compara. Si no coincide, el request es rechazado con <code>401 Unauthorized</code>. Si el secreto no está configurado, el sistema <strong>falla cerrado</strong> — rechaza todo en lugar de aceptar todo.</span>
       </div>
     </div>
     <div class="step">
-      <div class="step-num" style="background:var(--amber);">4</div>
+      <div class="step-num">2</div>
       <div class="step-body">
-        <strong>Inyección de filtros en la búsqueda del panel admin</strong>
-        <span><strong>Archivo:</strong> <code>app/(admin)/panel/usuarios/page.tsx</code><br>
-        El parámetro <code>q</code> de búsqueda se interpolaba directamente en el filtro <code>.or()</code> de PostgREST. Caracteres como <code>,</code> <code>(</code> <code>)</code> podían inyectar condiciones adicionales en la consulta. Se sanitiza el input eliminando esos caracteres y limitando a 60 caracteres antes de usarlo.</span>
+        <strong>PCI DSS — Lokro nunca toca datos bancarios</strong>
+        <span>El checkout de pago ocurre completamente en los servidores de Mercado Pago, que están certificados bajo el estándar <strong>PCI DSS</strong>. Lokro solo recibe la confirmación del pago vía webhook, nunca el número de tarjeta ni datos sensibles del usuario.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>service_role solo en el servidor — nunca en el cliente</strong>
+        <span>La clave <code>service_role</code> de Supabase (que omite RLS) solo se usa en las rutas de API del servidor para procesar webhooks. El cliente del navegador solo recibe la clave <code>anon</code>, que está restringida por las políticas RLS.</span>
       </div>
     </div>
   </div>
 
-  <h3 style="margin-top:28px;">Vulnerabilidades medias (2)</h3>
-
-  <div class="flow">
-    <div class="step">
-      <div class="step-num" style="background:var(--gray);">5</div>
-      <div class="step-body">
-        <strong>Subida de archivos sin validación de tipo real</strong>
-        <span><strong>Archivo:</strong> <code>lib/services/storage.ts</code><br>
-        El upload solo verificaba el tamaño y usaba la extensión del nombre del archivo para guardarlo. Un atacante podía renombrar cualquier archivo como <code>.jpg</code> y subirlo. Se agregó validación de <code>file.type</code> contra la lista permitida (<code>image/jpeg</code>, <code>image/png</code>, <code>image/webp</code>) y la extensión ahora se toma del MIME real, no del nombre.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num" style="background:var(--gray);">6</div>
-      <div class="step-body">
-        <strong>El monto del pago lo enviaba el cliente sin verificación</strong>
-        <span><strong>Archivo:</strong> <code>app/api/mercadopago/create-preference/route.ts</code><br>
-        El usuario podía manipular el monto que se enviaba al body del request. Se agregó validación de tipo (<code>typeof === 'number'</code>), verificación de que sea un número finito (<code>Number.isFinite()</code>) y un límite máximo de 100 millones de COP para evitar valores absurdos o ataques de desbordamiento.</span>
-      </div>
-    </div>
-  </div>
-
-  <h3 style="margin-top:28px;">Capas de seguridad activas en el sistema</h3>
+  <h3 style="margin-top:28px;">Resumen de capas</h3>
   <div class="card-grid g3" style="margin-top:12px;">
     <div class="card" style="border-color:#BFDBFE;">
       <span class="card-icon">🚦</span>
-      <h4>Middleware de rutas</h4>
-      <p>Verifica el JWT y el rol del usuario antes de cargar cualquier página. Sin sesión válida, redirige a login.</p>
+      <h4>Middleware</h4>
+      <p>Verifica JWT y rol antes de cargar cada página. Primera barrera de acceso.</p>
     </div>
     <div class="card" style="border-color:#C4B5FD;">
       <span class="card-icon">🔒</span>
-      <h4>RLS en la base de datos</h4>
-      <p>Aunque haya un bug en el código, PostgreSQL garantiza que cada usuario solo puede leer y escribir sus propios datos.</p>
+      <h4>RLS (PostgreSQL)</h4>
+      <p>Cada query en la base de datos pasa por políticas de acceso por usuario. Independiente del código.</p>
     </div>
     <div class="card" style="border-color:#A7F3D0;">
       <span class="card-icon">✅</span>
-      <h4>Validación con Zod</h4>
-      <p>Todos los formularios y Server Actions validan los datos con esquemas Zod antes de tocar la base de datos.</p>
+      <h4>Validación Zod</h4>
+      <p>Todo input es validado con esquemas estrictos antes de llegar a la base de datos.</p>
     </div>
     <div class="card" style="border-color:#FDE68A;">
       <span class="card-icon">🔐</span>
-      <h4>JWT + Cookie HttpOnly</h4>
-      <p>La sesión se guarda en una cookie segura que JavaScript del navegador no puede leer, protegiendo contra XSS.</p>
+      <h4>JWT + HttpOnly</h4>
+      <p>La sesión vive en una cookie que JavaScript no puede leer. Protección contra XSS.</p>
     </div>
     <div class="card" style="border-color:#FECACA;">
       <span class="card-icon">🔏</span>
-      <h4>HMAC en webhooks</h4>
-      <p>Cada notificación de pago de Mercado Pago se verifica con firma criptográfica SHA-256 antes de procesarse.</p>
+      <h4>HMAC-SHA256</h4>
+      <p>Los webhooks de pago se verifican criptográficamente. Firma inválida = request rechazado.</p>
     </div>
     <div class="card" style="border-color:#E9D5FF;">
       <span class="card-icon">🛡️</span>
-      <h4>service_role en webhooks</h4>
-      <p>Solo las rutas internas de servidor usan la clave de administrador. El cliente nunca tiene acceso a ella.</p>
+      <h4>service_role aislada</h4>
+      <p>La clave de administrador solo existe en el servidor. El cliente nunca tiene acceso a ella.</p>
     </div>
   </div>
 </div>
