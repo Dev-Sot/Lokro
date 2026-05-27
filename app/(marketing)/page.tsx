@@ -3,9 +3,12 @@ import Link from 'next/link'
 import {
   ArrowRight, Star, Shield, Zap, MapPin, Clock, CheckCircle2,
   Wallet, CalendarDays, TrendingUp, Lock, BadgeCheck, Headphones,
+  Search,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { CATEGORIES } from '@/constants'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { FAQSection } from '@/components/marketing/FAQSection'
 
 export const metadata: Metadata = {
   title: 'Lokro — Servicios locales a tu alcance',
@@ -13,58 +16,44 @@ export const metadata: Metadata = {
     'Encuentra fontaneros, electricistas, tutores y más cerca de ti. Reserva en minutos con garantía de calidad.',
 }
 
+// ── Data ──────────────────────────────────────────────────────────────────────
+
+const STATS = [
+  { value: '2.000+', label: 'Profesionales activos' },
+  { value: '15.000+', label: 'Servicios completados' },
+  { value: '4.8★', label: 'Calificación promedio' },
+  { value: '< 5 min', label: 'Tiempo de respuesta' },
+]
+
+const CATEGORIES = [
+  { name: 'Plomería', emoji: '🔧', bg: 'bg-blue-50' },
+  { name: 'Limpieza', emoji: '🧹', bg: 'bg-rose-50' },
+  { name: 'Electricidad', emoji: '⚡', bg: 'bg-amber-50' },
+  { name: 'Tutoría', emoji: '📚', bg: 'bg-emerald-50' },
+  { name: 'Veterinaria', emoji: '🐾', bg: 'bg-orange-50' },
+  { name: 'Diseño', emoji: '🎨', bg: 'bg-purple-50' },
+  { name: 'Mecánica', emoji: '🚗', bg: 'bg-slate-100' },
+  { name: 'Reparaciones', emoji: '🏠', bg: 'bg-teal-50' },
+  { name: 'Tecnología', emoji: '💻', bg: 'bg-indigo-50' },
+  { name: 'Cocina', emoji: '🍽️', bg: 'bg-red-50' },
+]
+
 const HOW_IT_WORKS = [
-  {
-    step: '01',
-    title: 'Encuentra',
-    desc: 'Busca profesionales verificados cerca de tu ubicación en tiempo real.',
-    icon: MapPin,
-  },
-  {
-    step: '02',
-    title: 'Reserva',
-    desc: 'Selecciona horario, describe tu necesidad y confirma con un clic.',
-    icon: Clock,
-  },
-  {
-    step: '03',
-    title: 'Disfruta',
-    desc: 'El profesional llega, hace el trabajo y tú valoras la experiencia.',
-    icon: CheckCircle2,
-  },
-]
-
-const TESTIMONIALS = [
-  {
-    name: 'Ana Rodríguez',
-    role: 'Usuaria en Chapinero, Bogotá',
-    text: 'Encontré un plomero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.',
-    rating: 5,
-  },
-  {
-    name: 'Carlos M.',
-    role: 'Empresario en El Chicó, Bogotá',
-    text: 'Uso Lokro cada semana para distintos servicios en mi oficina. La calidad es consistente.',
-    rating: 5,
-  },
-  {
-    name: 'Laura Torres',
-    role: 'Madre de familia en Suba, Bogotá',
-    text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Subió sus notas en menos de un mes.',
-    rating: 5,
-  },
-]
-
-const FEATURES = [
-  { icon: Shield, title: 'Profesionales verificados', desc: 'Revisión de antecedentes e identidad en todos los prestadores.' },
-  { icon: Zap, title: 'Respuesta en minutos', desc: 'Conectamos con el profesional más cercano y disponible.' },
-  { icon: Star, title: 'Calidad garantizada', desc: 'Sistema de reseñas bidireccional para máxima transparencia.' },
+  { step: '01', title: 'Encuentra', desc: 'Busca profesionales verificados cerca de tu ubicación en tiempo real.', icon: MapPin },
+  { step: '02', title: 'Reserva', desc: 'Selecciona horario, describe tu necesidad y confirma con un clic.', icon: Clock },
+  { step: '03', title: 'Disfruta', desc: 'El profesional llega, hace el trabajo y tú valoras la experiencia.', icon: CheckCircle2 },
 ]
 
 const TRUST = [
-  { icon: Lock, title: 'Pago 100% seguro', desc: 'Tu dinero está protegido hasta que confirmes que el trabajo está bien hecho.' },
-  { icon: BadgeCheck, title: 'Identidad verificada', desc: 'Cada prestador pasa por un proceso de validación antes de aparecer en el mapa.' },
-  { icon: Headphones, title: 'Soporte 7/7', desc: 'Nuestro equipo está disponible todos los días para resolver cualquier inconveniente.' },
+  { emoji: '🔒', title: 'Pago 100% seguro', desc: 'Tu dinero está protegido hasta que confirmes que el trabajo está bien hecho.' },
+  { emoji: '✅', title: 'Identidad verificada', desc: 'Cada prestador pasa por un proceso de validación antes de aparecer en el mapa.' },
+  { emoji: '🎧', title: 'Soporte 7/7', desc: 'Nuestro equipo está disponible todos los días para resolver cualquier inconveniente.' },
+]
+
+const FEATURES = [
+  { icon: Shield, title: 'Profesionales verificados', desc: 'Seguridad y confianza en cada servicio.' },
+  { icon: Zap, title: 'Respuesta en minutos', desc: 'Conexión inmediata con expertos cercanos.' },
+  { icon: Star, title: 'Calidad garantizada', desc: 'Calificaciones reales de usuarios verificados.' },
 ]
 
 const PROVIDER_BENEFITS = [
@@ -73,129 +62,183 @@ const PROVIDER_BENEFITS = [
   { icon: TrendingUp, title: 'Más clientes, menos esfuerzo', desc: 'Llega a clientes cerca de ti sin gastar en publicidad.' },
 ]
 
-const MOCK_PROVIDERS = [
-  { name: 'Carlos R.', cat: '🔧 Plomería', rating: '4.9', top: '12%', left: '10%' },
-  { name: 'Ana M.', cat: '🧹 Limpieza', rating: '5.0', top: '55%', left: '72%' },
-  { name: 'Diego F.', cat: '⚡ Electricidad', rating: '4.8', top: '75%', left: '15%' },
-  { name: 'Sara L.', cat: '📚 Tutoría', rating: '5.0', top: '25%', left: '65%' },
+const TESTIMONIALS = [
+  { name: 'Ana Rodríguez', location: 'Chapinero, Bogotá', initials: 'AR', bg: 'bg-blue-500', text: 'Encontré un plomero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.' },
+  { name: 'Carlos M.', location: 'El Chicó, Bogotá', initials: 'CM', bg: 'bg-emerald-500', text: 'Uso Lokro cada semana para distintos servicios en mi oficina. La calidad es consistente.' },
+  { name: 'Laura Torres', location: 'Suba, Bogotá', initials: 'LT', bg: 'bg-rose-500', text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Subió sus notas en menos de un mes.' },
 ]
+
+const MOCK_PROVIDERS = [
+  { name: 'Carlos R.', cat: 'Plomería', emoji: '🔧', rating: '4.9', bg: 'bg-blue-100', pos: 'top-6 left-4' },
+  { name: 'Andrea M.', cat: 'Electricidad', emoji: '⚡', rating: '5.0', bg: 'bg-amber-100', pos: 'top-14 right-4' },
+  { name: 'Sofía L.', cat: 'Limpieza', emoji: '🧹', rating: '4.8', bg: 'bg-rose-100', pos: 'bottom-20 left-8' },
+  { name: 'Daniel P.', cat: 'Tutoría', emoji: '📚', rating: '4.9', bg: 'bg-emerald-100', pos: 'bottom-6 right-4' },
+]
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   return (
     <div className="overflow-x-hidden">
 
-      {/* ── Hero ───────────────────────────────────────────────────── */}
-      <section className="relative bg-gradient-to-br from-primary/8 via-background to-background pt-20 pb-28">
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
+      <section className="bg-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
-              Servicios locales
-              <span className="text-primary block">a un toque</span>
+
+          {/* Left */}
+          <div className="flex flex-col items-start space-y-8">
+            <div className="inline-flex items-center rounded-full bg-primary/10 text-primary px-4 py-1.5 text-sm font-medium">
+              🚀 Ya disponible en Colombia
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-tight">
+              Servicios locales{' '}
+              <span className="text-primary">a un toque</span>{' '}
               de distancia
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-xl">
-              Lokro conecta a personas con profesionales de confianza cerca de su ubicación.
-              Fontaneros, electricistas, tutores, diseñadores y mucho más.
+              Lokro conecta personas con profesionales de confianza cerca de su ubicación.
+              Fontaneros, electricistas, tutores y mucho más.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button size="lg" asChild className="text-base">
+            {/* Search bar */}
+            <div className="w-full max-w-xl space-y-3">
+              <div className="flex items-center bg-background border rounded-xl shadow-sm p-2 focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+                <MapPin className="h-5 w-5 text-muted-foreground ml-2 shrink-0" />
+                <Input
+                  type="text"
+                  placeholder="¿Qué servicio necesitas?"
+                  className="border-0 shadow-none focus-visible:ring-0 text-base"
+                />
+                <Button className="shrink-0 rounded-lg px-5" asChild>
+                  <Link href="/register">
+                    <Search size={16} className="mr-1.5" />
+                    Buscar
+                  </Link>
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['🔧 Plomería', '⚡ Electricidad', '🧹 Limpieza', '📚 Tutoría'].map((tag) => (
+                  <Link
+                    key={tag}
+                    href="/register"
+                    className="rounded-full border hover:border-primary/50 hover:bg-primary/5 px-4 py-1.5 text-sm font-medium text-foreground transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Button size="lg" asChild className="text-base h-12">
                 <Link href="/register">
                   Buscar profesionales
                   <ArrowRight size={18} className="ml-2" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-base">
+              <Button size="lg" variant="outline" asChild className="text-base h-12">
                 <Link href="/register?role=PROVIDER">Ofrecer mis servicios</Link>
               </Button>
             </div>
-
           </div>
 
-          {/* Hero visual — mapa con tarjetas de prestadores */}
-          <div className="relative hidden lg:block">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border bg-gradient-to-br from-primary/5 to-blue-500/5 h-96">
-              {/* Fondo de mapa estilizado */}
-              <div className="absolute inset-0 opacity-10"
-                style={{
-                  backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
-                  backgroundSize: '24px 24px',
-                }} />
+          {/* Right — mapa estilizado */}
+          <div className="relative hidden lg:block h-[480px] rounded-3xl bg-blue-50 overflow-hidden border border-blue-100 shadow-xl">
+            {/* Grid map background */}
+            <div
+              className="absolute inset-0 opacity-20"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, #93c5fd 1px, transparent 1px), linear-gradient(to bottom, #93c5fd 1px, transparent 1px)',
+                backgroundSize: '40px 40px',
+              }}
+            />
+            {/* Street lines */}
+            <div className="absolute top-1/4 left-0 right-0 h-2 bg-white/60 -rotate-[3deg] scale-110" />
+            <div className="absolute top-0 bottom-0 left-1/3 w-3 bg-white/60 rotate-[12deg] scale-110" />
+            <div className="absolute top-2/3 left-0 right-0 h-3 bg-white/60 rotate-[6deg] scale-110" />
 
-              {/* Centro del mapa */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-20 w-20 rounded-full bg-primary/10 border-4 border-primary/20 flex items-center justify-center shadow-lg">
-                  <MapPin size={36} className="text-primary" />
+            {/* Pulsing center pin */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+              <div className="relative flex items-center justify-center">
+                <div className="absolute w-16 h-16 bg-primary rounded-full animate-ping opacity-30" />
+                <div className="absolute w-10 h-10 bg-primary rounded-full animate-ping opacity-50" style={{ animationDelay: '0.3s' }} />
+                <div className="relative w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                  <MapPin className="h-5 w-5 text-white" />
                 </div>
-                {/* Anillo pulsante */}
-                <div className="absolute h-32 w-32 rounded-full border-2 border-primary/20 animate-ping" style={{ animationDuration: '2.5s' }} />
-                <div className="absolute h-48 w-48 rounded-full border border-primary/10 animate-ping" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }} />
               </div>
-
-              {/* Tarjetas de prestadores flotantes */}
-              {MOCK_PROVIDERS.map((p) => (
-                <div
-                  key={p.name}
-                  className="absolute bg-background/95 backdrop-blur border rounded-xl px-3 py-2 shadow-lg flex items-center gap-2 text-xs"
-                  style={{ top: p.top, left: p.left }}
-                >
-                  <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-sm flex-shrink-0">
-                    {p.cat.split(' ')[0]}
-                  </div>
-                  <div>
-                    <p className="font-semibold leading-none">{p.name}</p>
-                    <p className="text-muted-foreground mt-0.5">{p.cat.split(' ').slice(1).join(' ')} · ⭐ {p.rating}</p>
-                  </div>
-                </div>
-              ))}
             </div>
+
+            {/* Provider cards */}
+            {MOCK_PROVIDERS.map((p) => (
+              <div
+                key={p.name}
+                className={`absolute ${p.pos} bg-white rounded-xl shadow-lg p-3 flex items-center gap-3 w-44 z-20`}
+              >
+                <div className={`w-10 h-10 rounded-full ${p.bg} flex items-center justify-center text-xl shrink-0`}>
+                  {p.emoji}
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-sm font-semibold truncate">{p.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{p.cat} · ⭐ {p.rating}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── Categories ─────────────────────────────────────────────── */}
-      <section className="py-20 bg-muted/30">
+      {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
+      <section className="bg-primary text-primary-foreground py-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {STATS.map((s) => (
+              <div key={s.label} className="flex flex-col items-center gap-1">
+                <span className="text-4xl font-bold tracking-tight">{s.value}</span>
+                <span className="text-sm text-primary-foreground/80">{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Categories ────────────────────────────────────────────────────── */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">¿Qué necesitas?</h2>
-            <p className="text-muted-foreground mt-2">
-              Cubrimos más de 10 categorías de servicios para el hogar y el trabajo
-            </p>
+            <h2 className="text-4xl font-bold">¿Qué necesitas hoy?</h2>
+            <p className="text-muted-foreground mt-2 text-lg">Encuentra al experto ideal para cualquier tarea.</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {CATEGORIES.map((cat) => (
               <Link
-                key={cat.id}
+                key={cat.name}
                 href="/register"
-                className="group flex flex-col items-center gap-3 rounded-xl border bg-background p-5 text-center hover:border-primary/40 hover:shadow-md transition-all"
+                className="group flex flex-col items-center gap-3 rounded-2xl border bg-background p-6 text-center hover:border-primary/50 hover:-translate-y-1 hover:shadow-md transition-all"
               >
-                <div
-                  className="h-12 w-12 rounded-xl flex items-center justify-center text-2xl"
-                  style={{ backgroundColor: `${cat.color}20` }}
-                >
-                  {cat.icon}
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl ${cat.bg} group-hover:scale-110 transition-transform`}>
+                  {cat.emoji}
                 </div>
-                <span className="text-sm font-medium group-hover:text-primary transition-colors">
-                  {cat.name}
-                </span>
+                <span className="text-sm font-medium group-hover:text-primary transition-colors">{cat.name}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── How it works ───────────────────────────────────────────── */}
-      <section className="py-20">
+      {/* ── How it works ──────────────────────────────────────────────────── */}
+      <section className="py-20 bg-muted/40">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold">Cómo funciona</h2>
-            <p className="text-muted-foreground mt-2">Simple. Rápido. Confiable.</p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold">Cómo funciona</h2>
+            <p className="text-muted-foreground mt-2 text-lg">Simple. Rápido. Confiable.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 relative">
+          <div className="grid md:grid-cols-3 gap-12 relative">
             <div className="hidden md:block absolute top-10 left-1/3 right-1/3 h-px border-t-2 border-dashed border-primary/20" />
             {HOW_IT_WORKS.map(({ step, title, desc, icon: Icon }) => (
-              <div key={step} className="relative flex flex-col items-center text-center gap-4">
+              <div key={step} className="flex flex-col items-center text-center gap-4">
                 <div className="relative">
                   <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <Icon size={32} className="text-primary" />
@@ -205,49 +248,45 @@ export default function LandingPage() {
                   </span>
                 </div>
                 <h3 className="text-xl font-semibold">{title}</h3>
-                <p className="text-muted-foreground text-sm max-w-xs">{desc}</p>
+                <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Trust ──────────────────────────────────────────────────── */}
-      <section className="py-16 bg-muted/30 border-y">
+      {/* ── Trust ─────────────────────────────────────────────────────────── */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">Tu seguridad, nuestra prioridad</h2>
-            <p className="text-muted-foreground mt-2">
-              Cada aspecto de Lokro está diseñado para que estés protegido
-            </p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold">Tu seguridad, nuestra prioridad</h2>
+            <p className="text-muted-foreground mt-2">Cada aspecto de Lokro está diseñado para que estés protegido.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {TRUST.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex gap-4 items-start">
-                <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon size={22} className="text-primary" />
+          <div className="grid md:grid-cols-3 gap-12">
+            {TRUST.map(({ emoji, title, desc }) => (
+              <div key={title} className="flex flex-col items-center text-center">
+                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-4xl mb-6">
+                  {emoji}
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-1">{title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{desc}</p>
-                </div>
+                <h3 className="text-xl font-semibold mb-3">{title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Features ───────────────────────────────────────────────── */}
+      {/* ── Why Lokro ─────────────────────────────────────────────────────── */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold">Por qué elegir Lokro</h2>
+            <h2 className="text-4xl font-bold">Por qué elegir Lokro</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {FEATURES.map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex flex-col items-center text-center gap-4">
-                <div className="h-14 w-14 rounded-xl bg-white/10 flex items-center justify-center">
-                  <Icon size={28} />
+                <div className="h-16 w-16 rounded-2xl bg-white/10 flex items-center justify-center">
+                  <Icon size={30} />
                 </div>
                 <h3 className="text-lg font-semibold">{title}</h3>
                 <p className="text-primary-foreground/80 text-sm">{desc}</p>
@@ -257,63 +296,68 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Para prestadores ───────────────────────────────────────── */}
-      <section className="py-24">
+      {/* ── Para prestadores ──────────────────────────────────────────────── */}
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
-          {/* Card de ingresos mock */}
-          <div className="relative">
-            <div className="rounded-2xl border bg-card shadow-xl p-8 space-y-6">
+
+          {/* Dashboard mock */}
+          <div className="order-2 lg:order-1">
+            <div className="rounded-2xl border bg-card shadow-xl p-8 max-w-md mx-auto lg:mx-0 space-y-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Ingresos este mes</p>
                   <p className="text-4xl font-bold mt-1">$2.340.000</p>
                 </div>
-                <div className="h-12 w-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                  <TrendingUp size={24} className="text-green-600 dark:text-green-400" />
+                <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg text-sm font-medium">
+                  <TrendingUp size={16} />
+                  +18%
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-1">
                 {[
-                  { label: 'Limpieza de oficina', amount: '$180.000', cat: '🧹' },
-                  { label: 'Instalación eléctrica', amount: '$320.000', cat: '⚡' },
-                  { label: 'Tutoría de matemáticas', amount: '$95.000', cat: '📚' },
+                  { label: 'Limpieza de casa', time: 'Hoy, 10:00 AM', amount: '$180.000', emoji: '🧹', bg: 'bg-rose-50' },
+                  { label: 'Instalación eléctrica', time: 'Ayer, 2:30 PM', amount: '$320.000', emoji: '⚡', bg: 'bg-amber-50' },
+                  { label: 'Tutoría matemáticas', time: 'Lun, 4:00 PM', amount: '$95.000', emoji: '📚', bg: 'bg-emerald-50' },
                 ].map((item) => (
-                  <div key={item.label} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div key={item.label} className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-xl transition-colors">
                     <div className="flex items-center gap-3">
-                      <span className="text-lg">{item.cat}</span>
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <div className={`w-10 h-10 rounded-full ${item.bg} flex items-center justify-center text-lg`}>{item.emoji}</div>
+                      <div>
+                        <p className="text-sm font-semibold">{item.label}</p>
+                        <p className="text-xs text-muted-foreground">{item.time}</p>
+                      </div>
                     </div>
-                    <span className="text-sm font-semibold text-green-600">{item.amount}</span>
+                    <span className="text-sm font-bold">{item.amount}</span>
                   </div>
                 ))}
               </div>
-              <div className="rounded-lg bg-primary/5 border border-primary/10 p-3 text-center">
-                <p className="text-xs text-muted-foreground">Próximo pago en</p>
-                <p className="font-bold text-primary text-lg">2 días</p>
+              <div className="pt-2 border-t flex justify-center">
+                <Badge variant="secondary" className="px-4 py-1.5 text-sm">
+                  Próximo pago en 2 días
+                </Badge>
               </div>
             </div>
           </div>
 
-          {/* Texto */}
-          <div className="space-y-8">
+          {/* Text */}
+          <div className="order-1 lg:order-2 flex flex-col items-start space-y-8">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
                 Para prestadores
               </div>
               <h2 className="text-4xl font-bold leading-tight">
-                Convierte tu talento
-                <span className="text-primary block">en ingresos reales</span>
+                Convierte tu talento{' '}
+                <span className="text-primary">en ingresos reales</span>
               </h2>
               <p className="text-muted-foreground text-lg">
-                Miles de clientes cerca de ti buscan exactamente lo que sabes hacer.
-                Regístrate, activa tu perfil y empieza a recibir solicitudes hoy mismo.
+                Únete a la red de profesionales más grande de Colombia. Conecta con clientes
+                cercanos que necesitan tus habilidades hoy mismo.
               </p>
             </div>
-
-            <div className="space-y-5">
+            <div className="space-y-6">
               {PROVIDER_BENEFITS.map(({ icon: Icon, title, desc }) => (
                 <div key={title} className="flex gap-4 items-start">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                     <Icon size={20} className="text-primary" />
                   </div>
                   <div>
@@ -323,8 +367,7 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-
-            <Button size="lg" asChild>
+            <Button size="lg" asChild className="h-12 px-8 text-base">
               <Link href="/register?role=PROVIDER">
                 Empezar a ganar
                 <ArrowRight size={18} className="ml-2" />
@@ -334,24 +377,29 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ───────────────────────────────────────────── */}
-      <section className="py-20 bg-muted/30">
+      {/* ── Testimonials ──────────────────────────────────────────────────── */}
+      <section className="py-20 bg-muted/40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold">Lo que dicen nuestros usuarios</h2>
+            <h2 className="text-4xl font-bold">Lo que dicen nuestros usuarios</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map(({ name, role, text, rating }) => (
-              <div key={name} className="rounded-2xl border bg-background p-6 space-y-4 shadow-sm">
-                <div className="flex gap-1">
-                  {Array.from({ length: rating }, (_, i) => (
+            {TESTIMONIALS.map(({ name, location, initials, bg, text }) => (
+              <div key={name} className="rounded-2xl border bg-background p-8 shadow-sm flex flex-col">
+                <div className="flex gap-1 mb-6">
+                  {Array.from({ length: 5 }, (_, i) => (
                     <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="text-sm leading-relaxed">"{text}"</p>
-                <div>
-                  <p className="font-semibold text-sm">{name}</p>
-                  <p className="text-xs text-muted-foreground">{role}</p>
+                <p className="text-sm leading-relaxed italic flex-grow mb-8">"{text}"</p>
+                <div className="flex items-center gap-3 mt-auto">
+                  <div className={`w-11 h-11 rounded-full ${bg} text-white flex items-center justify-center font-bold text-sm shrink-0`}>
+                    {initials}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">{name}</p>
+                    <p className="text-xs text-muted-foreground">{location}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -359,22 +407,30 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── CTA final ──────────────────────────────────────────────── */}
+      {/* ── FAQ ───────────────────────────────────────────────────────────── */}
+      <FAQSection />
+
+      {/* ── CTA Final ─────────────────────────────────────────────────────── */}
       <section className="py-24 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
         <div className="max-w-3xl mx-auto px-4 text-center space-y-6">
-          <h2 className="text-4xl font-bold">¿Listo para empezar?</h2>
-          <p className="text-primary-foreground/80 text-lg">
+          <h2 className="text-4xl md:text-5xl font-bold">¿Listo para empezar?</h2>
+          <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto">
             Únete a miles de personas que ya confían en Lokro para sus servicios del día a día.
             Gratis, sin compromisos.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-            <Button size="lg" variant="secondary" asChild className="text-base">
+            <Button size="lg" variant="secondary" asChild className="text-base h-14 px-8 font-semibold">
               <Link href="/register">
                 Crear cuenta gratis
                 <ArrowRight size={18} className="ml-2" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="text-base border-white/30 text-white hover:bg-white/10">
+            <Button
+              size="lg"
+              variant="outline"
+              asChild
+              className="text-base h-14 px-8 font-semibold border-white/30 text-white hover:bg-white/10"
+            >
               <Link href="/register?role=PROVIDER">Ser prestador</Link>
             </Button>
           </div>
