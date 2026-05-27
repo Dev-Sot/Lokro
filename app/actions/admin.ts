@@ -1,0 +1,37 @@
+'use server'
+
+import { revalidatePath } from 'next/cache'
+import { createClient } from '@/lib/supabase/server'
+import type { UserRole } from '@/types'
+
+async function requireAdmin() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.role !== 'ADMIN') throw new Error('Forbidden')
+  return supabase
+}
+
+export async function setUserRole(userId: string, role: UserRole) {
+  const supabase = await requireAdmin()
+  const { error } = await supabase.from('users').update({ role }).eq('id', userId)
+  if (error) throw new Error('Failed to update role')
+  revalidatePath('/panel/usuarios')
+}
+
+export async function cancelRequest(requestId: string) {
+  const supabase = await requireAdmin()
+  const { error } = await supabase
+    .from('service_requests')
+    .update({ status: 'CANCELLED' })
+    .eq('id', requestId)
+  if (error) throw new Error('Failed to cancel request')
+  revalidatePath('/panel/solicitudes')
+}

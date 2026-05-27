@@ -2,8 +2,11 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Pagination } from '@/components/shared/Pagination'
 import { StatusBadge } from '@/components/shared/StatusBadge'
+import { CancelRequestButton } from '@/components/admin/CancelRequestButton'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 import type { ServiceRequestStatus } from '@/types'
+
+const CANCELLABLE: ServiceRequestStatus[] = ['PENDING', 'ACCEPTED', 'IN_PROGRESS']
 
 export const metadata: Metadata = { title: 'Solicitudes — Admin' }
 
@@ -101,18 +104,20 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden sm:table-cell">Presupuesto</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Estado</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Fecha</th>
+              <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y">
             {!requests || requests.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
                   Sin resultados
                 </td>
               </tr>
             ) : requests.map((req) => {
               const category = req.category as unknown as { name: string; icon: string } | null
               const user = req.user as unknown as { name: string } | null
+              const status = req.status as ServiceRequestStatus
               return (
                 <tr key={req.id} className="hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3">
@@ -124,10 +129,15 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
                     {req.estimated_price ? formatCurrency(req.estimated_price) : <span className="text-muted-foreground">—</span>}
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={req.status as ServiceRequestStatus} />
+                    <StatusBadge status={status} />
                   </td>
                   <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
                     {formatRelativeTime(req.created_at)}
+                  </td>
+                  <td className="px-4 py-3">
+                    {CANCELLABLE.includes(status) && (
+                      <CancelRequestButton requestId={req.id} />
+                    )}
                   </td>
                 </tr>
               )

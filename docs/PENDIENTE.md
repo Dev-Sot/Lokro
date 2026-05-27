@@ -12,20 +12,8 @@ _Sin tareas críticas pendientes._
 
 ## 🟡 Medio — necesario antes de lanzar
 
-### 1. Admin: acciones sobre usuarios y solicitudes
-**Problema:** Las tablas del panel admin son solo lectura. No hay forma de desactivar un usuario, cambiar su rol, ni cerrar una solicitud problemática.
-
-**Lo que falta:**
-- Botón "Desactivar / Activar" en la tabla de usuarios (toggle columna `active` o similar)
-- Selector de rol por usuario (cambiar USER ↔ PROVIDER)
-- Botón "Cancelar" en solicitudes con estado `PENDING` o `ACCEPTED` desde admin
-
-**Archivos a modificar:**
-- `app/(admin)/panel/usuarios/page.tsx` — añadir acciones por fila
-- `app/(admin)/panel/solicitudes/page.tsx` — añadir acción de cancelar
-- Posiblemente crear Server Actions o endpoints en `app/api/admin/`
-
-**Estimado:** 3–4 horas
+### 1. Admin: acciones sobre usuarios y solicitudes ✅
+Resuelto: `UserRoleSelect` por fila en usuarios + `CancelRequestButton` en solicitudes cancelables. Server Actions en `app/actions/admin.ts`.
 
 ---
 
@@ -71,6 +59,7 @@ _Sin tareas críticas pendientes._
 | Panel de administración completo (tablas + navegación) | 2026-05-27 |
 | Exportar ingresos a CSV | 2026-05-27 |
 | Cambio de contraseña desde el perfil | 2026-05-27 |
+| Admin: cambiar rol de usuario + cancelar solicitudes | 2026-05-27 |
 | Middleware no corría (proxy.ts → middleware.ts) | 2026-05-27 |
 | useUser sin catch → loading infinito | 2026-05-27 |
 | HomeClient race condition al desmontar | 2026-05-27 |

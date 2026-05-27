@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Pagination } from '@/components/shared/Pagination'
+import { UserRoleSelect } from '@/components/admin/UserRoleSelect'
 import { formatRelativeTime } from '@/lib/utils'
+import type { UserRole } from '@/types'
 
 export const metadata: Metadata = { title: 'Usuarios — Admin' }
 
@@ -46,12 +48,6 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
   }
 
   const { data: users } = await dataQuery
-
-  const ROLE_STYLES: Record<string, string> = {
-    PROVIDER: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-    ADMIN: 'bg-destructive/10 text-destructive',
-    USER: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  }
 
   return (
     <div className="space-y-6">
@@ -118,9 +114,7 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
                 <td className="px-4 py-3 font-medium">{u.name}</td>
                 <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{u.email}</td>
                 <td className="px-4 py-3">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${ROLE_STYLES[u.role] ?? ''}`}>
-                    {u.role}
-                  </span>
+                  <UserRoleSelect userId={u.id} currentRole={u.role as UserRole} />
                 </td>
                 <td className="px-4 py-3 text-muted-foreground hidden sm:table-cell">
                   {formatRelativeTime(u.created_at)}
