@@ -90,22 +90,36 @@ export function TrackingClient({
 
     // If provider, broadcast own location
     let locationInterval: ReturnType<typeof setInterval> | null = null
+    let cleanedUp = false
+
     if (isProvider && request.status === 'IN_PROGRESS') {
       locationInterval = setInterval(() => {
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-          await supabase
-            .from('provider_locations')
-            .upsert({
-              provider_id: request.provider_id,
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-              updated_at: new Date().toISOString(),
-            })
-        })
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            if (cleanedUp) return
+            const { error } = await supabase
+              .from('provider_locations')
+              .upsert({
+                provider_id: request.provider_id,
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                updated_at: new Date().toISOString(),
+              })
+            if (error) console.error('TrackingClient: location upsert failed', error)
+          },
+          (err) => {
+            console.error('TrackingClient: geolocation error', err.message)
+            if (err.code === err.PERMISSION_DENIED && locationInterval) {
+              clearInterval(locationInterval)
+              locationInterval = null
+            }
+          }
+        )
       }, PROVIDER_LOCATION_UPDATE_INTERVAL)
     }
 
     return () => {
+      cleanedUp = true
       supabase.removeChannel(channel)
       if (locationInterval) clearInterval(locationInterval)
     }
