@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,13 +15,15 @@ import { UserAvatar } from '@/components/shared/UserAvatar'
 import { createClient } from '@/lib/supabase/client'
 import { uploadAvatar } from '@/lib/services/storage'
 import type { User as UserType, ProviderProfile, Category, ProviderSpecialty } from '@/types'
+import mapboxgl from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
+
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
 
 const schema = z.object({
   name: z.string().min(2, 'Nombre muy corto').max(60, 'Nombre muy largo'),
   bio: z.string().max(500, 'Máximo 500 caracteres').optional(),
   hourly_rate: z.coerce.number().min(1, 'Ingresa una tarifa válida'),
-  latitude: z.coerce.number().min(-90).max(90).optional().or(z.literal('')),
-  longitude: z.coerce.number().min(-180).max(180).optional().or(z.literal('')),
 })
 type FormData = z.infer<typeof schema>
 
@@ -39,6 +41,58 @@ export function ProfileClient({ user, profile, categories, specialties }: Props)
   const [selected, setSelected] = useState(new Set(specialties.map((s) => s.category_id)))
   const [avatarUrl, setAvatarUrl] = useState(user.avatar_url)
   const [uploading, setUploading] = useState(false)
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    user.latitude && user.longitude ? { lat: user.latitude, lng: user.longitude } : null
+  )
+  const mapContainerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<mapboxgl.Map | null>(null)
+  const markerRef = useRef<mapboxgl.Marker | null>(null)
+
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return
+    const center: [number, number] = coords
+      ? [coords.lng, coords.lat]
+      : [-74.0721, 4.7110]
+
+    mapRef.current = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center,
+      zoom: coords ? 13 : 5,
+    })
+
+    if (coords) {
+      markerRef.current = new mapboxgl.Marker({ color: '#6366f1', draggable: true })
+        .setLngLat([coords.lng, coords.lat])
+        .addTo(mapRef.current)
+
+      markerRef.current.on('dragend', () => {
+        const lngLat = markerRef.current!.getLngLat()
+        setCoords({ lat: lngLat.lat, lng: lngLat.lng })
+      })
+    }
+
+    mapRef.current.on('click', (e) => {
+      const { lng, lat } = e.lngLat
+      setCoords({ lat, lng })
+
+      if (markerRef.current) {
+        markerRef.current.setLngLat([lng, lat])
+      } else {
+        markerRef.current = new mapboxgl.Marker({ color: '#6366f1', draggable: true })
+          .setLngLat([lng, lat])
+          .addTo(mapRef.current!)
+
+        markerRef.current.on('dragend', () => {
+          const lngLat = markerRef.current!.getLngLat()
+          setCoords({ lat: lngLat.lat, lng: lngLat.lng })
+        })
+      }
+      toast.success('Ubicación seleccionada')
+    })
+
+    return () => { mapRef.current?.remove(); mapRef.current = null }
+  }, [])
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -46,14 +100,12 @@ export function ProfileClient({ user, profile, categories, specialties }: Props)
       name: user.name,
       bio: profile.bio ?? '',
       hourly_rate: Math.round(profile.hourly_rate / 100),
-      latitude: user.latitude ?? '',
-      longitude: user.longitude ?? '',
     },
   })
 
   async function onSubmit(data: FormData) {
     const { error: e1 } = await supabase.from('users')
-      .update({ name: data.name, latitude: data.latitude || null, longitude: data.longitude || null })
+      .update({ name: data.name, latitude: coords?.lat ?? null, longitude: coords?.lng ?? null })
       .eq('id', user.id)
     if (e1) { toast.error('Error al guardar'); return }
 
@@ -166,24 +218,18 @@ export function ProfileClient({ user, profile, categories, specialties }: Props)
             <h2 className="font-semibold">Ubicacion</h2>
           </div>
           <p className="text-sm text-muted-foreground -mt-2">
-            Tu ubicacion aparecera en el mapa.{' '}
-            <a href="https://www.latlong.net/" target="_blank" rel="noopener noreferrer"
-              className="text-primary underline-offset-2 hover:underline">
-              Busca tus coordenadas aqui
-            </a>
+            Haz clic en el mapa para marcar donde ofreces tu servicio. Puedes arrastrar el pin para ajustar.
           </p>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="latitude">Latitud</Label>
-              <Input id="latitude" type="number" step="any" {...register('latitude')} placeholder="4.7110" />
-              {errors.latitude && <p className="text-xs text-destructive">{errors.latitude.message}</p>}
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="longitude">Longitud</Label>
-              <Input id="longitude" type="number" step="any" {...register('longitude')} placeholder="-74.0721" />
-              {errors.longitude && <p className="text-xs text-destructive">{errors.longitude.message}</p>}
-            </div>
-          </div>
+          <div ref={mapContainerRef} className="h-64 w-full rounded-xl overflow-hidden border" />
+          {coords ? (
+            <p className="text-xs text-green-600 font-medium">
+              ✓ Ubicación seleccionada: {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
+            </p>
+          ) : (
+            <p className="text-xs text-amber-600">
+              Haz clic en el mapa para seleccionar tu ubicación
+            </p>
+          )}
         </section>
 
         {categories.length > 0 && (
