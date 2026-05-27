@@ -26,7 +26,7 @@ export default async function ProviderReviewsPage() {
     .eq('user_id', authUser.id)
     .single()
 
-  const list = (reviews ?? []) as {
+  const list = (reviews ?? []) as unknown as {
     id: string
     rating: number
     comment: string | null
