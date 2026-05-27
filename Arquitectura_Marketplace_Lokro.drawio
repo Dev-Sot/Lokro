@@ -1,0 +1,304 @@
+<mxfile host="65bd71144e">
+    <diagram id="MarketplaceArch001" name="Page-1">
+        <mxGraphModel dx="2940" dy="1763" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1280" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+
+                <!-- TÍTULO -->
+                <mxCell id="title" value="Arquitectura — Marketplace de Servicios Locales por Geolocalización (Lokro)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontStyle=1;fontColor=#1a1a2e;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="15" width="1840" height="35" as="geometry"/>
+                </mxCell>
+
+                <!-- CLIENTE WEB -->
+                <mxCell id="spa_client" value="Cliente Web&#xa;(Navegador)" style="shape=mxgraph.network.workstation;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="-10" y="140" width="130" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="spa_note" value="Next.js 16 (SSR + CSR)&#xa;Desplegado en Vercel" style="text;html=1;align=center;fontSize=9;fontStyle=2;" parent="1" vertex="1">
+                    <mxGeometry x="-30" y="250" width="170" height="35" as="geometry"/>
+                </mxCell>
+
+                <!-- FRONTEND BOX -->
+                <mxCell id="frontend_box" value="Frontend — Next.js 16.2.6 App Router (SSR + Client Components)" style="swimlane;startSize=32;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="100" width="660" height="870" as="geometry"/>
+                </mxCell>
+
+                <!-- Auth / Middleware -->
+                <mxCell id="auth_ctx" value="Auth — Supabase SSR Cookies · Middleware Next.js · Roles USER/PROVIDER/ADMIN → redirección automática" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="15" y="42" width="630" height="35" as="geometry"/>
+                </mxCell>
+
+                <!-- Roles -->
+                <mxCell id="rol_user" value="ROL: USER&#xa;/home · /explore&#xa;/chat · /tracking&#xa;/pay · /profile · /notifications" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="15" y="95" width="195" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="rol_provider" value="ROL: PROVIDER&#xa;/dashboard · /requests&#xa;/schedule · /earnings&#xa;/perfil" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="225" y="95" width="195" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="rol_admin" value="ROL: ADMIN&#xa;/panel · Usuarios&#xa;Prestadores · Solicitudes&#xa;Health checks" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="435" y="95" width="195" height="80" as="geometry"/>
+                </mxCell>
+
+                <!-- Páginas clave -->
+                <mxCell id="pages_box" value="Páginas Principales" style="swimlane;startSize=25;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;fontStyle=1;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="15" y="195" width="630" height="175" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_home" value="/home&#xa;Mapa + Lista&#xa;Filtros geolocal." style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="10" y="32" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_explore" value="/explore&#xa;Grid proveedores&#xa;Filtros URL params" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="135" y="32" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_provider" value="/providers/[id]&#xa;Perfil público&#xa;Reseñas · Portfolio" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="260" y="32" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_request" value="/request/[id]&#xa;Formulario solicitud&#xa;Zod + React Hook Form" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="385" y="32" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_chat" value="/chat/[id]&#xa;Chat tiempo real&#xa;Estado servicio" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="510" y="32" width="110" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_tracking" value="/tracking/[id]&#xa;Mapa en tiempo real&#xa;Timeline de estado" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="10" y="100" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_pay" value="/pay/[id]&#xa;Mercado Pago&#xa;Checkout" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="135" y="100" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_perfil" value="/perfil (PROVIDER)&#xa;Mapa picker · Bio&#xa;Tarifa · Fotos" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="260" y="100" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_dashboard" value="/dashboard&#xa;Panel proveedor&#xa;Estadísticas" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="385" y="100" width="115" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg_earnings" value="/earnings&#xa;Historial pagos&#xa;Export CSV" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="pages_box" vertex="1">
+                    <mxGeometry x="510" y="100" width="110" height="55" as="geometry"/>
+                </mxCell>
+
+                <!-- Componentes -->
+                <mxCell id="comp_box" value="Componentes Clave" style="swimlane;startSize=25;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;fontStyle=1;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="15" y="390" width="630" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="comp_map" value="ProviderMap&#xa;(Mapbox GL JS)" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="comp_box" vertex="1">
+                    <mxGeometry x="10" y="30" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="comp_chat" value="ChatWindow&#xa;(Supabase Realtime)" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="comp_box" vertex="1">
+                    <mxGeometry x="160" y="30" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="comp_tracking" value="TrackingClient&#xa;(Mapbox + Realtime)" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="comp_box" vertex="1">
+                    <mxGeometry x="310" y="30" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="comp_payment" value="PaymentClient&#xa;(Mercado Pago SDK)" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="comp_box" vertex="1">
+                    <mxGeometry x="460" y="30" width="155" height="50" as="geometry"/>
+                </mxCell>
+
+                <!-- Stores y Hooks -->
+                <mxCell id="stores_box" value="Estado Global y Hooks" style="swimlane;startSize=25;fillColor=#f0f0ff;strokeColor=#7777cc;fontSize=10;fontStyle=1;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="15" y="525" width="630" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="store_map" value="useMapStore (Zustand)&#xa;markers · selectedMarker&#xa;filters · userLocation" style="rounded=1;fillColor=#fff;strokeColor=#7777cc;fontSize=9;" parent="stores_box" vertex="1">
+                    <mxGeometry x="10" y="30" width="180" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="store_user" value="useUserStore (Zustand)&#xa;user · profile&#xa;role · loading" style="rounded=1;fillColor=#fff;strokeColor=#7777cc;fontSize=9;" parent="stores_box" vertex="1">
+                    <mxGeometry x="200" y="30" width="155" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="hook_geo" value="useGeolocation&#xa;GPS nativo navegador&#xa;lat/lng del usuario" style="rounded=1;fillColor=#fff;strokeColor=#7777cc;fontSize=9;" parent="stores_box" vertex="1">
+                    <mxGeometry x="365" y="30" width="120" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="hook_notif" value="useRealtimeNotifications&#xa;Supabase Realtime&#xa;notif. push browser" style="rounded=1;fillColor=#fff;strokeColor=#7777cc;fontSize=9;" parent="stores_box" vertex="1">
+                    <mxGeometry x="495" y="30" width="125" height="65" as="geometry"/>
+                </mxCell>
+
+                <!-- API Routes -->
+                <mxCell id="api_box" value="API Routes (Next.js Server)" style="swimlane;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="15" y="660" width="630" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="api_mp" value="POST /api/mercadopago/create-preference&#xa;Crea preferencia MP · guarda en payments" style="rounded=1;fillColor=#fff;strokeColor=#82b366;fontSize=9;align=left;" parent="api_box" vertex="1">
+                    <mxGeometry x="10" y="28" width="295" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="api_webhook" value="POST /api/webhooks/mercadopago&#xa;Procesa IPN · actualiza payment + service_request" style="rounded=1;fillColor=#fff;strokeColor=#82b366;fontSize=9;align=left;" parent="api_box" vertex="1">
+                    <mxGeometry x="320" y="28" width="295" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="api_email" value="POST /api/email/notify&#xa;Envía email via Resend&#xa;(REQUEST_ACCEPTED · SERVICE_COMPLETED)" style="rounded=1;fillColor=#fff;strokeColor=#82b366;fontSize=9;align=left;" parent="api_box" vertex="1">
+                    <mxGeometry x="10" y="88" width="295" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="api_earnings" value="GET /api/exports/earnings&#xa;Exporta pagos del proveedor&#xa;en formato CSV" style="rounded=1;fillColor=#fff;strokeColor=#82b366;fontSize=9;align=left;" parent="api_box" vertex="1">
+                    <mxGeometry x="320" y="88" width="295" height="50" as="geometry"/>
+                </mxCell>
+
+                <!-- Vercel note -->
+                <mxCell id="vercel_note" value="☁️ Desplegado en Vercel — SSR + Edge Middleware + Static Assets · TypeScript strict · Tailwind CSS v4 + shadcn/ui" style="rounded=1;fillColor=#e8f4fd;strokeColor=#6c8ebf;fontSize=9;fontStyle=2;" parent="frontend_box" vertex="1">
+                    <mxGeometry x="15" y="825" width="630" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- SUPABASE BOX -->
+                <mxCell id="supabase_box" value="Supabase — Backend as a Service (BaaS)" style="swimlane;startSize=32;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="100" width="660" height="870" as="geometry"/>
+                </mxCell>
+
+                <!-- Auth -->
+                <mxCell id="sb_auth" value="Supabase Auth" style="swimlane;startSize=25;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="15" y="42" width="300" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="sb_auth_detail" value="Email + Password (principal)&#xa;OAuth: Google (opcional)&#xa;JWT en cookies SSR (Supabase SSR)&#xa;user_metadata: { role, name }&#xa;Trigger SQL: handle_new_user&#xa;  → crea fila en users (public)&#xa;  → crea provider_profiles si PROVIDER" style="rounded=1;fillColor=#fffde7;strokeColor=#d6b656;fontSize=9;align=left;" parent="sb_auth" vertex="1">
+                    <mxGeometry x="10" y="30" width="280" height="110" as="geometry"/>
+                </mxCell>
+
+                <!-- Storage -->
+                <mxCell id="sb_storage" value="Supabase Storage" style="swimlane;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="330" y="42" width="315" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="sb_storage_detail" value="Bucket: avatars (público)&#xa;→ fotos de perfil de usuario&#xa;Bucket: portfolio (público)&#xa;→ imágenes de trabajos del proveedor&#xa;Políticas RLS: solo auth puede subir" style="rounded=1;fillColor=#e8f4fd;strokeColor=#6c8ebf;fontSize=9;align=left;" parent="sb_storage" vertex="1">
+                    <mxGeometry x="10" y="30" width="295" height="110" as="geometry"/>
+                </mxCell>
+
+                <!-- PostgreSQL DB -->
+                <mxCell id="sb_db" value="PostgreSQL 15 — Extensiones: uuid-ossp · postgis" style="swimlane;startSize=25;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="15" y="210" width="630" height="310" as="geometry"/>
+                </mxCell>
+
+                <!-- Enums -->
+                <mxCell id="db_enums" value="ENUMs: user_role (USER·PROVIDER·ADMIN) · service_status (PENDING·ACCEPTED·IN_PROGRESS·COMPLETED·CANCELLED)&#xa;payment_status (PENDING·PAID·REFUNDED) · review_type (TO_PROVIDER·TO_USER) · notification_type (6 tipos)" style="rounded=1;fillColor=#fff8e1;strokeColor=#d79b00;fontSize=8;align=left;" parent="sb_db" vertex="1">
+                    <mxGeometry x="10" y="30" width="610" height="35" as="geometry"/>
+                </mxCell>
+
+                <!-- Tablas fila 1 -->
+                <mxCell id="tbl_users" value="users&#xa;id · name · email&#xa;role · avatar_url&#xa;latitude · longitude&#xa;created_at" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="10" y="75" width="140" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_provider" value="provider_profiles&#xa;user_id · bio&#xa;hourly_rate · available&#xa;average_rating&#xa;total_reviews" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="160" y="75" width="145" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_categories" value="categories&#xa;id · name&#xa;icon · color&#xa;description" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="315" y="75" width="130" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_specialties" value="provider_specialties&#xa;provider_id&#xa;category_id&#xa;(UNIQUE pair)" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="455" y="75" width="155" height="80" as="geometry"/>
+                </mxCell>
+
+                <!-- Tablas fila 2 -->
+                <mxCell id="tbl_requests" value="service_requests&#xa;user_id · provider_id&#xa;category_id · status&#xa;description · address&#xa;latitude · longitude&#xa;estimated_price · final_price&#xa;requested_date" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="10" y="165" width="155" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_messages" value="messages&#xa;request_id · sender_id&#xa;content · read&#xa;created_at" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="175" y="165" width="135" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_payments" value="payments&#xa;request_id · amount&#xa;platform_fee&#xa;provider_amount&#xa;mp_preference_id&#xa;status (PENDING·PAID·REFUNDED)" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="320" y="165" width="155" height="95" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_notifications" value="notifications&#xa;user_id · type&#xa;title · message&#xa;read · created_at" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="485" y="165" width="135" height="80" as="geometry"/>
+                </mxCell>
+
+                <!-- Tablas fila 3 -->
+                <mxCell id="tbl_reviews" value="reviews&#xa;request_id · author_id&#xa;target_id · rating (1-5)&#xa;comment · type" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="10" y="245" width="145" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_locations" value="provider_locations&#xa;provider_id&#xa;latitude · longitude&#xa;updated_at" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="165" y="245" width="135" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_portfolio" value="provider_portfolio&#xa;provider_id&#xa;image_url · created_at" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="310" y="245" width="145" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_history" value="service_status_history&#xa;request_id · status&#xa;created_by · created_at" style="rounded=1;fillColor=#fff;strokeColor=#d79b00;fontSize=9;" parent="sb_db" vertex="1">
+                    <mxGeometry x="465" y="245" width="155" height="55" as="geometry"/>
+                </mxCell>
+
+                <!-- Triggers -->
+                <mxCell id="db_triggers" value="Triggers SQL: on_auth_user_created → crea users + provider_profiles al registrarse  |  on_review_change → recalcula average_rating + total_reviews en provider_profiles" style="rounded=1;fillColor=#fff3cd;strokeColor=#d79b00;fontSize=8;align=left;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="15" y="528" width="630" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Realtime -->
+                <mxCell id="sb_realtime" value="Supabase Realtime — WebSockets (habilitado en Replication)" style="swimlane;startSize=25;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="15" y="570" width="630" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="rt_messages" value="messages (public)&#xa;INSERT → chat en tiempo real&#xa;useRealtimeNotifications" style="rounded=1;fillColor=#fde8e8;strokeColor=#b85450;fontSize=9;" parent="sb_realtime" vertex="1">
+                    <mxGeometry x="10" y="30" width="185" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="rt_requests" value="service_requests (public)&#xa;UPDATE → estado servicio&#xa;Notifica usuario + proveedor" style="rounded=1;fillColor=#fde8e8;strokeColor=#b85450;fontSize=9;" parent="sb_realtime" vertex="1">
+                    <mxGeometry x="210" y="30" width="190" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="rt_locations" value="provider_locations (public)&#xa;UPDATE → tracking GPS&#xa;proveedor en camino" style="rounded=1;fillColor=#fde8e8;strokeColor=#b85450;fontSize=9;" parent="sb_realtime" vertex="1">
+                    <mxGeometry x="415" y="30" width="200" height="80" as="geometry"/>
+                </mxCell>
+
+                <!-- RLS -->
+                <mxCell id="sb_rls" value="Row Level Security (RLS) activo en todas las tablas · 002_rls_security.sql · Políticas: usuarios solo ven/editan sus propios datos" style="rounded=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=9;fontStyle=2;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="15" y="725" width="630" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Supabase hosted -->
+                <mxCell id="sb_hosted" value="☁️ Supabase Cloud — PostgreSQL 15 · pgvector · uuid-ossp · postgis — Migraciones: 001_initial_schema.sql · 002_rls_security.sql" style="rounded=1;fillColor=#e8f4fd;strokeColor=#6c8ebf;fontSize=9;fontStyle=2;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="15" y="770" width="630" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Supabase seed note -->
+                <mxCell id="sb_seed" value="seed.sql disponible con datos de prueba (categorías, usuarios, prestadores, solicitudes)" style="rounded=1;fillColor=#f0fff0;strokeColor=#82b366;fontSize=9;fontStyle=2;" parent="supabase_box" vertex="1">
+                    <mxGeometry x="15" y="815" width="630" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- SERVICIOS EXTERNOS BOX -->
+                <mxCell id="ext_box" value="Servicios Externos" style="swimlane;startSize=28;fillColor=#f5f5f5;strokeColor=#666;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="100" width="200" height="500" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_vercel" value="☁️ Vercel&#xa;Hosting Frontend&#xa;SSR + Edge Middleware&#xa;Deploy auto desde GitHub" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="ext_box" vertex="1">
+                    <mxGeometry x="10" y="38" width="180" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_mp" value="💳 Mercado Pago&#xa;Checkout Preferencias&#xa;IPN Webhooks&#xa;create-preference API&#xa;Modo sandbox (TEST-)" style="rounded=1;fillColor=#00b1ea22;strokeColor=#00b1ea;fontSize=9;" parent="ext_box" vertex="1">
+                    <mxGeometry x="10" y="113" width="180" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_resend" value="📧 Resend&#xa;Emails transaccionales&#xa;REQUEST_ACCEPTED&#xa;SERVICE_COMPLETED&#xa;PAYMENT_RECEIVED" style="rounded=1;fillColor=#fff0f5;strokeColor=#cc3366;fontSize=9;" parent="ext_box" vertex="1">
+                    <mxGeometry x="10" y="203" width="180" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_github" value="🐙 GitHub&#xa;Dev-Sot / Marketplace&#xa;Push → deploy automático&#xa;en Vercel" style="rounded=1;fillColor=#fff;strokeColor=#666;fontSize=9;" parent="ext_box" vertex="1">
+                    <mxGeometry x="10" y="293" width="180" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_supabase_dash" value="Supabase Dashboard&#xa;Admin · Storage · Auth&#xa;SQL Editor · Logs · RLS" style="rounded=1;fillColor=#3ecf8e22;strokeColor=#3ecf8e;fontSize=9;" parent="ext_box" vertex="1">
+                    <mxGeometry x="10" y="368" width="180" height="55" as="geometry"/>
+                </mxCell>
+
+                <!-- MAPAS BOX -->
+                <mxCell id="maps_box" value="APIs de Mapas" style="swimlane;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="620" width="200" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="mapbox_tiles" value="Mapbox GL JS v3&#xa;react-map-gl v8&#xa;Tiles streets-v12&#xa;Marcadores proveedores&#xa;Mapa picker (perfil)" style="rounded=1;fillColor=#fff;strokeColor=#82b366;fontSize=9;" parent="maps_box" vertex="1">
+                    <mxGeometry x="10" y="38" width="180" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="geo_api" value="Browser Geolocation API&#xa;GPS nativo (useGeolocation)&#xa;Centra mapa en usuario" style="rounded=1;fillColor=#e8f5e9;strokeColor=#82b366;fontSize=9;" parent="maps_box" vertex="1">
+                    <mxGeometry x="10" y="123" width="180" height="55" as="geometry"/>
+                </mxCell>
+
+                <!-- FLUJO PRINCIPAL -->
+                <mxCell id="flow_box" value="Flujo Principal del Usuario" style="swimlane;startSize=28;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="840" width="200" height="330" as="geometry"/>
+                </mxCell>
+                <mxCell id="flow_detail" value="1. Registro / Login&#xa;   → Supabase Auth&#xa;   → handle_new_user trigger&#xa;&#xa;2. Busca proveedor&#xa;   → Mapa Mapbox + filtros&#xa;&#xa;3. Solicita servicio&#xa;   → service_requests INSERT&#xa;&#xa;4. Chat en tiempo real&#xa;   → Supabase Realtime&#xa;&#xa;5. Pago con Mercado Pago&#xa;   → create-preference&#xa;   → IPN webhook&#xa;&#xa;6. Tracking GPS proveedor&#xa;   → provider_locations RT" style="rounded=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=9;align=left;" parent="flow_box" vertex="1">
+                    <mxGeometry x="10" y="35" width="180" height="280" as="geometry"/>
+                </mxCell>
+
+                <!-- EDGES -->
+                <mxCell id="e1" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;fontStyle=2;fontSize=9;" parent="1" source="spa_client" target="frontend_box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" value="Supabase JS SDK&#xa;REST + WebSockets" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;fontStyle=2;fontSize=9;" parent="1" source="frontend_box" target="supabase_box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" value="IPN Webhook" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#00b1ea;fontStyle=2;fontSize=9;" parent="1" source="ext_mp" target="frontend_box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" value="create-preference" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#00b1ea;fontStyle=2;fontSize=9;" parent="1" source="frontend_box" target="ext_mp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" value="Tiles + Marcadores" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;fontStyle=2;fontSize=9;" parent="1" source="frontend_box" target="maps_box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" value="Deploy automático" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666;fontStyle=2;fontSize=9;" parent="1" source="ext_github" target="frontend_box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" value="sendEmail (Resend API)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#cc3366;fontStyle=2;fontSize=9;" parent="1" source="frontend_box" target="ext_resend" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
