@@ -32,5 +32,8 @@ export function useRealtimeNotifications(userId: string | undefined) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [userId, incrementUnread])
+  // Only depend on userId — incrementUnread is stable from zustand but adding it
+  // would cause a new subscription every time the store updates.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
 }
