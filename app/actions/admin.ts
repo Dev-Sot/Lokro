@@ -32,6 +32,7 @@ export async function cancelRequest(requestId: string) {
     .from('service_requests')
     .update({ status: 'CANCELLED' })
     .eq('id', requestId)
+    .in('status', ['PENDING', 'ACCEPTED', 'IN_PROGRESS'])
   if (error) throw new Error('Failed to cancel request')
   revalidatePath('/panel/solicitudes')
 }

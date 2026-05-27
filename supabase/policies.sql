@@ -198,11 +198,14 @@ CREATE POLICY "notifications_update_own" ON notifications
 CREATE POLICY "notifications_insert_participants" ON notifications
   FOR INSERT WITH CHECK (
     get_user_role() = 'ADMIN'
-    OR EXISTS (
-      SELECT 1
-      FROM service_requests sr
-      JOIN provider_profiles pp ON pp.id = sr.provider_id
-      WHERE (sr.user_id = auth.uid() OR pp.user_id = auth.uid())
-        AND (notifications.user_id = sr.user_id OR notifications.user_id = pp.user_id)
+    OR (
+      notifications.user_id != auth.uid()
+      AND EXISTS (
+        SELECT 1
+        FROM service_requests sr
+        JOIN provider_profiles pp ON pp.id = sr.provider_id
+        WHERE (sr.user_id = auth.uid() OR pp.user_id = auth.uid())
+          AND (notifications.user_id = sr.user_id OR notifications.user_id = pp.user_id)
+      )
     )
   );

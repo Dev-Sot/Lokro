@@ -39,6 +39,9 @@ export async function POST(request: Request) {
   const client = req.user as unknown as { id: string; name: string; email: string } | null
   const providerUser = (req.provider as unknown as { user: { id: string; name: string; email: string } } | null)?.user
 
+  const isParticipant = authUser.id === client?.id || authUser.id === providerUser?.id
+  if (!isParticipant) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
   try {
     if (event === 'REQUEST_ACCEPTED' && client && providerUser) {
       await sendRequestAcceptedEmail({

@@ -4,6 +4,10 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM = process.env.EMAIL_FROM ?? 'Lokro <noreply@lokro.app>'
 const APP_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lokro.app'
 
+function esc(s: string) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
 function baseTemplate(title: string, body: string) {
   return `<!DOCTYPE html>
 <html lang="es">
@@ -50,14 +54,14 @@ export async function sendRequestAcceptedEmail({
   if (!process.env.RESEND_API_KEY) return
 
   const body = `
-    ${p(`Hola ${toName},`)}
-    ${p(`<strong>${providerName}</strong> aceptó tu solicitud de servicio. Ya puedes coordinarte con él directamente desde el chat.`)}
+    ${p(`Hola ${esc(toName)},`)}
+    ${p(`<strong>${esc(providerName)}</strong> aceptó tu solicitud de servicio. Ya puedes coordinarte con él directamente desde el chat.`)}
     ${btn(`${APP_URL}/chat/${requestId}`, 'Ir al chat')}
   `
   await resend.emails.send({
     from: FROM,
     to: toEmail,
-    subject: `${providerName} aceptó tu solicitud — Lokro`,
+    subject: `${esc(providerName)} aceptó tu solicitud — Lokro`,
     html: baseTemplate('¡Tu solicitud fue aceptada!', body),
   })
 }
@@ -79,14 +83,14 @@ export async function sendPaymentReceivedEmail({
 
   const formatted = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount)
   const body = `
-    ${p(`Hola ${toName},`)}
-    ${p(`<strong>${clientName}</strong> realizó el pago de <strong>${formatted}</strong> por tu servicio. Ya puedes comenzar el trabajo.`)}
+    ${p(`Hola ${esc(toName)},`)}
+    ${p(`<strong>${esc(clientName)}</strong> realizó el pago de <strong>${formatted}</strong> por tu servicio. Ya puedes comenzar el trabajo.`)}
     ${btn(`${APP_URL}/chat/${requestId}`, 'Ver solicitud')}
   `
   await resend.emails.send({
     from: FROM,
     to: toEmail,
-    subject: `Recibiste un pago de ${clientName} — Lokro`,
+    subject: `Recibiste un pago de ${esc(clientName)} — Lokro`,
     html: baseTemplate('Pago confirmado', body),
   })
 }
@@ -105,8 +109,8 @@ export async function sendServiceCompletedEmail({
   if (!process.env.RESEND_API_KEY) return
 
   const body = `
-    ${p(`Hola ${toName},`)}
-    ${p(`<strong>${providerName}</strong> marcó tu servicio como completado. ¿Cómo te fue? Deja una reseña para ayudar a otros usuarios.`)}
+    ${p(`Hola ${esc(toName)},`)}
+    ${p(`<strong>${esc(providerName)}</strong> marcó tu servicio como completado. ¿Cómo te fue? Deja una reseña para ayudar a otros usuarios.`)}
     ${btn(`${APP_URL}/chat/${requestId}`, 'Dejar reseña')}
   `
   await resend.emails.send({

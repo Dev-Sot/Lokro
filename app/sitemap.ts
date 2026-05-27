@@ -9,7 +9,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: providers } = await supabase
     .from('provider_profiles')
     .select('id, updated_at')
-    .eq('available', true)
     .order('updated_at', { ascending: false })
 
   const providerRoutes: MetadataRoute.Sitemap = (providers ?? []).map((p) => ({

@@ -4,6 +4,8 @@
 -- ─── FIX 1: Allow admins to update any user (needed for setUserRole action) ──
 -- The existing users_update_own only allows id = auth.uid(), so admin
 -- server actions couldn't change another user's role at all.
+-- DROP IF EXISTS prevents failure when policies.sql was already applied.
+DROP POLICY IF EXISTS "users_update_admin" ON users;
 CREATE POLICY "users_update_admin" ON users
   FOR UPDATE USING (get_user_role() = 'ADMIN');
 
@@ -33,13 +35,16 @@ CREATE POLICY "notifications_insert_participants" ON notifications
   FOR INSERT WITH CHECK (
     -- Admins can insert any notification
     get_user_role() = 'ADMIN'
-    -- Participants can notify the other party in a shared request
-    OR EXISTS (
-      SELECT 1
-      FROM service_requests sr
-      JOIN provider_profiles pp ON pp.id = sr.provider_id
-      WHERE (sr.user_id = auth.uid() OR pp.user_id = auth.uid())
-        AND (notifications.user_id = sr.user_id OR notifications.user_id = pp.user_id)
+    -- Participants can notify only the OTHER party in a shared request (not themselves)
+    OR (
+      notifications.user_id != auth.uid()
+      AND EXISTS (
+        SELECT 1
+        FROM service_requests sr
+        JOIN provider_profiles pp ON pp.id = sr.provider_id
+        WHERE (sr.user_id = auth.uid() OR pp.user_id = auth.uid())
+          AND (notifications.user_id = sr.user_id OR notifications.user_id = pp.user_id)
+      )
     )
   );
 
