@@ -50,6 +50,26 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
         status: newStatus,
         created_by: currentUser.id,
       })
+
+      // Notificar al otro usuario
+      const notifMap = {
+        IN_PROGRESS: {
+          title: '🚗 Tu prestador está en camino',
+          message: `${currentUser.name} se dirige a tu ubicación.`,
+          type: 'PROVIDER_EN_ROUTE',
+        },
+        COMPLETED: {
+          title: '🎉 Servicio completado',
+          message: `${currentUser.name} ha marcado el servicio como completado.`,
+          type: 'SERVICE_COMPLETED',
+        },
+      }
+      await supabase.from('notifications').insert({
+        user_id: otherUser.id,
+        ...notifMap[newStatus],
+        read: false,
+      })
+
       setStatus(newStatus)
       toast.success(newStatus === 'IN_PROGRESS' ? '¡En camino!' : '¡Servicio completado!')
       if (newStatus === 'IN_PROGRESS') router.refresh()

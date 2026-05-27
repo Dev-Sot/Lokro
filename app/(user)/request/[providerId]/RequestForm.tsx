@@ -99,6 +99,15 @@ export function RequestForm({ provider, currentUserId }: RequestFormProps) {
       created_by: currentUserId,
     })
 
+    // Notificar al proveedor
+    await supabase.from('notifications').insert({
+      user_id: provider.user.id,
+      title: '📋 Nueva solicitud de servicio',
+      message: `Tienes una nueva solicitud: ${data.description.slice(0, 80)}${data.description.length > 80 ? '...' : ''}`,
+      type: 'NEW_REQUEST',
+      read: false,
+    })
+
     toast.success('¡Solicitud enviada! El prestador te responderá pronto.')
     router.push(`/chat/${request.id}`)
   }
