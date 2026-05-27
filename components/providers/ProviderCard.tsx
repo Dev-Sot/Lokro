@@ -83,16 +83,13 @@ export function ProviderCard({
       </div>
 
       {!compact && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            window.location.href = `/providers/${provider.id}`
-          }}
+        <Link
+          href={`/providers/${provider.id}`}
+          onClick={(e) => e.stopPropagation()}
           className="mt-3 flex w-full items-center justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           Ver perfil
-        </button>
+        </Link>
       )}
     </div>
   )

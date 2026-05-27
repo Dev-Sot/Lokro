@@ -104,7 +104,7 @@ export function HomeClient() {
       }
       if (filters.category && !p.specialties.includes(filters.category)) return false
       if (filters.minRating && p.average_rating < filters.minRating) return false
-      if (filters.maxPrice && p.hourly_rate / 100 > filters.maxPrice) return false
+      if (filters.maxPrice && p.hourly_rate > filters.maxPrice) return false
       if (filters.maxDistance && userLocation) {
         const d = getDistanceInMeters(userLocation.lat, userLocation.lng, p.latitude, p.longitude)
         if (d / 1000 > filters.maxDistance) return false

@@ -82,7 +82,7 @@ export function RequestForm({ provider, currentUserId }: RequestFormProps) {
         longitude: data.longitude,
         requested_date: new Date(data.requested_date).toISOString(),
         status: 'PENDING',
-        estimated_price: data.estimated_price ? data.estimated_price * 100 : null,
+        estimated_price: data.estimated_price || null,
       })
       .select('id')
       .single()
@@ -185,7 +185,7 @@ export function RequestForm({ provider, currentUserId }: RequestFormProps) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="estimated_price">Presupuesto estimado (opcional)</Label>
+        <Label htmlFor="estimated_price">Presupuesto estimado en COP (opcional)</Label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
             $
@@ -194,8 +194,8 @@ export function RequestForm({ provider, currentUserId }: RequestFormProps) {
             id="estimated_price"
             type="number"
             min={0}
-            step={5}
-            placeholder="0"
+            step={1000}
+            placeholder="50000"
             className="pl-7"
             {...register('estimated_price', { valueAsNumber: true })}
           />

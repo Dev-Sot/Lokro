@@ -19,7 +19,10 @@ import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 import { CATEGORIES } from '@/constants'
 import { useMapStore } from '@/store/useMapStore'
-import { cn } from '@/lib/utils'
+import { formatCurrency, cn } from '@/lib/utils'
+
+const MAX_PRICE = 300000
+const PRICE_STEP = 10000
 
 export function ProviderFilters() {
   const { filters, setFilters } = useMapStore()
@@ -54,12 +57,18 @@ export function ProviderFilters() {
           <div className="flex items-center justify-between">
             <p className="font-semibold text-sm">Filtros</p>
             {hasFilters && (
-              <Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-muted-foreground" onClick={clearFilters}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-auto p-0 text-xs text-muted-foreground"
+                onClick={clearFilters}
+              >
                 Limpiar todo
               </Button>
             )}
           </div>
 
+          {/* Category — value is the category name so it matches specialties[] in ProviderMapMarker */}
           <div className="space-y-2">
             <Label>Categoría</Label>
             <Select
@@ -72,7 +81,7 @@ export function ProviderFilters() {
               <SelectContent>
                 <SelectItem value="all">Todas las categorías</SelectItem>
                 {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
+                  <SelectItem key={cat.id} value={cat.name}>
                     {cat.icon} {cat.name}
                   </SelectItem>
                 ))}
@@ -80,11 +89,12 @@ export function ProviderFilters() {
             </Select>
           </div>
 
+          {/* Distance */}
           <div className="space-y-2">
             <div className="flex justify-between">
               <Label>Distancia máxima</Label>
               <span className="text-xs text-muted-foreground">
-                {filters.maxDistance ? `${filters.maxDistance}km` : 'Cualquiera'}
+                {filters.maxDistance ? `${filters.maxDistance} km` : 'Cualquiera'}
               </span>
             </div>
             <Slider
@@ -92,26 +102,38 @@ export function ProviderFilters() {
               max={50}
               step={1}
               value={[filters.maxDistance ?? 50]}
-              onValueChange={(vals) => { const v = vals[0] ?? 50; setFilters({ maxDistance: v === 50 ? undefined : v }) }}
+              onValueChange={(vals) => {
+                const v = vals[0] ?? 50
+                setFilters({ maxDistance: v === 50 ? undefined : v })
+              }}
             />
           </div>
 
+          {/* Price — COP range */}
           <div className="space-y-2">
             <div className="flex justify-between">
               <Label>Precio máximo/hora</Label>
               <span className="text-xs text-muted-foreground">
-                {filters.maxPrice ? `$${filters.maxPrice}` : 'Cualquiera'}
+                {filters.maxPrice ? formatCurrency(filters.maxPrice) : 'Cualquiera'}
               </span>
             </div>
             <Slider
-              min={10}
-              max={200}
-              step={5}
-              value={[filters.maxPrice ?? 200]}
-              onValueChange={(vals) => { const v = vals[0] ?? 200; setFilters({ maxPrice: v === 200 ? undefined : v }) }}
+              min={PRICE_STEP}
+              max={MAX_PRICE}
+              step={PRICE_STEP}
+              value={[filters.maxPrice ?? MAX_PRICE]}
+              onValueChange={(vals) => {
+                const v = vals[0] ?? MAX_PRICE
+                setFilters({ maxPrice: v === MAX_PRICE ? undefined : v })
+              }}
             />
+            <div className="flex justify-between text-[10px] text-muted-foreground">
+              <span>{formatCurrency(PRICE_STEP)}</span>
+              <span>{formatCurrency(MAX_PRICE)}+</span>
+            </div>
           </div>
 
+          {/* Rating */}
           <div className="space-y-2">
             <Label>Calificación mínima</Label>
             <Select

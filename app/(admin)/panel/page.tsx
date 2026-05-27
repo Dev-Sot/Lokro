@@ -32,7 +32,7 @@ export default async function AdminPanelPage() {
     supabase.from('users').select('*', { count: 'exact', head: true }),
     supabase.from('provider_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('service_requests').select('*', { count: 'exact', head: true }),
-    supabase.from('payments').select('amount').eq('status', 'PAID'),
+    supabase.from('payments').select('amount, platform_fee').eq('status', 'PAID'),
     checkMercadoPago(),
   ])
 
@@ -40,7 +40,7 @@ export default async function AdminPanelPage() {
   const mapboxOk = !!process.env.NEXT_PUBLIC_MAPBOX_TOKEN
   const storageOk = !!process.env.NEXT_PUBLIC_SUPABASE_URL
 
-  const totalRevenue = paymentsData?.reduce((sum, p) => sum + p.amount * 0.1, 0) ?? 0
+  const totalRevenue = paymentsData?.reduce((sum, p) => sum + p.platform_fee, 0) ?? 0
 
   const stats = [
     { label: 'Usuarios', value: usersCount ?? 0, icon: Users, color: 'text-blue-500' },
