@@ -12,27 +12,13 @@ _Sin tareas críticas pendientes._
 
 ## 🟡 Medio — necesario antes de lanzar
 
-### 1. Admin: acciones sobre usuarios y solicitudes ✅
-Resuelto: `UserRoleSelect` por fila en usuarios + `CancelRequestButton` en solicitudes cancelables. Server Actions en `app/actions/admin.ts`.
-
----
-
-### 2. Notificaciones por email ✅
-Resuelto: Resend integrado. `lib/services/email.ts` con 3 plantillas HTML. Endpoint autenticado `/api/email/notify`. Se dispara desde `AcceptRejectButtons`, `ChatWindow` y el webhook de MercadoPago.
-
-**Requiere configurar en `.env.local`:**
-```
-RESEND_API_KEY=re_...
-EMAIL_FROM=Lokro <noreply@lokro.app>
-NEXT_PUBLIC_APP_URL=https://tu-dominio.com
-```
+_Sin tareas medias pendientes._
 
 ---
 
 ## 🟢 Pequeño — polish y visibilidad
 
-### 3. SEO y Open Graph ✅
-Resuelto: OG + Twitter card en `app/layout.tsx` (global) y `providers/[id]/page.tsx` (por proveedor, con avatar). `sitemap.ts` incluye rutas estáticas + perfiles dinámicos de proveedores disponibles. `robots.ts` bloquea rutas privadas y apunta al sitemap.
+_Sin tareas pendientes._
 
 ---
 
@@ -51,6 +37,8 @@ Resuelto: OG + Twitter card en `app/layout.tsx` (global) y `providers/[id]/page.
 | Admin: cambiar rol de usuario + cancelar solicitudes | 2026-05-27 |
 | Notificaciones por email (Resend) | 2026-05-27 |
 | SEO: Open Graph, sitemap dinámico, robots.txt | 2026-05-27 |
+| Seguridad RLS: 7 vulnerabilidades corregidas | 2026-05-27 |
+| Landing page rediseñada | 2026-05-27 |
 | Middleware no corría (proxy.ts → middleware.ts) | 2026-05-27 |
 | useUser sin catch → loading infinito | 2026-05-27 |
 | HomeClient race condition al desmontar | 2026-05-27 |

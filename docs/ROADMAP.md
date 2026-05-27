@@ -69,16 +69,18 @@ Stack: Next.js 16 · React 19 · Supabase · Mapbox · Mercado Pago · TypeScrip
 | Notificaciones por email con Resend (aceptación, pago, completado) | ✅ |
 | SEO: Open Graph global + por proveedor, sitemap dinámico, robots.txt | ✅ |
 
-### Fase 6 — Producción 🔜
-Lo que falta para poder lanzar a usuarios reales:
+### Fase 6 — Producción ✅ (2026-05-27)
+- Seguridad RLS: 7 vulnerabilidades corregidas (escalación de rol, spam notificaciones, integridad de pagos)
+- Landing page rediseñada: sección para prestadores, hero visual mejorado, sección de confianza, CTA mejorado
 
-| Tarea | Notas |
-|-------|-------|
-| Configurar variables de entorno en producción | `RESEND_API_KEY`, `EMAIL_FROM`, `NEXT_PUBLIC_SITE_URL`, MP keys |
-| Agregar `public/og-image.png` | Imagen 1200×630px para preview en redes |
-| Verificar dominio en Resend | Para enviar emails desde `@lokro.app` |
-| Deploy (Vercel / Railway) | Conectar repositorio y configurar env vars |
-| Configurar webhook de MercadoPago en producción | Apuntar a la URL real del servidor |
+### Lista de configuración para lanzar (responsabilidad del equipo)
+
+| Tarea | Estado |
+|-------|--------|
+| Variables de entorno en Vercel (`RESEND_API_KEY`, `EMAIL_FROM`, `NEXT_PUBLIC_SITE_URL`, MP keys) | Pendiente equipo |
+| Agregar `public/og-image.png` (1200×630px) | Pendiente diseño |
+| Verificar dominio en Resend (`@lokro.app`) | Pendiente equipo |
+| Webhook de MercadoPago apuntando a URL de producción | Pendiente equipo |
 
 ---
 
