@@ -47,31 +47,37 @@ export async function POST(request: Request) {
   const provider = serviceRequest.provider as unknown as { user: { name: string } } | null
 
   const preference = new Preference(mpClient)
-  const result = await preference.create({
-    body: {
-      items: [
-        {
-          id: requestId,
-          title: `${category?.icon ?? ''} ${category?.name ?? 'Servicio'} · ${provider?.user?.name ?? 'Prestador'}`.trim(),
-          quantity: 1,
-          unit_price: amount,
-          currency_id: 'COP',
+  let result: Awaited<ReturnType<typeof preference.create>>
+  try {
+    result = await preference.create({
+      body: {
+        items: [
+          {
+            id: requestId,
+            title: `${category?.icon ?? ''} ${category?.name ?? 'Servicio'} · ${provider?.user?.name ?? 'Prestador'}`.trim(),
+            quantity: 1,
+            unit_price: amount,
+            currency_id: 'COP',
+          },
+        ],
+        back_urls: {
+          success: `${siteUrl}/pay/${requestId}/success`,
+          failure: `${siteUrl}/pay/${requestId}?payment=failed`,
+          pending: `${siteUrl}/pay/${requestId}/success?status=pending`,
         },
-      ],
-      back_urls: {
-        success: `${siteUrl}/pay/${requestId}/success`,
-        failure: `${siteUrl}/pay/${requestId}?payment=failed`,
-        pending: `${siteUrl}/pay/${requestId}/success?status=pending`,
+        auto_return: 'approved',
+        external_reference: requestId,
+        notification_url: `${siteUrl}/api/webhooks/mercadopago`,
       },
-      auto_return: 'approved',
-      external_reference: requestId,
-      notification_url: `${siteUrl}/api/webhooks/mercadopago`,
-    },
-  })
+    })
+  } catch (err) {
+    console.error('create-preference: MercadoPago API error', err)
+    return NextResponse.json({ error: 'Error al crear la preferencia de pago' }, { status: 502 })
+  }
 
   const { platformFee, providerAmount } = calculateFees(amount)
 
-  await supabase.from('payments').upsert({
+  const { error: upsertError } = await supabase.from('payments').upsert({
     request_id: requestId,
     amount,
     platform_fee: platformFee,
@@ -79,6 +85,11 @@ export async function POST(request: Request) {
     stripe_payment_intent: result.id,
     status: 'PENDING',
   })
+
+  if (upsertError) {
+    console.error('create-preference: failed to upsert payment record', upsertError)
+    return NextResponse.json({ error: 'Error al registrar el pago' }, { status: 500 })
+  }
 
   const isDev = process.env.NODE_ENV !== 'production'
   return NextResponse.json({
