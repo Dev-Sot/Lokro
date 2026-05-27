@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Logo } from '@/components/shared/Logo'
+import { ThemeToggle } from '@/components/shared/ThemeToggle'
+import { AdminNav } from '@/components/admin/AdminNav'
 
 export default async function AdminLayout({
   children,
@@ -33,10 +35,14 @@ export default async function AdminLayout({
               Admin
             </span>
           </div>
-          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
-            Ver sitio
-          </Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
+              Ver sitio
+            </Link>
+          </div>
         </div>
+        <AdminNav />
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
     </div>

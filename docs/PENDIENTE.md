@@ -135,6 +135,8 @@ Tareas ordenadas por prioridad. Actualizar este archivo al completar cada una.
 | Perfil de usuario sin edición (nombre + avatar) | 2026-05-27 |
 | Historial de solicitudes sin links | 2026-05-27 |
 | Usuario no puede cancelar sus solicitudes | 2026-05-27 |
+| Dark mode toggle | 2026-05-27 |
+| Panel de administración completo | 2026-05-27 |
 | Middleware no corría (proxy.ts → middleware.ts) | 2026-05-27 |
 | useUser sin catch → loading infinito | 2026-05-27 |
 | HomeClient race condition al desmontar | 2026-05-27 |
