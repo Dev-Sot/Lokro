@@ -75,7 +75,7 @@ Tareas ordenadas por prioridad. Actualizar este archivo al completar cada una.
 
 ## 🟡 Medio — mejora la gestión de la plataforma
 
-### 5. Panel de administración completo
+### 5. Panel de administración completo ✅
 **Problema:** `app/(admin)/panel/page.tsx` solo muestra 4 métricas globales y estado del sistema. No hay gestión de nada.
 
 **Lo que falta:**
@@ -93,13 +93,8 @@ Tareas ordenadas por prioridad. Actualizar este archivo al completar cada una.
 
 ---
 
-### 6. Editar perfil del usuario — cambio de contraseña
-**Problema:** Además de nombre/avatar, el usuario no tiene forma de cambiar su contraseña desde el perfil (solo existe el flujo de forgot password que requiere salir de la sesión).
-
-**Solución:**
-- Añadir sección "Cambiar contraseña" en `/profile/edit` usando `supabase.auth.updateUser({ password })`
-
-**Estimado:** 1–2 horas
+### 6. Editar perfil del usuario — cambio de contraseña ✅
+Resuelto: botón "Cambiar contraseña" en `ProfileEditForm` con validación zod y `supabase.auth.updateUser`.
 
 ---
 
@@ -150,3 +145,4 @@ Tareas ordenadas por prioridad. Actualizar este archivo al completar cada una.
 | create-preference sin manejo de error de API MP | 2026-05-27 |
 | TrackingClient geolocation sin callback de error | 2026-05-27 |
 | NotificationsClient markAllRead sin catch | 2026-05-27 |
+| Cambio de contraseña desde el perfil | 2026-05-27 |
