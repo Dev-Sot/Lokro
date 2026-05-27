@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server'
 import { Payment } from 'mercadopago'
 import { createAdminClient } from '@/lib/supabase/server'
