@@ -52,6 +52,10 @@ export function RequestForm({ provider, currentUserId }: RequestFormProps) {
   const estimatedPrice = watch('estimated_price')
 
   async function detectLocation() {
+    if (!navigator.geolocation) {
+      toast.error('Tu navegador no soporta geolocalización. Ingresa la dirección manualmente.')
+      return
+    }
     setLocating(true)
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -60,9 +64,13 @@ export function RequestForm({ provider, currentUserId }: RequestFormProps) {
         setLocating(false)
         toast.success('Ubicación detectada')
       },
-      () => {
+      (err) => {
         setLocating(false)
-        toast.error('No se pudo detectar la ubicación')
+        if (err.code === err.PERMISSION_DENIED) {
+          toast.error('Permiso denegado. Ingresa la dirección manualmente.')
+        } else {
+          toast.error('No se pudo detectar la ubicación. Intenta de nuevo.')
+        }
       }
     )
   }
