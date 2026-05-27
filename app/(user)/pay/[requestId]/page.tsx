@@ -42,7 +42,7 @@ export default async function PayPage({ params }: Props) {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Pagar servicio</h1>
-          <p className="text-muted-foreground mt-1">Pago seguro procesado por Stripe</p>
+          <p className="text-muted-foreground mt-1">Pago seguro procesado por Mercado Pago</p>
         </div>
 
         <div className="rounded-xl border bg-card p-5 space-y-3">

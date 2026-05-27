@@ -1,9 +1,9 @@
 export const PLATFORM_FEE_PERCENT = 0.1
 
 export const DEFAULT_MAP_CENTER = {
-  lng: -74.006,
-  lat: 40.7128,
-  zoom: 12,
+  lng: -74.0721,
+  lat: 4.7110,
+  zoom: 13,
 }
 
 export const PROVIDER_LOCATION_UPDATE_INTERVAL = 5000

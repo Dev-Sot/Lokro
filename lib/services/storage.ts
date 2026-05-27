@@ -19,7 +19,7 @@ export async function uploadPortfolioImage(
   file: File
 ): Promise<string> {
   const ext = file.name.split('.').pop()
-  const path = `portfolios/${providerId}/${Date.now()}.${ext}`
+  const path = `${providerId}/${Date.now()}.${ext}`
 
   const { error } = await supabase.storage
     .from('portfolios')

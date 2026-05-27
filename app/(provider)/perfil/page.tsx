@@ -26,12 +26,17 @@ export default async function ProfilePage() {
 
   if (!user || !profile) redirect('/home')
 
-  const [{ data: categories }, { data: specialties }] = await Promise.all([
+  const [{ data: categories }, { data: specialties }, { data: portfolio }] = await Promise.all([
     supabase.from('categories').select('*').order('name'),
     supabase
       .from('provider_specialties')
       .select('*, category:categories(*)')
       .eq('provider_id', profile.id),
+    supabase
+      .from('provider_portfolio')
+      .select('*')
+      .eq('provider_id', profile.id)
+      .order('created_at', { ascending: true }),
   ])
 
   return (
@@ -40,6 +45,7 @@ export default async function ProfilePage() {
       profile={profile}
       categories={categories ?? []}
       specialties={specialties ?? []}
+      portfolio={portfolio ?? []}
     />
   )
 }

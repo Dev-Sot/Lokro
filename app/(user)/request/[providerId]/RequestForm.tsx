@@ -202,7 +202,7 @@ export function RequestForm({ provider, currentUserId }: RequestFormProps) {
         </div>
         {estimatedPrice && (
           <p className="text-xs text-muted-foreground">
-            La plataforma retiene el 10% ({formatCurrency((estimatedPrice * 100) * 0.1)}) de comisión
+            La plataforma retiene el 10% ({formatCurrency(estimatedPrice * 0.1)}) de comisión
           </p>
         )}
       </div>

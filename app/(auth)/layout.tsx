@@ -15,7 +15,7 @@ export default function AuthLayout({
           <blockquote className="text-2xl font-semibold leading-snug">
             "Lokro conectó a mi empresa con el electricista perfecto en menos de 10 minutos."
           </blockquote>
-          <footer className="text-sm opacity-80">— Carlos M., Madrid</footer>
+          <footer className="text-sm opacity-80">— Carlos M., Bogotá</footer>
         </div>
         <div className="text-sm opacity-60">
           © {new Date().getFullYear()} Lokro. Confianza. Rapidez. Cercanía.

@@ -33,21 +33,21 @@ const HOW_IT_WORKS = [
 
 const TESTIMONIALS = [
   {
-    name: 'Ana García',
-    role: 'Usuaria de Madrid',
-    text: 'Encontré un fontanero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.',
+    name: 'Ana Rodríguez',
+    role: 'Usuaria en Chapinero, Bogotá',
+    text: 'Encontré un plomero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.',
     rating: 5,
   },
   {
     name: 'Carlos M.',
-    role: 'Empresario en Barcelona',
+    role: 'Empresario en El Chicó, Bogotá',
     text: 'Uso Lokro cada semana para distintos servicios en mi oficina. La calidad es consistente.',
     rating: 5,
   },
   {
     name: 'Laura Torres',
-    role: 'Madre de familia en Valencia',
-    text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Sacó un 9 en selectividad.',
+    role: 'Madre de familia en Suba, Bogotá',
+    text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Subió sus notas en menos de un mes.',
     rating: 5,
   },
 ]

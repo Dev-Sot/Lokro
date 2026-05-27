@@ -116,10 +116,10 @@ export default async function ProviderProfilePage({ params }: Props) {
             <span className="flex items-center gap-1.5 font-semibold text-foreground">
               {formatCurrency(provider.hourly_rate)}/hora
             </span>
-            {user.latitude && (
+            {user.latitude && user.longitude && (
               <span className="flex items-center gap-1.5">
                 <MapPin size={14} />
-                Madrid, España
+                Colombia
               </span>
             )}
           </div>
