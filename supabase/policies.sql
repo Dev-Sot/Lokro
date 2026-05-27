@@ -23,9 +23,13 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 CREATE POLICY "users_select_public" ON users
   FOR SELECT USING (TRUE);
 
--- Users can only update their own record
+-- Users can only update their own record (role changes blocked by trigger)
 CREATE POLICY "users_update_own" ON users
   FOR UPDATE USING (id = auth.uid());
+
+-- Admins can update any user (needed for role management from admin panel)
+CREATE POLICY "users_update_admin" ON users
+  FOR UPDATE USING (get_user_role() = 'ADMIN');
 
 -- Insert handled by trigger only (service role)
 CREATE POLICY "users_insert_trigger" ON users
@@ -46,7 +50,7 @@ CREATE POLICY "provider_profiles_update_own" ON provider_profiles
   FOR UPDATE USING (user_id = auth.uid());
 
 CREATE POLICY "provider_profiles_insert_own" ON provider_profiles
-  FOR INSERT WITH CHECK (user_id = auth.uid());
+  FOR INSERT WITH CHECK (user_id = auth.uid() AND get_user_role() = 'PROVIDER');
 
 -- ─── PROVIDER SPECIALTIES ───────────────────────────────────────────────────
 CREATE POLICY "provider_specialties_select_all" ON provider_specialties
@@ -134,8 +138,16 @@ CREATE POLICY "messages_insert_participants" ON messages
     )
   );
 
-CREATE POLICY "messages_update_own" ON messages
-  FOR UPDATE USING (sender_id = auth.uid());
+-- Participants can update messages in their requests (read flag + sender can edit content)
+-- A trigger prevents non-senders from changing content
+CREATE POLICY "messages_update_participants" ON messages
+  FOR UPDATE USING (
+    request_id IN (
+      SELECT sr.id FROM service_requests sr
+      LEFT JOIN provider_profiles pp ON pp.id = sr.provider_id
+      WHERE sr.user_id = auth.uid() OR pp.user_id = auth.uid()
+    )
+  );
 
 -- ─── REVIEWS ────────────────────────────────────────────────────────────────
 CREATE POLICY "reviews_select_all" ON reviews
@@ -171,8 +183,8 @@ CREATE POLICY "payments_insert_user" ON payments
     )
   );
 
-CREATE POLICY "payments_update_service_role" ON payments
-  FOR UPDATE USING (get_user_role() = 'ADMIN');
+-- Payment updates are handled exclusively by the webhook using service role (bypasses RLS).
+-- No client-side policy — prevents admins from manually marking payments as PAID.
 
 -- ─── NOTIFICATIONS ──────────────────────────────────────────────────────────
 CREATE POLICY "notifications_select_own" ON notifications
@@ -181,6 +193,16 @@ CREATE POLICY "notifications_select_own" ON notifications
 CREATE POLICY "notifications_update_own" ON notifications
   FOR UPDATE USING (user_id = auth.uid());
 
--- Notifications are inserted by server-side code (service role)
-CREATE POLICY "notifications_insert_service" ON notifications
-  FOR INSERT WITH CHECK (TRUE);
+-- Participants can notify the other party in a shared request; admins can notify anyone.
+-- Old policy (TRUE) allowed any user to spam notifications to anyone.
+CREATE POLICY "notifications_insert_participants" ON notifications
+  FOR INSERT WITH CHECK (
+    get_user_role() = 'ADMIN'
+    OR EXISTS (
+      SELECT 1
+      FROM service_requests sr
+      JOIN provider_profiles pp ON pp.id = sr.provider_id
+      WHERE (sr.user_id = auth.uid() OR pp.user_id = auth.uid())
+        AND (user_id = sr.user_id OR user_id = pp.user_id)
+    )
+  );
