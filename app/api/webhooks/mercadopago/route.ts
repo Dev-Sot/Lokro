@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { Payment } from 'mercadopago'
 import { createAdminClient } from '@/lib/supabase/server'
+import { sendPaymentReceivedEmail } from '@/lib/services/email'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
     if (serviceReq) {
       const { data: providerProfile } = await supabase
         .from('provider_profiles')
-        .select('user_id')
+        .select('user_id, user:users(name, email)')
         .eq('id', serviceReq.provider_id)
         .single()
 
@@ -74,6 +75,23 @@ export async function POST(request: Request) {
           read: false,
         })
         if (provNotifError) console.error('Webhook: provider notification failed', provNotifError)
+
+        const { data: clientUser } = await supabase
+          .from('users')
+          .select('name')
+          .eq('id', serviceReq.user_id)
+          .single()
+
+        const provUser = providerProfile.user as unknown as { name: string; email: string } | null
+        if (provUser) {
+          sendPaymentReceivedEmail({
+            toEmail: provUser.email,
+            toName: provUser.name,
+            clientName: clientUser?.name ?? 'Un usuario',
+            amount: paymentData.transaction_amount ?? 0,
+            requestId,
+          }).catch((e) => console.error('Webhook: payment email failed', e))
+        }
       }
 
       const { error: userNotifError } = await supabase.from('notifications').insert({

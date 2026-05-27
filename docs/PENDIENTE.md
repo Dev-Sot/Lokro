@@ -17,19 +17,15 @@ Resuelto: `UserRoleSelect` por fila en usuarios + `CancelRequestButton` en solic
 
 ---
 
-### 2. Notificaciones por email
-**Problema:** Las notificaciones son solo in-app. Si el usuario no tiene la app abierta, nunca se entera de que aceptaron su solicitud o de que debe pagar.
+### 2. Notificaciones por email ✅
+Resuelto: Resend integrado. `lib/services/email.ts` con 3 plantillas HTML. Endpoint autenticado `/api/email/notify`. Se dispara desde `AcceptRejectButtons`, `ChatWindow` y el webhook de MercadoPago.
 
-**Eventos que deberían disparar email:**
-- Solicitud aceptada → email al usuario
-- Pago confirmado → email al proveedor
-- Solicitud completada → email al usuario (con link a reseña)
-
-**Solución:**
-- Integrar Resend (o SendGrid) con Supabase Edge Functions o desde los webhooks/Server Actions existentes
-- Crear plantillas HTML mínimas para cada evento
-
-**Estimado:** 4–6 horas
+**Requiere configurar en `.env.local`:**
+```
+RESEND_API_KEY=re_...
+EMAIL_FROM=Lokro <noreply@lokro.app>
+NEXT_PUBLIC_APP_URL=https://tu-dominio.com
+```
 
 ---
 
@@ -60,6 +56,7 @@ Resuelto: `UserRoleSelect` por fila en usuarios + `CancelRequestButton` en solic
 | Exportar ingresos a CSV | 2026-05-27 |
 | Cambio de contraseña desde el perfil | 2026-05-27 |
 | Admin: cambiar rol de usuario + cancelar solicitudes | 2026-05-27 |
+| Notificaciones por email (Resend) | 2026-05-27 |
 | Middleware no corría (proxy.ts → middleware.ts) | 2026-05-27 |
 | useUser sin catch → loading infinito | 2026-05-27 |
 | HomeClient race condition al desmontar | 2026-05-27 |

@@ -80,6 +80,14 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
         read: false,
       })
 
+      if (newStatus === 'ACCEPTED' || newStatus === 'COMPLETED') {
+        fetch('/api/email/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event: newStatus === 'ACCEPTED' ? 'REQUEST_ACCEPTED' : 'SERVICE_COMPLETED', requestId: request.id }),
+        }).catch(() => {})
+      }
+
       setStatus(newStatus)
       if (newStatus === 'ACCEPTED') toast.success('¡Solicitud aceptada!')
       else if (newStatus === 'CANCELLED') toast.success('Solicitud rechazada')

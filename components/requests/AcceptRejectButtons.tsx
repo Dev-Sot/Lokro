@@ -51,6 +51,12 @@ export function AcceptRejectButtons({
       read: false,
     })
 
+    fetch('/api/email/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'REQUEST_ACCEPTED', requestId }),
+    }).catch(() => {})
+
     toast.success('Solicitud aceptada')
     router.refresh()
     setLoading(null)
