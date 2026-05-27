@@ -8,7 +8,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import {
   User, FileText, DollarSign, MapPin, Tag,
-  Camera, Save, Loader2, Images, Plus, X,
+  Camera, Save, Loader2, Images, Plus, X, AlertCircle,
 } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -39,9 +39,10 @@ interface Props {
   categories: Category[]
   specialties: (ProviderSpecialty & { category: Category })[]
   portfolio: ProviderPortfolio[]
+  onboarding?: boolean
 }
 
-export function ProfileClient({ user, profile, categories, specialties, portfolio: initialPortfolio }: Props) {
+export function ProfileClient({ user, profile, categories, specialties, portfolio: initialPortfolio, onboarding }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const avatarInputRef = useRef<HTMLInputElement>(null)
@@ -129,7 +130,11 @@ export function ProfileClient({ user, profile, categories, specialties, portfoli
       )
     }
     toast.success('Perfil actualizado')
-    router.refresh()
+    if (onboarding) {
+      router.push('/provider/dashboard')
+    } else {
+      router.refresh()
+    }
   }
 
   async function onAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -197,6 +202,19 @@ export function ProfileClient({ user, profile, categories, specialties, portfoli
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+      {onboarding && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700 p-4 flex gap-3">
+          <AlertCircle size={20} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-amber-800 dark:text-amber-300 text-sm">¡Completa tu perfil!</p>
+            <p className="text-amber-700 dark:text-amber-400 text-sm mt-0.5">
+              Para aparecer en el mapa y recibir solicitudes de clientes, necesitas agregar tu
+              <strong> ubicación</strong>, al menos una <strong>especialidad</strong> y una <strong>tarifa por hora</strong>.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div>
         <h1 className="text-2xl font-bold">Mi perfil</h1>
         <p className="text-muted-foreground mt-1">Completa tu perfil para aparecer en el mapa</p>

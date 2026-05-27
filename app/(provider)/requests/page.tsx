@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { UserAvatar } from '@/components/shared/UserAvatar'
+import { Pagination } from '@/components/shared/Pagination'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -11,7 +12,16 @@ import type { ServiceRequestStatus } from '@/types'
 
 export const metadata: Metadata = { title: 'Solicitudes' }
 
-export default async function ProviderRequestsPage() {
+const HISTORY_PAGE_SIZE = 10
+
+interface Props {
+  searchParams: Promise<{ page?: string }>
+}
+
+export default async function ProviderRequestsPage({ searchParams }: Props) {
+  const { page: pageParam } = await searchParams
+  const currentPage = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
+
   const supabase = await createClient()
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (!authUser) redirect('/login')
@@ -24,7 +34,8 @@ export default async function ProviderRequestsPage() {
 
   if (!profile) redirect('/home')
 
-  const { data: requests } = await supabase
+  // Active requests — load all (usually small number)
+  const { data: activeRequests } = await supabase
     .from('service_requests')
     .select(`
       id, status, description, estimated_price, final_price, created_at, requested_date,
@@ -32,21 +43,40 @@ export default async function ProviderRequestsPage() {
       category:categories(name, icon)
     `)
     .eq('provider_id', profile.id)
+    .in('status', ['PENDING', 'ACCEPTED', 'IN_PROGRESS'])
     .order('created_at', { ascending: false })
 
-  const groupedRequests = {
-    active: requests?.filter((r) =>
-      ['PENDING', 'ACCEPTED', 'IN_PROGRESS'].includes(r.status)
-    ) ?? [],
-    completed: requests?.filter((r) => r.status === 'COMPLETED') ?? [],
-    cancelled: requests?.filter((r) => r.status === 'CANCELLED') ?? [],
-  }
+  // Paginated history (completed + cancelled)
+  const { count: historyCount } = await supabase
+    .from('service_requests')
+    .select('id', { count: 'exact', head: true })
+    .eq('provider_id', profile.id)
+    .in('status', ['COMPLETED', 'CANCELLED'])
 
-  function RequestList({
-    items,
-  }: {
-    items: typeof groupedRequests.active
-  }) {
+  const totalHistory = historyCount ?? 0
+  const totalHistoryPages = Math.max(1, Math.ceil(totalHistory / HISTORY_PAGE_SIZE))
+  const safePage = Math.min(currentPage, totalHistoryPages)
+  const from = (safePage - 1) * HISTORY_PAGE_SIZE
+  const to = from + HISTORY_PAGE_SIZE - 1
+
+  const { data: historyRequests } = await supabase
+    .from('service_requests')
+    .select(`
+      id, status, description, estimated_price, final_price, created_at, requested_date,
+      user:users!service_requests_user_id_fkey(name, avatar_url),
+      category:categories(name, icon)
+    `)
+    .eq('provider_id', profile.id)
+    .in('status', ['COMPLETED', 'CANCELLED'])
+    .order('created_at', { ascending: false })
+    .range(from, to)
+
+  const completedItems = historyRequests?.filter((r) => r.status === 'COMPLETED') ?? []
+  const cancelledItems = historyRequests?.filter((r) => r.status === 'CANCELLED') ?? []
+
+  type RequestItem = NonNullable<typeof activeRequests>[number]
+
+  function RequestList({ items }: { items: RequestItem[] }) {
     if (items.length === 0) {
       return (
         <p className="text-center py-12 text-muted-foreground text-sm">
@@ -111,23 +141,28 @@ export default async function ProviderRequestsPage() {
       <Tabs defaultValue="active">
         <TabsList className="grid grid-cols-3 w-full">
           <TabsTrigger value="active">
-            Activas ({groupedRequests.active.length})
+            Activas ({activeRequests?.length ?? 0})
           </TabsTrigger>
           <TabsTrigger value="completed">
-            Completadas ({groupedRequests.completed.length})
+            Completadas
           </TabsTrigger>
           <TabsTrigger value="cancelled">
-            Canceladas ({groupedRequests.cancelled.length})
+            Canceladas
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="active" className="mt-4">
-          <RequestList items={groupedRequests.active} />
+          <RequestList items={activeRequests ?? []} />
         </TabsContent>
-        <TabsContent value="completed" className="mt-4">
-          <RequestList items={groupedRequests.completed} />
+
+        <TabsContent value="completed" className="mt-4 space-y-4">
+          <RequestList items={completedItems} />
+          <Pagination currentPage={safePage} totalPages={totalHistoryPages} />
         </TabsContent>
-        <TabsContent value="cancelled" className="mt-4">
-          <RequestList items={groupedRequests.cancelled} />
+
+        <TabsContent value="cancelled" className="mt-4 space-y-4">
+          <RequestList items={cancelledItems} />
+          <Pagination currentPage={safePage} totalPages={totalHistoryPages} />
         </TabsContent>
       </Tabs>
     </div>

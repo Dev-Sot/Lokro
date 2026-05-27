@@ -5,7 +5,12 @@ import { ProfileClient } from './ProfileClient'
 
 export const metadata: Metadata = { title: 'Mi perfil' }
 
-export default async function ProfilePage() {
+interface Props {
+  searchParams: Promise<{ onboarding?: string }>
+}
+
+export default async function ProfilePage({ searchParams }: Props) {
+  const { onboarding } = await searchParams
   const supabase = await createClient()
   const {
     data: { user: authUser },
@@ -46,6 +51,7 @@ export default async function ProfilePage() {
       categories={categories ?? []}
       specialties={specialties ?? []}
       portfolio={portfolio ?? []}
+      onboarding={onboarding === '1'}
     />
   )
 }
