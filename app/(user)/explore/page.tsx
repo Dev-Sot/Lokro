@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Star, Search } from 'lucide-react'
+import Image from 'next/image'
+import { Star, Search, ArrowLeft, MapPin } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { UserAvatar } from '@/components/shared/UserAvatar'
 import { StarRating } from '@/components/shared/StarRating'
@@ -72,20 +73,37 @@ export default async function ExplorePage({ searchParams }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-gradient-to-r from-primary/5 to-background">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Header con imagen de fondo */}
+      <div className="relative overflow-hidden border-b">
+        <Image
+          src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1400&q=70"
+          alt="Profesionales"
+          fill
+          className="object-cover object-top"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/80 to-primary/60" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Explorar profesionales</h1>
-              <p className="text-muted-foreground mt-1 text-sm">
+            <div className="space-y-1">
+              <Link
+                href="/home"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white transition-colors mb-2"
+              >
+                <ArrowLeft size={13} />
+                Volver al mapa
+              </Link>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">Explorar profesionales</h1>
+              <p className="text-white/80 text-sm flex items-center gap-1.5">
+                <MapPin size={13} />
                 {totalCount > 0
                   ? `${totalCount} profesional${totalCount !== 1 ? 'es' : ''} disponible${totalCount !== 1 ? 's' : ''} ahora`
                   : 'Busca el experto que necesitas'}
               </p>
             </div>
-            <Button asChild variant="outline" size="sm" className="shrink-0 hidden sm:flex">
-              <Link href="/home">Ver mapa</Link>
+            <Button asChild variant="secondary" size="sm" className="shrink-0 hidden sm:flex">
+              <Link href="/home">Ver en mapa</Link>
             </Button>
           </div>
 
@@ -112,39 +130,39 @@ export default async function ExplorePage({ searchParams }: Props) {
                   <Link
                     key={provider.id}
                     href={`/providers/${provider.id}`}
-                    className="group rounded-2xl border bg-card overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-200"
+                    className="group rounded-2xl border bg-card overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-200 hover:-translate-y-0.5"
                   >
-                    {/* Color header based on specialty */}
+                    {/* Color strip */}
                     <div
-                      className="h-2"
+                      className="h-1.5"
                       style={{
                         background: topSpecialty?.color
-                          ? `linear-gradient(90deg, ${topSpecialty.color}80, ${topSpecialty.color}20)`
-                          : 'linear-gradient(90deg, var(--primary) / 0.3, transparent)',
+                          ? `linear-gradient(90deg, ${topSpecialty.color}, ${topSpecialty.color}40)`
+                          : undefined,
                       }}
                     />
 
-                    <div className="p-4 space-y-4">
+                    <div className="p-4 space-y-3">
                       {/* Avatar + name */}
                       <div className="flex items-center gap-3">
                         <div className="relative shrink-0">
                           <UserAvatar name={user?.name ?? '?'} avatarUrl={user?.avatar_url} size="md" />
-                          <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-background bg-green-500" />
+                          <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-background bg-green-500 shadow-sm" />
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
                             {user?.name}
                           </p>
                           <div className="flex items-center gap-1 mt-0.5">
                             <Star size={11} className="fill-amber-400 text-amber-400" />
-                            <span className="text-xs font-medium">{provider.average_rating.toFixed(1)}</span>
+                            <span className="text-xs font-semibold">{provider.average_rating.toFixed(1)}</span>
                             <span className="text-xs text-muted-foreground">({provider.total_reviews})</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Specialties */}
-                      <div className="flex flex-wrap gap-1.5 min-h-[24px]">
+                      <div className="flex flex-wrap gap-1.5 min-h-[22px]">
                         {specialties.slice(0, 2).map(({ category: cat }) => (
                           <span
                             key={cat.id}
@@ -162,13 +180,13 @@ export default async function ExplorePage({ searchParams }: Props) {
                       </div>
 
                       {/* Price + CTA */}
-                      <div className="flex items-center justify-between pt-1 border-t">
+                      <div className="flex items-center justify-between pt-2 border-t">
                         <div>
                           <p className="text-sm font-bold">{formatCurrency(provider.hourly_rate)}</p>
                           <p className="text-[10px] text-muted-foreground">por hora</p>
                         </div>
-                        <span className="text-xs font-semibold text-primary group-hover:underline">
-                          Ver perfil →
+                        <span className="text-xs font-semibold text-primary group-hover:underline flex items-center gap-1">
+                          Ver perfil <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
                         </span>
                       </div>
                     </div>

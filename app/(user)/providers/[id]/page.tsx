@@ -4,8 +4,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   MapPin, Star, Clock, ArrowRight, CheckCircle,
-  Briefcase, ArrowLeft, Calendar,
+  Briefcase, ArrowLeft, Calendar, MessageCircle,
 } from 'lucide-react'
+
+const CATEGORY_HERO: Record<string, string> = {
+  'Plomería':     'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=75',
+  'Electricidad': 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1200&q=75',
+  'Limpieza':     'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=1200&q=75',
+  'Tutoría':      'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&q=75',
+  'Mecánica':     'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1200&q=75',
+  'Tecnología':   'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&q=75',
+  'Cocina':       'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=75',
+  'Diseño':       'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&q=75',
+  'Reparaciones': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=75',
+}
+const DEFAULT_HERO = 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1200&q=75'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -91,22 +104,26 @@ export default async function ProviderProfilePage({ params }: Props) {
     id: string; image_url: string; created_at: string
   }[]
 
+  const primaryCategoryName = specialties[0]?.category?.name
+  const heroImage = CATEGORY_HERO[primaryCategoryName ?? ''] ?? DEFAULT_HERO
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero cover */}
-      <div className="relative h-48 sm:h-64 bg-gradient-to-br from-primary/20 via-primary/10 to-muted overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
-            backgroundSize: '28px 28px',
-          }}
+      <div className="relative h-56 sm:h-72 overflow-hidden">
+        <Image
+          src={heroImage}
+          alt={primaryCategoryName ?? 'Profesional'}
+          fill
+          className="object-cover"
+          priority
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
         {/* Back button */}
         <div className="absolute top-4 left-4">
           <Link
             href="/explore"
-            className="inline-flex items-center gap-2 text-sm font-medium bg-background/80 backdrop-blur rounded-xl px-3 py-2 hover:bg-background transition-all shadow-sm"
+            className="inline-flex items-center gap-2 text-sm font-medium bg-white/90 backdrop-blur rounded-xl px-3 py-2 hover:bg-white transition-all shadow-md"
           >
             <ArrowLeft size={15} />
             Explorar
