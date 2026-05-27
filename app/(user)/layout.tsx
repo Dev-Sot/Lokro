@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { UserNavbar } from '@/components/shared/UserNavbar'
+import { ProviderNavbar } from '@/components/shared/ProviderNavbar'
 import { NotificationsInitializer } from '@/components/shared/NotificationsInitializer'
 import type { User } from '@/types'
 
@@ -37,7 +38,10 @@ export default async function UserLayout({
         userId={authUser.id}
         initialUnreadCount={unreadCount ?? 0}
       />
-      <UserNavbar user={user as User} />
+      {user.role === 'PROVIDER'
+        ? <ProviderNavbar user={user as User} />
+        : <UserNavbar user={user as User} />
+      }
       <main className="flex-1">{children}</main>
     </div>
   )

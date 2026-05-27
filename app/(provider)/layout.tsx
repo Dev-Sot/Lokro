@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { ProviderNavbar } from '@/components/shared/ProviderNavbar'
+import { NotificationsInitializer } from '@/components/shared/NotificationsInitializer'
 import type { User } from '@/types'
 
 export default async function ProviderLayout({
@@ -16,11 +17,14 @@ export default async function ProviderLayout({
 
   if (!authUser) redirect('/login')
 
-  const { data: user } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', authUser.id)
-    .single()
+  const [{ data: user }, { count: unreadCount }] = await Promise.all([
+    supabase.from('users').select('*').eq('id', authUser.id).single(),
+    supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', authUser.id)
+      .eq('read', false),
+  ])
 
   if (!user) redirect('/login')
   if (user.role === 'USER') redirect('/home')
@@ -36,6 +40,10 @@ export default async function ProviderLayout({
 
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
+      <NotificationsInitializer
+        userId={authUser.id}
+        initialUnreadCount={unreadCount ?? 0}
+      />
       <ProviderNavbar user={user as User} />
       <main className="flex-1">{children}</main>
     </div>

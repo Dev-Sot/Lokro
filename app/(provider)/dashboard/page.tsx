@@ -18,5 +18,18 @@ export default async function DashboardPage() {
 
   if (!profile) redirect('/home')
 
-  return <DashboardClient initialProfile={profile} userId={authUser.id} />
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('id, rating, comment, created_at, author:users(name, avatar_url)')
+    .eq('target_id', authUser.id)
+    .eq('type', 'TO_PROVIDER')
+    .order('created_at', { ascending: false })
+
+  return (
+    <DashboardClient
+      initialProfile={profile}
+      userId={authUser.id}
+      reviews={(reviews ?? []) as unknown as import('./DashboardClient').ReviewItem[]}
+    />
+  )
 }
