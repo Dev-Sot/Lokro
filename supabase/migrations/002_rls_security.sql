@@ -39,7 +39,7 @@ CREATE POLICY "notifications_insert_participants" ON notifications
       FROM service_requests sr
       JOIN provider_profiles pp ON pp.id = sr.provider_id
       WHERE (sr.user_id = auth.uid() OR pp.user_id = auth.uid())
-        AND (user_id = sr.user_id OR user_id = pp.user_id)
+        AND (notifications.user_id = sr.user_id OR notifications.user_id = pp.user_id)
     )
   );
 
