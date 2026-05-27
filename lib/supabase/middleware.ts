@@ -47,16 +47,10 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone()
       url.pathname =
         role === 'PROVIDER'
-          ? '/provider/dashboard'
+          ? '/dashboard'
           : role === 'ADMIN'
-            ? '/admin/panel'
+            ? '/panel'
             : '/home'
-      return NextResponse.redirect(url)
-    }
-
-    if (pathname.startsWith('/provider') && role !== 'PROVIDER' && role !== 'ADMIN') {
-      const url = request.nextUrl.clone()
-      url.pathname = '/home'
       return NextResponse.redirect(url)
     }
 

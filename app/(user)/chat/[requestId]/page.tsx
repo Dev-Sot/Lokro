@@ -50,6 +50,7 @@ export default async function ChatPage({ params }: Props) {
         request={request as unknown as ServiceRequest}
         currentUser={currentUser}
         otherUser={otherUser}
+        isProvider={!isUser}
       />
     </div>
   )

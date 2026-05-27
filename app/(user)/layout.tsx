@@ -22,8 +22,7 @@ export default async function UserLayout({
     .single()
 
   if (!user) redirect('/login')
-  if (user.role === 'PROVIDER') redirect('/provider/dashboard')
-  if (user.role === 'ADMIN') redirect('/admin/panel')
+  if (user.role === 'ADMIN') redirect('/panel')
 
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">

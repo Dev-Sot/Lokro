@@ -1,8 +1,9 @@
+'use client'
+
 import Link from 'next/link'
-import { MapPin, Star, Clock } from 'lucide-react'
+import { MapPin, Star } from 'lucide-react'
 import { UserAvatar } from '@/components/shared/UserAvatar'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { cn, formatCurrency, formatDistance } from '@/lib/utils'
 import type { ProviderMapMarker } from '@/types'
 
@@ -82,9 +83,16 @@ export function ProviderCard({
       </div>
 
       {!compact && (
-        <Button asChild size="sm" className="w-full mt-3">
-          <Link href={`/providers/${provider.id}`}>Ver perfil</Link>
-        </Button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            window.location.href = `/providers/${provider.id}`
+          }}
+          className="mt-3 flex w-full items-center justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          Ver perfil
+        </button>
       )}
     </div>
   )

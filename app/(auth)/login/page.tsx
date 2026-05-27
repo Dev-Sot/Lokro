@@ -33,7 +33,7 @@ export default function LoginPage() {
     }
     const { data: { user } } = await supabase.auth.getUser()
     const role = user?.user_metadata?.role
-    router.push(role === 'PROVIDER' ? '/provider/dashboard' : role === 'ADMIN' ? '/admin/panel' : '/home')
+    router.push(role === 'PROVIDER' ? '/dashboard' : role === 'ADMIN' ? '/panel' : '/home')
     router.refresh()
   }
 

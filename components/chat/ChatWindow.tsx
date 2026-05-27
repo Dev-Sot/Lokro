@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Send, Loader2 } from 'lucide-react'
+import { Send, Loader2, Navigation, CheckCircle2, MapPin, CreditCard } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { UserAvatar } from '@/components/shared/UserAvatar'
@@ -17,14 +19,42 @@ interface ChatWindowProps {
   request: ServiceRequest
   currentUser: User
   otherUser: User
+  isProvider: boolean
 }
 
-export function ChatWindow({ request, currentUser, otherUser }: ChatWindowProps) {
+export function ChatWindow({ request, currentUser, otherUser, isProvider }: ChatWindowProps) {
+  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [typing, setTyping] = useState(false)
+  const [status, setStatus] = useState(request.status)
+  const [updatingStatus, setUpdatingStatus] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const supabase = createClient()
+
+  async function updateStatus(newStatus: 'IN_PROGRESS' | 'COMPLETED') {
+    setUpdatingStatus(true)
+    const { error } = await supabase
+      .from('service_requests')
+      .update({ status: newStatus })
+      .eq('id', request.id)
+
+    if (error) {
+      toast.error('Error al actualizar el estado')
+    } else {
+      await supabase.from('service_status_history').insert({
+        request_id: request.id,
+        status: newStatus,
+        created_by: currentUser.id,
+      })
+      setStatus(newStatus)
+      toast.success(newStatus === 'IN_PROGRESS' ? '¡En camino!' : '¡Servicio completado!')
+      if (newStatus === 'IN_PROGRESS') {
+        router.refresh()
+      }
+    }
+    setUpdatingStatus(false)
+  }
 
   const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm<MessageInput>({
     resolver: zodResolver(messageSchema),
@@ -119,7 +149,7 @@ export function ChatWindow({ request, currentUser, otherUser }: ChatWindowProps)
   return (
     <div className="flex flex-col h-full">
       {/* Chat header */}
-      <div className="flex items-center gap-3 p-4 border-b shrink-0">
+      <div className="flex items-center gap-3 p-4 border-b shrink-0 flex-wrap">
         <UserAvatar name={otherUser.name} avatarUrl={otherUser.avatar_url} size="sm" />
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-sm truncate">{otherUser.name}</p>
@@ -127,7 +157,38 @@ export function ChatWindow({ request, currentUser, otherUser }: ChatWindowProps)
             {(request.category as { name?: string })?.name ?? 'Servicio'}
           </p>
         </div>
-        <StatusBadge status={request.status} />
+        <StatusBadge status={status} />
+        <button
+          type="button"
+          onClick={() => window.location.href = `/tracking/${request.id}`}
+          className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+        >
+          <MapPin size={12} />
+          Tracking
+        </button>
+        {!isProvider && status === 'ACCEPTED' && (
+          <Button size="sm" className="gap-1.5"
+            onClick={() => window.location.href = `/pay/${request.id}`}>
+            <CreditCard size={12} />
+            Pagar
+          </Button>
+        )}
+        {isProvider && status === 'ACCEPTED' && (
+          <Button size="sm" variant="outline" disabled={updatingStatus}
+            onClick={() => updateStatus('IN_PROGRESS')}
+            className="gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50">
+            {updatingStatus ? <Loader2 size={12} className="animate-spin" /> : <Navigation size={12} />}
+            En camino
+          </Button>
+        )}
+        {isProvider && status === 'IN_PROGRESS' && (
+          <Button size="sm" disabled={updatingStatus}
+            onClick={() => updateStatus('COMPLETED')}
+            className="gap-1.5">
+            {updatingStatus ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
+            Completado
+          </Button>
+        )}
       </div>
 
       {/* Messages */}

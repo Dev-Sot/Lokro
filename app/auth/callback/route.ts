@@ -18,9 +18,9 @@ export async function GET(request: Request) {
         const role = user.user_metadata?.role
         const redirectTo =
           role === 'PROVIDER'
-            ? '/provider/dashboard'
+            ? '/dashboard'
             : role === 'ADMIN'
-              ? '/admin/panel'
+              ? '/panel'
               : '/home'
 
         return NextResponse.redirect(`${origin}${redirectTo}`)

@@ -28,10 +28,11 @@ import { cn } from '@/lib/utils'
 import type { User as UserType } from '@/types'
 
 const NAV_LINKS = [
-  { href: '/provider/dashboard', label: 'Panel', icon: LayoutDashboard },
-  { href: '/provider/requests', label: 'Solicitudes', icon: ClipboardList },
-  { href: '/provider/schedule', label: 'Agenda', icon: Calendar },
-  { href: '/provider/earnings', label: 'Ingresos', icon: DollarSign },
+  { href: '/dashboard', label: 'Panel', icon: LayoutDashboard },
+  { href: '/requests', label: 'Solicitudes', icon: ClipboardList },
+  { href: '/schedule', label: 'Agenda', icon: Calendar },
+  { href: '/earnings', label: 'Ingresos', icon: DollarSign },
+  { href: '/perfil', label: 'Mi perfil', icon: UserIcon },
 ]
 
 interface ProviderNavbarProps {
@@ -104,7 +105,7 @@ export function ProviderNavbar({ user }: ProviderNavbarProps) {
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/provider/profile">
+                <Link href="/perfil">
                   <UserIcon size={14} className="mr-2" />
                   Mi perfil
                 </Link>
