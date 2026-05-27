@@ -41,7 +41,17 @@ export default async function TrackingPage({ params }: Props) {
 
   const isProvider = userRow?.role === 'PROVIDER'
 
-  if (!isProvider && request.user_id !== authUser.id) redirect('/home')
+  if (isProvider) {
+    // Verify the logged-in provider is the one assigned to this request
+    const { data: providerProfile } = await supabase
+      .from('provider_profiles')
+      .select('id')
+      .eq('user_id', authUser.id)
+      .single()
+    if (!providerProfile || providerProfile.id !== request.provider_id) redirect('/home')
+  } else if (request.user_id !== authUser.id) {
+    redirect('/home')
+  }
 
   const { data: statusHistory } = await supabase
     .from('service_status_history')

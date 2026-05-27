@@ -1,13 +1,27 @@
 import { createClient } from '@/lib/supabase/client'
 
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MIME_TO_EXT: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+}
+
+function validateImageFile(file: File) {
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    throw new Error('Solo se permiten imágenes JPG, PNG o WebP')
+  }
+}
+
 export async function uploadAvatar(userId: string, file: File): Promise<string> {
+  validateImageFile(file)
   const supabase = createClient()
-  const ext = file.name.split('.').pop()
+  const ext = MIME_TO_EXT[file.type]
   const path = `avatars/${userId}.${ext}`
 
   const { error } = await supabase.storage
     .from('avatars')
-    .upload(path, file, { upsert: true })
+    .upload(path, file, { upsert: true, contentType: file.type })
 
   if (error) throw error
   return getPublicUrl('avatars', path)
@@ -17,13 +31,14 @@ export async function uploadPortfolioImage(
   providerId: string,
   file: File
 ): Promise<string> {
+  validateImageFile(file)
   const supabase = createClient()
-  const ext = file.name.split('.').pop()
+  const ext = MIME_TO_EXT[file.type]
   const path = `${providerId}/${Date.now()}.${ext}`
 
   const { error } = await supabase.storage
     .from('portfolios')
-    .upload(path, file)
+    .upload(path, file, { contentType: file.type })
 
   if (error) throw error
   return getPublicUrl('portfolios', path)

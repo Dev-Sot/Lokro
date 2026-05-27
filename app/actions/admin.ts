@@ -1,8 +1,12 @@
 'use server'
 
+import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/types'
+
+const ASSIGNABLE_ROLES = ['USER', 'PROVIDER'] as const
+const roleSchema = z.enum(ASSIGNABLE_ROLES)
 
 async function requireAdmin() {
   const supabase = await createClient()
@@ -20,8 +24,10 @@ async function requireAdmin() {
 }
 
 export async function setUserRole(userId: string, role: UserRole) {
+  const parsed = roleSchema.safeParse(role)
+  if (!parsed.success) throw new Error('Invalid role')
   const supabase = await requireAdmin()
-  const { error } = await supabase.from('users').update({ role }).eq('id', userId)
+  const { error } = await supabase.from('users').update({ role: parsed.data }).eq('id', userId)
   if (error) throw new Error('Failed to update role')
   revalidatePath('/panel/usuarios')
 }

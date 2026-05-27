@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 function verifyMPSignature(req: Request, rawBody: string): boolean {
   const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET
-  if (!secret) return true // allow in dev without secret configured
+  if (!secret) return false // fail closed — missing secret = reject all requests
 
   const xSignature = req.headers.get('x-signature')
   const xRequestId = req.headers.get('x-request-id') ?? ''

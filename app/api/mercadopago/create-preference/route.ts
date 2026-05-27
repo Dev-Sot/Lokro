@@ -17,7 +17,15 @@ export async function POST(request: Request) {
   const body = await request.json()
   const { requestId, amount } = body
 
-  if (!requestId || !amount || amount < 100) {
+  if (
+    !requestId ||
+    typeof requestId !== 'string' ||
+    !amount ||
+    typeof amount !== 'number' ||
+    !Number.isFinite(amount) ||
+    amount < 100 ||
+    amount > 100_000_000 // 100M COP cap
+  ) {
     return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 })
   }
 
