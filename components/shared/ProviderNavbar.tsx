@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createClient } from '@/lib/supabase/client'
 import { useUserStore } from '@/store/useUserStore'
+import { ThemeToggle } from './ThemeToggle'
 import { cn } from '@/lib/utils'
 import type { User as UserType } from '@/types'
 
@@ -80,6 +81,7 @@ export function ProviderNavbar({ user }: ProviderNavbarProps) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button asChild variant="ghost" size="icon" className="relative">
             <Link href="/notifications">
               <Bell size={20} />

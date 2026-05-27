@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { createClient } from '@/lib/supabase/client'
 import { useUserStore } from '@/store/useUserStore'
+import { ThemeToggle } from './ThemeToggle'
 import { cn } from '@/lib/utils'
 import type { User } from '@/types'
 
@@ -64,6 +65,7 @@ export function UserNavbar({ user }: UserNavbarProps) {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button
             asChild
             variant="ghost"
