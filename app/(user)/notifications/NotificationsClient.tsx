@@ -26,17 +26,24 @@ export function NotificationsClient({
     const supabase = createClient()
 
     async function markAllRead() {
-      await supabase
+      const { error } = await supabase
         .from('notifications')
         .update({ read: true })
         .eq('user_id', userId)
         .eq('read', false)
 
+      if (error) {
+        console.error('NotificationsClient: failed to mark notifications as read', error)
+        return
+      }
+
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
       setUnreadNotifications(0)
     }
 
-    markAllRead()
+    markAllRead().catch((err) =>
+      console.error('NotificationsClient: unexpected error', err)
+    )
 
     // Subscribe to new ones
     const channel = supabase
