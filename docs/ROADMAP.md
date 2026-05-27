@@ -13,7 +13,7 @@ Stack: Next.js 16 · React 19 · Supabase · Mapbox · Mercado Pago · TypeScrip
 | Fase 2 — Flujo usuario | ✅ Completo |
 | Fase 3 — Flujo proveedor | ✅ Completo |
 | Fase 4 — Correcciones y features faltantes | ✅ Completo (2026-05-27) |
-| Fase 5 — Pre-lanzamiento | ⚠️ En curso |
+| Fase 5 — Pre-lanzamiento | ✅ Completo (2026-05-27) |
 
 ---
 
@@ -61,14 +61,24 @@ Stack: Next.js 16 · React 19 · Supabase · Mapbox · Mercado Pago · TypeScrip
 - Panel de admin con tablas de usuarios, solicitudes y prestadores
 - Corrección de middleware (proxy.ts → middleware.ts)
 
-### Fase 5 — Pre-lanzamiento ⚠️
-Ver [`PENDIENTE.md`](./PENDIENTE.md) para detalle y estimados.
+### Fase 5 — Pre-lanzamiento ✅ (2026-05-27)
 
-| Tarea | Prioridad | Estado |
-|-------|-----------|--------|
-| Admin: acciones (desactivar usuarios, cambiar roles, cancelar solicitudes) | 🟡 Medio | Pendiente |
-| Notificaciones por email (Resend) en eventos clave | 🟡 Medio | Pendiente |
-| SEO: Open Graph + sitemap + robots.txt | 🟢 Pequeño | Pendiente |
+| Tarea | Estado |
+|-------|--------|
+| Admin: cambiar rol de usuario + cancelar solicitudes desde panel | ✅ |
+| Notificaciones por email con Resend (aceptación, pago, completado) | ✅ |
+| SEO: Open Graph global + por proveedor, sitemap dinámico, robots.txt | ✅ |
+
+### Fase 6 — Producción 🔜
+Lo que falta para poder lanzar a usuarios reales:
+
+| Tarea | Notas |
+|-------|-------|
+| Configurar variables de entorno en producción | `RESEND_API_KEY`, `EMAIL_FROM`, `NEXT_PUBLIC_SITE_URL`, MP keys |
+| Agregar `public/og-image.png` | Imagen 1200×630px para preview en redes |
+| Verificar dominio en Resend | Para enviar emails desde `@lokro.app` |
+| Deploy (Vercel / Railway) | Conectar repositorio y configurar env vars |
+| Configurar webhook de MercadoPago en producción | Apuntar a la URL real del servidor |
 
 ---
 
