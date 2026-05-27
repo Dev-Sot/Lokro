@@ -9,15 +9,11 @@ Stack: Next.js 16 · React 19 · Supabase · Mapbox · Mercado Pago · TypeScrip
 
 | Fase | Estado |
 |------|--------|
-| Infraestructura y auth | ✅ Completo |
-| Flujo usuario (buscar → solicitar → pagar) | ✅ Completo |
-| Flujo proveedor (onboarding → gestionar → cobrar) | ✅ Completo |
-| Notificaciones en tiempo real | ⚠️ Parcial — badge siempre en 0 |
-| Perfil editable del usuario regular | ❌ Pendiente |
-| Panel de administración completo | ⚠️ Parcial — solo métricas |
-| Cancelación de solicitudes (lado usuario) | ❌ Pendiente |
-| Dark mode | ❌ Pendiente |
-| Auditoría de bugs críticos | ✅ Completo (2026-05-27) |
+| Fase 1 — Infraestructura y auth | ✅ Completo |
+| Fase 2 — Flujo usuario | ✅ Completo |
+| Fase 3 — Flujo proveedor | ✅ Completo |
+| Fase 4 — Correcciones y features faltantes | ✅ Completo (2026-05-27) |
+| Fase 5 — Pre-lanzamiento | ⚠️ En curso |
 
 ---
 
@@ -41,7 +37,8 @@ Stack: Next.js 16 · React 19 · Supabase · Mapbox · Mercado Pago · TypeScrip
 - Chat en tiempo real con typing indicator y mark-as-read
 - Pago con Mercado Pago (preferencia + webhook + BD)
 - Tracking con ubicación del proveedor en tiempo real
-- Historial de solicitudes en perfil de usuario
+- Historial de solicitudes en perfil (con links a chat y tracking)
+- Cancelar solicitudes propias desde el chat
 
 ### Fase 3 — Flujo proveedor ✅
 - Onboarding: ubicación (mapa), bio, especialidades, portafolio, tarifa
@@ -53,10 +50,25 @@ Stack: Next.js 16 · React 19 · Supabase · Mapbox · Mercado Pago · TypeScrip
 - Review bidireccional al completar (usuario ↔ proveedor)
 - Agenda semanal con citas del proveedor
 - Página de ingresos con historial paginado y desglose de comisión
+- Exportar ingresos a CSV
 - Notificaciones en tiempo real
 
-### Fase 4 — Pendiente ⚠️
-Ver [`PENDIENTE.md`](./PENDIENTE.md) para detalle de cada tarea.
+### Fase 4 — Correcciones y features faltantes ✅ (2026-05-27)
+- Auditoría completa: 12 bugs críticos corregidos (ver `AUDITORIA.md`)
+- Badge de notificaciones con conteo real + suscripción realtime
+- Perfil de usuario editable (nombre, avatar, contraseña)
+- Dark mode toggle en todas las navbars
+- Panel de admin con tablas de usuarios, solicitudes y prestadores
+- Corrección de middleware (proxy.ts → middleware.ts)
+
+### Fase 5 — Pre-lanzamiento ⚠️
+Ver [`PENDIENTE.md`](./PENDIENTE.md) para detalle y estimados.
+
+| Tarea | Prioridad | Estado |
+|-------|-----------|--------|
+| Admin: acciones (desactivar usuarios, cambiar roles, cancelar solicitudes) | 🟡 Medio | Pendiente |
+| Notificaciones por email (Resend) en eventos clave | 🟡 Medio | Pendiente |
+| SEO: Open Graph + sitemap + robots.txt | 🟢 Pequeño | Pendiente |
 
 ---
 
@@ -68,10 +80,11 @@ app/
   (marketing)/     landing page
   (user)/          home, explore, providers, request, pay, chat, tracking, notifications, profile
   (provider)/      dashboard, requests, perfil, schedule, earnings
-  (admin)/         panel
+  (admin)/         panel → page, usuarios, solicitudes, prestadores
   api/
     mercadopago/   create-preference
     webhooks/      mercadopago (webhook de pago)
+    exports/       earnings (CSV)
     auth/          callback
 
 components/
@@ -79,7 +92,10 @@ components/
   map/             ProviderMap
   providers/       ProviderCard, ProviderFilters
   requests/        ReviewForm, AcceptRejectButtons
-  shared/          UserNavbar, ProviderNavbar, UserAvatar, StatusBadge, Pagination
+  admin/           AdminNav
+  provider/        EarningsExportButton
+  shared/          UserNavbar, ProviderNavbar, UserAvatar, StatusBadge,
+                   Pagination, ThemeToggle, NotificationsInitializer
 
 hooks/             useUser, useGeolocation, useRealtimeNotifications
 store/             useUserStore (zustand), useMapStore (zustand)
@@ -87,4 +103,9 @@ lib/
   supabase/        client, server, middleware
   services/        storage, notifications
   validations/     auth, service
+
+docs/
+  ROADMAP.md       este archivo
+  PENDIENTE.md     tareas activas con detalle
+  AUDITORIA.md     bugs corregidos con causa y solución
 ```
