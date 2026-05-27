@@ -2,7 +2,7 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM = process.env.EMAIL_FROM ?? 'Lokro <noreply@lokro.app>'
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://lokro.app'
+const APP_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lokro.app'
 
 function baseTemplate(title: string, body: string) {
   return `<!DOCTYPE html>

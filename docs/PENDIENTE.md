@@ -31,15 +31,8 @@ NEXT_PUBLIC_APP_URL=https://tu-dominio.com
 
 ## 🟢 Pequeño — polish y visibilidad
 
-### 3. SEO y Open Graph
-**Problema:** Las páginas públicas (landing, perfil de proveedor) no tienen meta tags Open Graph ni sitemap. El preview al compartir en WhatsApp/redes sociales es genérico.
-
-**Solución:**
-- Añadir `<meta og:*>` en `app/(marketing)/page.tsx` y `app/(user)/providers/[id]/page.tsx`
-- Crear `app/sitemap.ts` con rutas estáticas + perfiles de proveedores
-- Crear `app/robots.ts`
-
-**Estimado:** 2–3 horas
+### 3. SEO y Open Graph ✅
+Resuelto: OG + Twitter card en `app/layout.tsx` (global) y `providers/[id]/page.tsx` (por proveedor, con avatar). `sitemap.ts` incluye rutas estáticas + perfiles dinámicos de proveedores disponibles. `robots.ts` bloquea rutas privadas y apunta al sitemap.
 
 ---
 
@@ -57,6 +50,7 @@ NEXT_PUBLIC_APP_URL=https://tu-dominio.com
 | Cambio de contraseña desde el perfil | 2026-05-27 |
 | Admin: cambiar rol de usuario + cancelar solicitudes | 2026-05-27 |
 | Notificaciones por email (Resend) | 2026-05-27 |
+| SEO: Open Graph, sitemap dinámico, robots.txt | 2026-05-27 |
 | Middleware no corría (proxy.ts → middleware.ts) | 2026-05-27 |
 | useUser sin catch → loading infinito | 2026-05-27 |
 | HomeClient race condition al desmontar | 2026-05-27 |

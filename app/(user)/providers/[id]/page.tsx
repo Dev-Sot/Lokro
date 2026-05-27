@@ -27,12 +27,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient()
   const { data } = await supabase
     .from('provider_profiles')
-    .select('bio, user:users(name)')
+    .select('bio, user:users(name, avatar_url)')
     .eq('id', id)
     .single()
 
-  const name = (data?.user as { name?: string })?.name ?? 'Prestador'
-  return { title: name, description: data?.bio ?? undefined }
+  const user = data?.user as { name?: string; avatar_url?: string | null } | null
+  const name = user?.name ?? 'Prestador'
+  const description = data?.bio ?? `Perfil de ${name} en Lokro — servicios locales a tu alcance.`
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+
+  return {
+    title: name,
+    description,
+    openGraph: {
+      title: `${name} — Lokro`,
+      description,
+      url: `${siteUrl}/providers/${id}`,
+      siteName: 'Lokro',
+      locale: 'es_ES',
+      type: 'profile',
+      ...(user?.avatar_url ? { images: [{ url: user.avatar_url, width: 400, height: 400, alt: name }] } : {}),
+    },
+    twitter: {
+      card: 'summary',
+      title: `${name} — Lokro`,
+      description,
+      ...(user?.avatar_url ? { images: [user.avatar_url] } : {}),
+    },
+  }
 }
 
 export default async function ProviderProfilePage({ params }: Props) {

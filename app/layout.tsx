@@ -25,12 +25,21 @@ export const metadata: Metadata = {
     siteName: 'Lokro',
     locale: 'es_ES',
     type: 'website',
+    images: [
+      {
+        url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: 'Lokro — Servicios locales a tu alcance',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Lokro — Servicios locales a tu alcance',
     description:
       'Encuentra fontaneros, electricistas, tutores y más cerca de ti.',
+    images: [`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/og-image.png`],
   },
   robots: { index: true, follow: true },
 }
