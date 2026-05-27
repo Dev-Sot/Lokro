@@ -462,109 +462,133 @@
 <div class="section break">
   <div class="section-tag">Flujos principales</div>
   <h2>¿Cómo funciona paso a paso?</h2>
-  <p class="section-sub">Los recorridos más importantes dentro de la app</p>
+  <p class="section-sub">Los recorridos más importantes con sus detalles técnicos</p>
 
+  <!-- FLUJO 1 -->
   <h3>Flujo 1 — Registro e inicio de sesión</h3>
   <div class="flow">
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-body">
-        <strong>El usuario entra a la app y se registra</strong>
-        <span>Puede registrarse con email y contraseña, o con su cuenta de Google con un solo clic. Elige si quiere ser Usuario o Prestador.</span>
+        <strong>El usuario se registra — email/contraseña o Google OAuth</strong>
+        <span>Supabase Auth gestiona ambos métodos. Con Google, el flujo sigue el protocolo <strong>OAuth 2.0</strong>: redirige a Google, obtiene el token y lo intercambia por una sesión en Lokro. En ambos casos se emite un <strong>JWT</strong> que se guarda en una cookie segura <code>HttpOnly</code>.</span>
       </div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
-        <strong>La base de datos crea su perfil automáticamente</strong>
-        <span>Sin que nadie tenga que hacer nada manualmente, el sistema crea su ficha en la plataforma. Si es prestador, también crea su perfil vacío listo para completar.</span>
+        <strong>Trigger en la base de datos crea el perfil automáticamente</strong>
+        <span>Supabase tiene un <strong>trigger de PostgreSQL</strong> (<code>on_auth_user_created</code>) que escucha cuando se registra un nuevo usuario en <code>auth.users</code> e inserta automáticamente una fila en la tabla <code>public.users</code> con su nombre y email. Si eligió ser prestador, también inserta una fila en <code>provider_profiles</code>.</span>
       </div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
-        <strong>La app lo redirige al lugar correcto</strong>
-        <span>Usuario → va al mapa de inicio. Prestador → va a completar su perfil. Admin → va al panel de control.</span>
+        <strong>El Middleware de Next.js verifica el JWT y redirige según el rol</strong>
+        <span>En cada request, el <strong>middleware</strong> (<code>middleware.ts</code>) lee la cookie de sesión, valida el JWT contra Supabase y consulta el campo <code>role</code> del usuario. Según el resultado: <strong>USER → /home</strong>, <strong>PROVIDER → /dashboard</strong>, <strong>ADMIN → /panel</strong>. Sin JWT válido, redirige a <code>/login</code>.</span>
       </div>
     </div>
   </div>
 
-  <h3>Flujo 2 — Solicitar un servicio (Usuario)</h3>
+  <div class="highlight hl-blue" style="margin-top:4px;">
+    <strong>JWT + RLS — doble capa de seguridad</strong>
+    <p>El JWT identifica al usuario en cada request. Las políticas <strong>RLS</strong> (Row Level Security) de PostgreSQL usan ese mismo JWT para filtrar qué filas puede leer o escribir cada usuario — directamente en la base de datos, sin depender del código.</p>
+  </div>
+
+  <!-- FLUJO 2 -->
+  <h3>Flujo 2 — Solicitar un servicio</h3>
+
+  <div class="highlight hl-purple" style="margin-bottom:12px;">
+    <strong>Máquina de estados de una solicitud</strong>
+    <p>Cada solicitud pasa por estados definidos en la base de datos:</p>
+    <div class="arrow-row" style="margin:10px 0 0;">
+      <div class="arrow-box" style="background:#F5F3FF;border-color:#C4B5FD;flex:none;padding:8px 14px;"><strong>PENDING</strong><small>Esperando respuesta</small></div>
+      <div class="arrow" style="font-size:14pt;">→</div>
+      <div class="arrow-box" style="background:#EFF6FF;border-color:#BFDBFE;flex:none;padding:8px 14px;"><strong>ACCEPTED</strong><small>Prestador aceptó</small></div>
+      <div class="arrow" style="font-size:14pt;">→</div>
+      <div class="arrow-box" style="background:#FEF3C7;border-color:#FDE68A;flex:none;padding:8px 14px;"><strong>PAID</strong><small>Pago confirmado</small></div>
+      <div class="arrow" style="font-size:14pt;">→</div>
+      <div class="arrow-box" style="background:#D1FAE5;border-color:#6EE7B7;flex:none;padding:8px 14px;"><strong>IN_PROGRESS</strong><small>Servicio activo</small></div>
+      <div class="arrow" style="font-size:14pt;">→</div>
+      <div class="arrow-box" style="background:#D1FAE5;border-color:#059669;flex:none;padding:8px 14px;"><strong>COMPLETED</strong><small>Finalizado</small></div>
+    </div>
+  </div>
+
   <div class="flow">
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-body">
-        <strong>Busca en el mapa</strong>
-        <span>Ve un mapa con puntos que representan prestadores disponibles cerca de su ubicación. Puede filtrar por categoría, precio o calificación.</span>
+        <strong>El usuario busca en el mapa (Mapbox + Supabase PostGIS)</strong>
+        <span>El frontend consulta a Supabase filtrando <code>provider_profiles</code> donde <code>available = true</code>. Las coordenadas GPS de cada prestador se almacenan como tipo <strong>POINT</strong> (PostGIS) lo que permite hacer queries de proximidad geográfica eficientemente.</span>
       </div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
-        <strong>Revisa el perfil del prestador</strong>
-        <span>Antes de contratar, puede ver la descripción, fotos de trabajos anteriores, calificación y precio por hora.</span>
+        <strong>Envía la solicitud → INSERT en <code>service_requests</code></strong>
+        <span>El formulario llama a un <strong>Server Action</strong> de Next.js que inserta la solicitud con estado <code>PENDING</code> y dispara una notificación al prestador vía <strong>Supabase Realtime</strong>. El prestador la recibe al instante sin recargar.</span>
       </div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
-        <strong>Hace la solicitud</strong>
-        <span>Describe qué necesita, elige fecha y hora, y comparte su ubicación. La solicitud queda en estado "Pendiente".</span>
+        <strong>El prestador acepta → estado cambia a <code>ACCEPTED</code></strong>
+        <span>El prestador hace un UPDATE en la solicitud. Supabase Realtime emite el cambio por WebSocket al navegador del usuario, quien recibe la notificación al instante y ve el botón de pago habilitarse.</span>
       </div>
     </div>
     <div class="step">
       <div class="step-num">4</div>
       <div class="step-body">
-        <strong>El prestador acepta y el usuario paga</strong>
-        <span>Cuando el prestador acepta, el usuario recibe una notificación y pasa a pagar de forma segura con Mercado Pago. El dinero queda retenido hasta que el trabajo se complete.</span>
+        <strong>Tracking en tiempo real durante el servicio — <code>provider_locations</code></strong>
+        <span>El prestador activa el tracking desde su dispositivo. El navegador envía su posición GPS al servidor cada pocos segundos, que actualiza la tabla <code>provider_locations</code>. El usuario tiene una suscripción Realtime activa a esa tabla y ve el punto moverse en el mapa en vivo.</span>
       </div>
     </div>
     <div class="step">
       <div class="step-num">5</div>
       <div class="step-body">
-        <strong>Seguimiento en tiempo real</strong>
-        <span>El usuario puede ver en el mapa exactamente dónde está el prestador en camino, y chatear con él directamente.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">6</div>
-      <div class="step-body">
-        <strong>Calificación mutua</strong>
-        <span>Al terminar, usuario y prestador se califican entre sí. El sistema actualiza automáticamente el promedio del prestador.</span>
+        <strong>Al completar → trigger recalcula calificación automáticamente</strong>
+        <span>Cuando se inserta una fila en <code>reviews</code>, un <strong>trigger de PostgreSQL</strong> recalcula el promedio (<code>average_rating</code>) del prestador con <code>AVG()</code> y actualiza <code>provider_profiles</code> sin que el código tenga que hacerlo manualmente.</span>
       </div>
     </div>
   </div>
 
-  <h3>Flujo 3 — Cómo funciona el pago</h3>
-  <div class="arrow-row">
-    <div class="arrow-box">
-      👤 Usuario<br>
-      <small>Hace clic en "Pagar"</small>
+  <!-- FLUJO 3 -->
+  <h3>Flujo 3 — Flujo de pago con Mercado Pago</h3>
+
+  <div class="flow">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Usuario hace clic en "Pagar" → API Route <code>POST /api/payments/create</code></strong>
+        <span>El Server Action llama a la API de Mercado Pago con el monto y los datos del servicio. MP responde con una <code>preference_id</code> y una URL de checkout seguro.</span>
+      </div>
     </div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">
-      🔌 Lokro<br>
-      <small>Crea la orden en Mercado Pago</small>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>El usuario completa el pago en el checkout de Mercado Pago</strong>
+        <span>PSE, tarjeta débito/crédito o efectivo. Lokro nunca toca los datos bancarios — todo sucede en los servidores de MP bajo protocolo <strong>PCI DSS</strong>.</span>
+      </div>
     </div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">
-      💳 Mercado Pago<br>
-      <small>Usuario paga en el checkout</small>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>MP notifica a Lokro por Webhook → <code>POST /api/payments/webhook</code></strong>
+        <span>Cuando el pago es aprobado, MP envía una llamada HTTP a nuestra URL de webhook con el estado <code>approved</code>. Esta ruta usa la clave <strong>service_role</strong> de Supabase (omite RLS) para actualizar el estado de la solicitud a <code>PAID</code> y crear el registro en la tabla <code>payments</code> con el monto, la comisión (10%) y lo que recibe el prestador.</span>
+      </div>
     </div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">
-      ✅ Confirmación<br>
-      <small>MP avisa a Lokro que se pagó</small>
-    </div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">
-      🔧 Servicio activo<br>
-      <small>El prestador puede comenzar</small>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Se dispara el email automático → Resend</strong>
+        <span>El webhook también llama a la API de Resend para enviar un email de confirmación al usuario y otro al prestador indicando que el servicio está listo para comenzar.</span>
+      </div>
     </div>
   </div>
-  <div class="highlight hl-green" style="margin-top:8px;">
-    <strong>¿Por qué es seguro?</strong>
-    <p>El dinero nunca lo toca Lokro directamente. Mercado Pago lo retiene y solo lo libera al prestador cuando el servicio se completa. Si hay un problema, el usuario puede reclamar el reembolso.</p>
+
+  <div class="highlight hl-amber">
+    <strong>¿Por qué el webhook es la única fuente de verdad del pago?</strong>
+    <p>El usuario podría cerrar la pestaña antes de que Lokro confirme el pago en el frontend. Por eso no se confía en la URL de retorno — solo el webhook de Mercado Pago, que llega directamente al servidor, actualiza el estado del pago. Esto evita servicios que parecen pagados pero no lo están.</p>
   </div>
 </div>
 
