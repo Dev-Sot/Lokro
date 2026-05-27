@@ -218,6 +218,18 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
             </Button>
           </>
         )}
+        {!isProvider && (status === 'PENDING' || status === 'ACCEPTED') && (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={updatingStatus}
+            onClick={() => updateStatus('CANCELLED')}
+            className="gap-1.5 text-destructive border-destructive/40 hover:bg-destructive/10"
+          >
+            {updatingStatus ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
+            Cancelar
+          </Button>
+        )}
         {!isProvider && status === 'ACCEPTED' && (
           <Button size="sm" className="gap-1.5" asChild>
             <Link href={`/pay/${request.id}`}>
