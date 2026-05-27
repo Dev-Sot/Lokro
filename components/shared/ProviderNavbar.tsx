@@ -7,6 +7,7 @@ import {
   ClipboardList,
   Calendar,
   DollarSign,
+  Star,
   Bell,
   User as UserIcon,
   LogOut,
@@ -33,6 +34,7 @@ const NAV_LINKS = [
   { href: '/requests', label: 'Solicitudes', icon: ClipboardList },
   { href: '/schedule', label: 'Agenda', icon: Calendar },
   { href: '/earnings', label: 'Ingresos', icon: DollarSign },
+  { href: '/reviews', label: 'Reseñas', icon: Star },
   { href: '/perfil', label: 'Mi perfil', icon: UserIcon },
 ]
 
