@@ -3,12 +3,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
-  MapPin,
-  Star,
-  Clock,
-  ArrowRight,
-  CheckCircle,
-  Briefcase,
+  MapPin, Star, Clock, ArrowRight, CheckCircle,
+  Briefcase, ArrowLeft, Calendar,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
@@ -83,7 +79,7 @@ export default async function ProviderProfilePage({ params }: Props) {
     .limit(10)
 
   const user = provider.user as unknown as {
-    id: string; name: string; email: string;
+    id: string; name: string; email: string
     avatar_url: string | null; latitude: number | null; longitude: number | null
   }
 
@@ -96,179 +92,229 @@ export default async function ProviderProfilePage({ params }: Props) {
   }[]
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-6 items-start">
-        <div className="relative shrink-0">
-          <UserAvatar name={user.name} avatarUrl={user.avatar_url} size="lg" />
-          <span
-            className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-background ${
-              provider.available ? 'bg-green-500' : 'bg-muted-foreground'
-            }`}
-          />
-        </div>
-
-        <div className="flex-1 space-y-3">
-          <div className="flex flex-wrap items-start gap-3">
-            <div>
-              <h1 className="text-2xl font-bold">{user.name}</h1>
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <StarRating rating={provider.average_rating} showValue />
-                <span className="text-sm text-muted-foreground">
-                  ({provider.total_reviews} reseñas)
-                </span>
-                <Badge variant={provider.available ? 'default' : 'secondary'}>
-                  {provider.available ? '● Disponible ahora' : 'No disponible'}
-                </Badge>
-              </div>
-            </div>
-            <Button asChild className="ml-auto">
-              <Link href={`/request/${id}`}>
-                Solicitar servicio
-                <ArrowRight size={16} className="ml-2" />
-              </Link>
-            </Button>
-          </div>
-
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Clock size={14} />
-              Miembro desde {new Date(provider.created_at).getFullYear()}
-            </span>
-            <span className="flex items-center gap-1.5 font-semibold text-foreground">
-              {formatCurrency(provider.hourly_rate)}/hora
-            </span>
-            {user.latitude && user.longitude && (
-              <span className="flex items-center gap-1.5">
-                <MapPin size={14} />
-                Colombia
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {specialties.map(({ category }) => (
-              <span
-                key={category.id}
-                className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-medium"
-                style={{
-                  backgroundColor: `${category.color}20`,
-                  color: category.color,
-                }}
-              >
-                {category.icon} {category.name}
-              </span>
-            ))}
-          </div>
+    <div className="min-h-screen bg-background">
+      {/* Hero cover */}
+      <div className="relative h-48 sm:h-64 bg-gradient-to-br from-primary/20 via-primary/10 to-muted overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
+            backgroundSize: '28px 28px',
+          }}
+        />
+        {/* Back button */}
+        <div className="absolute top-4 left-4">
+          <Link
+            href="/explore"
+            className="inline-flex items-center gap-2 text-sm font-medium bg-background/80 backdrop-blur rounded-xl px-3 py-2 hover:bg-background transition-all shadow-sm"
+          >
+            <ArrowLeft size={15} />
+            Explorar
+          </Link>
         </div>
       </div>
 
-      <Separator />
-
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Main content */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Bio */}
-          {provider.bio && (
-            <section className="space-y-3">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Briefcase size={18} />
-                Sobre mí
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">{provider.bio}</p>
-            </section>
-          )}
-
-          {/* Portfolio */}
-          {portfolio.length > 0 && (
-            <section className="space-y-3">
-              <h2 className="text-lg font-semibold">Portafolio</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {portfolio.map((item) => (
-                  <div
-                    key={item.id}
-                    className="aspect-square rounded-xl overflow-hidden bg-muted relative"
-                  >
-                    <Image
-                      src={item.image_url}
-                      alt="Portfolio"
-                      fill
-                      className="object-cover hover:scale-105 transition-transform"
-                    />
+      <div className="max-w-5xl mx-auto px-4">
+        {/* Profile header — overlaps the hero */}
+        <div className="-mt-14 sm:-mt-16 pb-6">
+          <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-end">
+            {/* Avatar with border */}
+            <div className="relative shrink-0">
+              <div className="h-28 w-28 rounded-2xl overflow-hidden border-4 border-background shadow-xl bg-muted">
+                {user.avatar_url ? (
+                  <Image src={user.avatar_url} alt={user.name} fill className="object-cover" />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center bg-primary/10 text-3xl font-bold text-primary">
+                    {user.name.charAt(0).toUpperCase()}
                   </div>
-                ))}
+                )}
               </div>
-            </section>
-          )}
-
-          {/* Reviews */}
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Reseñas</h2>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Star size={14} className="fill-amber-400 text-amber-400" />
-                <span className="font-medium text-foreground">
-                  {provider.average_rating.toFixed(1)}
-                </span>
-                <span>· {provider.total_reviews} reseñas</span>
-              </div>
+              <span className={`absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-background shadow ${provider.available ? 'bg-green-500' : 'bg-muted-foreground'}`} />
             </div>
 
-            {reviews && reviews.length > 0 ? (
-              <div className="space-y-4">
-                {reviews.map((review) => {
-                  const author = review.author as unknown as { name: string; avatar_url: string | null }
-                  return (
-                    <div key={review.id} className="flex gap-3">
-                      <UserAvatar name={author.name} avatarUrl={author.avatar_url} size="sm" />
-                      <div className="flex-1 space-y-1">
+            <div className="flex-1 space-y-2 pt-2 sm:pt-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-bold">{user.name}</h1>
+                <Badge variant={provider.available ? 'default' : 'secondary'} className="shrink-0">
+                  {provider.available ? '● Disponible' : 'No disponible'}
+                </Badge>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Star size={13} className="fill-amber-400 text-amber-400" />
+                  <strong className="text-foreground">{provider.average_rating.toFixed(1)}</strong>
+                  <span>({provider.total_reviews} reseñas)</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <Calendar size={13} />
+                  Desde {new Date(provider.created_at).getFullYear()}
+                </span>
+                {user.latitude && (
+                  <span className="flex items-center gap-1">
+                    <MapPin size={13} />
+                    Colombia
+                  </span>
+                )}
+                <span className="font-bold text-foreground text-base">
+                  {formatCurrency(provider.hourly_rate)}/h
+                </span>
+              </div>
+
+              {specialties.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {specialties.map(({ category }) => (
+                    <span
+                      key={category.id}
+                      className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium"
+                      style={{ backgroundColor: `${category.color}20`, color: category.color }}
+                    >
+                      {category.icon} {category.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* CTA desktop */}
+            <div className="hidden sm:block shrink-0">
+              <Button asChild size="lg" disabled={!provider.available}>
+                <Link href={`/request/${id}`}>
+                  Solicitar servicio
+                  <ArrowRight size={16} className="ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="grid lg:grid-cols-3 gap-8 py-8">
+          {/* Main content */}
+          <div className="lg:col-span-2 space-y-8">
+
+            {/* Bio */}
+            {provider.bio && (
+              <section className="space-y-3">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  <Briefcase size={18} className="text-primary" />
+                  Sobre mí
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">{provider.bio}</p>
+              </section>
+            )}
+
+            {/* Portfolio */}
+            {portfolio.length > 0 && (
+              <section className="space-y-3">
+                <h2 className="text-lg font-semibold">Portafolio</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {portfolio.map((item) => (
+                    <div key={item.id} className="aspect-square rounded-2xl overflow-hidden bg-muted relative group">
+                      <Image
+                        src={item.image_url}
+                        alt="Trabajo"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Reviews */}
+            <section className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Reseñas de clientes</h2>
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Star size={14} className="fill-amber-400 text-amber-400" />
+                  <span className="font-semibold text-foreground">{provider.average_rating.toFixed(1)}</span>
+                  <span>· {provider.total_reviews} en total</span>
+                </div>
+              </div>
+
+              {reviews && reviews.length > 0 ? (
+                <div className="space-y-4">
+                  {reviews.map((review) => {
+                    const author = review.author as unknown as { name: string; avatar_url: string | null }
+                    return (
+                      <div key={review.id} className="rounded-2xl border bg-card p-4 space-y-2">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-sm font-medium">{author.name}</p>
-                          <span className="text-xs text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <UserAvatar name={author.name} avatarUrl={author.avatar_url} size="sm" />
+                            <p className="text-sm font-medium">{author.name}</p>
+                          </div>
+                          <span className="text-xs text-muted-foreground shrink-0">
                             {formatRelativeTime(review.created_at)}
                           </span>
                         </div>
-                        <StarRating rating={review.rating} size={12} />
+                        <StarRating rating={review.rating} size={13} />
                         {review.comment && (
-                          <p className="text-sm text-muted-foreground">{review.comment}</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
                         )}
                       </div>
-                    </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Aún no hay reseñas.</p>
-            )}
-          </section>
-        </div>
-
-        {/* Sidebar */}
-        <aside className="space-y-4">
-          <div className="rounded-xl border p-5 space-y-4 sticky top-24">
-            <div className="text-center">
-              <p className="text-3xl font-bold">{formatCurrency(provider.hourly_rate)}</p>
-              <p className="text-sm text-muted-foreground">por hora</p>
-            </div>
-            <Button asChild size="lg" className="w-full">
-              <Link href={`/request/${id}`}>Reservar ahora</Link>
-            </Button>
-            <Separator />
-            <div className="space-y-2.5 text-sm">
-              {[
-                'Pago seguro garantizado',
-                'Cancelación gratuita 24h antes',
-                'Comunicación directa',
-                'Soporte 24/7',
-              ].map((feature) => (
-                <div key={feature} className="flex items-center gap-2 text-muted-foreground">
-                  <CheckCircle size={14} className="text-green-500 shrink-0" />
-                  {feature}
+                    )
+                  })}
                 </div>
-              ))}
-            </div>
+              ) : (
+                <div className="rounded-2xl border bg-muted/30 p-8 text-center text-muted-foreground">
+                  <Star size={28} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">Aún no hay reseñas. ¡Sé el primero!</p>
+                </div>
+              )}
+            </section>
           </div>
-        </aside>
+
+          {/* Sidebar */}
+          <aside className="space-y-4">
+            <div className="rounded-2xl border bg-card p-5 space-y-5 sticky top-24 shadow-sm">
+              <div className="text-center py-2">
+                <p className="text-4xl font-bold">{formatCurrency(provider.hourly_rate)}</p>
+                <p className="text-sm text-muted-foreground mt-1">por hora · en COP</p>
+              </div>
+
+              <Button asChild size="lg" className="w-full" disabled={!provider.available}>
+                <Link href={`/request/${id}`}>
+                  {provider.available ? 'Reservar ahora' : 'No disponible'}
+                  {provider.available && <ArrowRight size={16} className="ml-2" />}
+                </Link>
+              </Button>
+
+              <Separator />
+
+              <div className="space-y-2.5 text-sm">
+                {[
+                  'Pago seguro garantizado',
+                  'Cancelación gratuita 24h antes',
+                  'Comunicación directa',
+                  'Soporte 7 días a la semana',
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-2 text-muted-foreground">
+                    <CheckCircle size={14} className="text-green-500 shrink-0" />
+                    {feature}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      {/* Mobile CTA bar */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-background border-t p-3 shadow-xl">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="font-bold">{formatCurrency(provider.hourly_rate)}/h</p>
+            <p className="text-xs text-muted-foreground">{user.name}</p>
+          </div>
+          <Button asChild disabled={!provider.available} className="flex-1 max-w-xs">
+            <Link href={`/request/${id}`}>
+              {provider.available ? 'Solicitar servicio' : 'No disponible'}
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   )
