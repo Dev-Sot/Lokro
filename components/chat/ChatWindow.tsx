@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Send, Loader2, Navigation, CheckCircle2, MapPin, CreditCard } from 'lucide-react'
+import { Send, Loader2, Navigation, CheckCircle2, MapPin, CreditCard, CheckCheck, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,7 +35,7 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const supabase = createClient()
 
-  async function updateStatus(newStatus: 'IN_PROGRESS' | 'COMPLETED') {
+  async function updateStatus(newStatus: 'ACCEPTED' | 'CANCELLED' | 'IN_PROGRESS' | 'COMPLETED') {
     setUpdatingStatus(true)
     const { error } = await supabase
       .from('service_requests')
@@ -53,6 +53,16 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
 
       // Notificar al otro usuario
       const notifMap = {
+        ACCEPTED: {
+          title: '✅ Solicitud aceptada',
+          message: `${currentUser.name} aceptó tu solicitud. ¡Ya puedes coordinar los detalles!`,
+          type: 'REQUEST_ACCEPTED',
+        },
+        CANCELLED: {
+          title: '❌ Solicitud rechazada',
+          message: `${currentUser.name} no pudo aceptar tu solicitud en este momento.`,
+          type: 'REQUEST_CANCELLED',
+        },
         IN_PROGRESS: {
           title: '🚗 Tu prestador está en camino',
           message: `${currentUser.name} se dirige a tu ubicación.`,
@@ -71,8 +81,11 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
       })
 
       setStatus(newStatus)
-      toast.success(newStatus === 'IN_PROGRESS' ? '¡En camino!' : '¡Servicio completado!')
-      if (newStatus === 'IN_PROGRESS') router.refresh()
+      if (newStatus === 'ACCEPTED') toast.success('¡Solicitud aceptada!')
+      else if (newStatus === 'CANCELLED') toast.success('Solicitud rechazada')
+      else if (newStatus === 'IN_PROGRESS') toast.success('¡En camino!')
+      else toast.success('¡Servicio completado!')
+      router.refresh()
     }
     setUpdatingStatus(false)
   }
@@ -178,6 +191,29 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
           Tracking
         </Link>
 
+        {isProvider && status === 'PENDING' && (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={updatingStatus}
+              onClick={() => updateStatus('CANCELLED')}
+              className="gap-1.5 text-destructive border-destructive/40 hover:bg-destructive/10"
+            >
+              {updatingStatus ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
+              Rechazar
+            </Button>
+            <Button
+              size="sm"
+              disabled={updatingStatus}
+              onClick={() => updateStatus('ACCEPTED')}
+              className="gap-1.5"
+            >
+              {updatingStatus ? <Loader2 size={12} className="animate-spin" /> : <CheckCheck size={12} />}
+              Aceptar
+            </Button>
+          </>
+        )}
         {!isProvider && status === 'ACCEPTED' && (
           <Button size="sm" className="gap-1.5" asChild>
             <Link href={`/pay/${request.id}`}>

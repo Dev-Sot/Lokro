@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { UserAvatar } from '@/components/shared/UserAvatar'
 import { Pagination } from '@/components/shared/Pagination'
+import { AcceptRejectButtons } from '@/components/requests/AcceptRejectButtons'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -39,7 +40,8 @@ export default async function ProviderRequestsPage({ searchParams }: Props) {
     .from('service_requests')
     .select(`
       id, status, description, estimated_price, final_price, created_at, requested_date,
-      user:users!service_requests_user_id_fkey(name, avatar_url),
+      user_id,
+      user:users!service_requests_user_id_fkey(id, name, avatar_url),
       category:categories(name, icon)
     `)
     .eq('provider_id', profile.id)
@@ -63,7 +65,8 @@ export default async function ProviderRequestsPage({ searchParams }: Props) {
     .from('service_requests')
     .select(`
       id, status, description, estimated_price, final_price, created_at, requested_date,
-      user:users!service_requests_user_id_fkey(name, avatar_url),
+      user_id,
+      user:users!service_requests_user_id_fkey(id, name, avatar_url),
       category:categories(name, icon)
     `)
     .eq('provider_id', profile.id)
@@ -88,7 +91,7 @@ export default async function ProviderRequestsPage({ searchParams }: Props) {
     return (
       <div className="space-y-3">
         {items.map((req) => {
-          const user = req.user as unknown as { name: string; avatar_url: string | null } | null
+          const user = req.user as unknown as { id: string; name: string; avatar_url: string | null } | null
           const category = req.category as unknown as { name: string; icon: string } | null
           return (
             <div key={req.id} className="rounded-xl border bg-card p-4 space-y-3">
@@ -117,16 +120,26 @@ export default async function ProviderRequestsPage({ searchParams }: Props) {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" asChild className="flex-1">
-                  <Link href={`/chat/${req.id}`}>Abrir chat</Link>
-                </Button>
-                {req.status === 'ACCEPTED' && (
-                  <Button size="sm" asChild className="flex-1">
-                    <Link href={`/tracking/${req.id}`}>Seguimiento</Link>
+
+              {req.status === 'PENDING' ? (
+                <AcceptRejectButtons
+                  requestId={req.id}
+                  clientUserId={user?.id ?? req.user_id}
+                  providerUserId={authUser!.id}
+                  providerName={authUser!.email ?? 'El prestador'}
+                />
+              ) : (
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" asChild className="flex-1">
+                    <Link href={`/chat/${req.id}`}>Abrir chat</Link>
                   </Button>
-                )}
-              </div>
+                  {req.status === 'ACCEPTED' && (
+                    <Button size="sm" asChild className="flex-1">
+                      <Link href={`/tracking/${req.id}`}>Seguimiento</Link>
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
           )
         })}
