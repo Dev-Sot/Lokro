@@ -21,22 +21,31 @@ export function useUser() {
         return
       }
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', authUser.id)
         .single()
 
+      if (error) {
+        console.error('useUser: failed to fetch user record', error)
+        setLoading(false)
+        return
+      }
+
       setUser(data)
       setLoading(false)
     }
 
-    getUser()
+    getUser().catch((err) => {
+      console.error('useUser: unexpected error', err)
+      setLoading(false)
+    })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {
-      getUser()
+      getUser().catch((err) => console.error('useUser: auth change error', err))
     })
 
     return () => subscription.unsubscribe()
