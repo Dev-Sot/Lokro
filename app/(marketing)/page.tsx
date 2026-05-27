@@ -3,7 +3,8 @@ import Link from 'next/link'
 import {
   ArrowRight, Star, Shield, Zap, MapPin, Clock, CheckCircle2,
   Wallet, CalendarDays, TrendingUp, Lock, BadgeCheck, Headphones,
-  Search,
+  Search, Rocket, Wrench, Sparkles, BookOpen, PawPrint, Palette,
+  Car, Hammer, Laptop, Utensils, type LucideIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,21 +22,21 @@ export const metadata: Metadata = {
 const STATS = [
   { value: '2.000+', label: 'Profesionales activos' },
   { value: '15.000+', label: 'Servicios completados' },
-  { value: '4.8★', label: 'Calificación promedio' },
+  { value: '4.8', label: 'Calificación promedio' },
   { value: '< 5 min', label: 'Tiempo de respuesta' },
 ]
 
-const CATEGORIES = [
-  { name: 'Plomería', emoji: '🔧', bg: 'bg-blue-50' },
-  { name: 'Limpieza', emoji: '🧹', bg: 'bg-rose-50' },
-  { name: 'Electricidad', emoji: '⚡', bg: 'bg-amber-50' },
-  { name: 'Tutoría', emoji: '📚', bg: 'bg-emerald-50' },
-  { name: 'Veterinaria', emoji: '🐾', bg: 'bg-orange-50' },
-  { name: 'Diseño', emoji: '🎨', bg: 'bg-purple-50' },
-  { name: 'Mecánica', emoji: '🚗', bg: 'bg-slate-100' },
-  { name: 'Reparaciones', emoji: '🏠', bg: 'bg-teal-50' },
-  { name: 'Tecnología', emoji: '💻', bg: 'bg-indigo-50' },
-  { name: 'Cocina', emoji: '🍽️', bg: 'bg-red-50' },
+const CATEGORIES: { name: string; icon: LucideIcon; color: string; bg: string }[] = [
+  { name: 'Plomería',     icon: Wrench,   color: 'text-blue-600',   bg: 'bg-blue-50' },
+  { name: 'Limpieza',     icon: Sparkles, color: 'text-rose-600',   bg: 'bg-rose-50' },
+  { name: 'Electricidad', icon: Zap,      color: 'text-amber-600',  bg: 'bg-amber-50' },
+  { name: 'Tutoría',      icon: BookOpen, color: 'text-emerald-600',bg: 'bg-emerald-50' },
+  { name: 'Veterinaria',  icon: PawPrint, color: 'text-orange-600', bg: 'bg-orange-50' },
+  { name: 'Diseño',       icon: Palette,  color: 'text-purple-600', bg: 'bg-purple-50' },
+  { name: 'Mecánica',     icon: Car,      color: 'text-slate-600',  bg: 'bg-slate-100' },
+  { name: 'Reparaciones', icon: Hammer,   color: 'text-teal-600',   bg: 'bg-teal-50' },
+  { name: 'Tecnología',   icon: Laptop,   color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  { name: 'Cocina',       icon: Utensils, color: 'text-red-600',    bg: 'bg-red-50' },
 ]
 
 const HOW_IT_WORKS = [
@@ -44,35 +45,48 @@ const HOW_IT_WORKS = [
   { step: '03', title: 'Disfruta', desc: 'El profesional llega, hace el trabajo y tú valoras la experiencia.', icon: CheckCircle2 },
 ]
 
-const TRUST = [
-  { emoji: '🔒', title: 'Pago 100% seguro', desc: 'Tu dinero está protegido hasta que confirmes que el trabajo está bien hecho.' },
-  { emoji: '✅', title: 'Identidad verificada', desc: 'Cada prestador pasa por un proceso de validación antes de aparecer en el mapa.' },
-  { emoji: '🎧', title: 'Soporte 7/7', desc: 'Nuestro equipo está disponible todos los días para resolver cualquier inconveniente.' },
+const TRUST: { icon: LucideIcon; title: string; desc: string }[] = [
+  { icon: Lock,      title: 'Pago 100% seguro',     desc: 'Tu dinero está protegido hasta que confirmes que el trabajo está bien hecho.' },
+  { icon: BadgeCheck,title: 'Identidad verificada', desc: 'Cada prestador pasa por un proceso de validación antes de aparecer en el mapa.' },
+  { icon: Headphones,title: 'Soporte 7/7',           desc: 'Nuestro equipo está disponible todos los días para resolver cualquier inconveniente.' },
 ]
 
 const FEATURES = [
-  { icon: Shield, title: 'Profesionales verificados', desc: 'Seguridad y confianza en cada servicio.' },
-  { icon: Zap, title: 'Respuesta en minutos', desc: 'Conexión inmediata con expertos cercanos.' },
-  { icon: Star, title: 'Calidad garantizada', desc: 'Calificaciones reales de usuarios verificados.' },
+  { icon: Shield,    title: 'Profesionales verificados', desc: 'Seguridad y confianza en cada servicio.' },
+  { icon: Zap,       title: 'Respuesta en minutos',      desc: 'Conexión inmediata con expertos cercanos.' },
+  { icon: Star,      title: 'Calidad garantizada',       desc: 'Calificaciones reales de usuarios verificados.' },
 ]
 
 const PROVIDER_BENEFITS = [
-  { icon: Wallet, title: 'Tú fijas tu tarifa', desc: 'Cobra lo que vale tu trabajo. Sin tarifas impuestas.' },
-  { icon: CalendarDays, title: 'Tu propio horario', desc: 'Activa y desactiva tu disponibilidad cuando quieras.' },
-  { icon: TrendingUp, title: 'Más clientes, menos esfuerzo', desc: 'Llega a clientes cerca de ti sin gastar en publicidad.' },
+  { icon: Wallet,      title: 'Tú fijas tu tarifa',           desc: 'Cobra lo que vale tu trabajo. Sin tarifas impuestas.' },
+  { icon: CalendarDays,title: 'Tu propio horario',             desc: 'Activa y desactiva tu disponibilidad cuando quieras.' },
+  { icon: TrendingUp,  title: 'Más clientes, menos esfuerzo', desc: 'Llega a clientes cerca de ti sin gastar en publicidad.' },
 ]
 
 const TESTIMONIALS = [
-  { name: 'Ana Rodríguez', location: 'Chapinero, Bogotá', initials: 'AR', bg: 'bg-blue-500', text: 'Encontré un plomero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.' },
-  { name: 'Carlos M.', location: 'El Chicó, Bogotá', initials: 'CM', bg: 'bg-emerald-500', text: 'Uso Lokro cada semana para distintos servicios en mi oficina. La calidad es consistente.' },
-  { name: 'Laura Torres', location: 'Suba, Bogotá', initials: 'LT', bg: 'bg-rose-500', text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Subió sus notas en menos de un mes.' },
+  { name: 'Ana Rodríguez', location: 'Chapinero, Bogotá',  initials: 'AR', bg: 'bg-blue-500',    text: 'Encontré un plomero en menos de 5 minutos. Llegó en 20 minutos y solucionó la fuga. Increíble.' },
+  { name: 'Carlos M.',     location: 'El Chicó, Bogotá',   initials: 'CM', bg: 'bg-emerald-500', text: 'Uso Lokro cada semana para distintos servicios en mi oficina. La calidad es consistente.' },
+  { name: 'Laura Torres',  location: 'Suba, Bogotá',       initials: 'LT', bg: 'bg-rose-500',    text: 'Gracias a Lokro encontré una tutora excelente para mi hijo. Subió sus notas en menos de un mes.' },
 ]
 
-const MOCK_PROVIDERS = [
-  { name: 'Carlos R.', cat: 'Plomería', emoji: '🔧', rating: '4.9', bg: 'bg-blue-100', pos: 'top-6 left-4' },
-  { name: 'Andrea M.', cat: 'Electricidad', emoji: '⚡', rating: '5.0', bg: 'bg-amber-100', pos: 'top-14 right-4' },
-  { name: 'Sofía L.', cat: 'Limpieza', emoji: '🧹', rating: '4.8', bg: 'bg-rose-100', pos: 'bottom-20 left-8' },
-  { name: 'Daniel P.', cat: 'Tutoría', emoji: '📚', rating: '4.9', bg: 'bg-emerald-100', pos: 'bottom-6 right-4' },
+const MOCK_PROVIDERS: { name: string; cat: string; icon: LucideIcon; rating: string; iconColor: string; bg: string; pos: string }[] = [
+  { name: 'Carlos R.',  cat: 'Plomería',     icon: Wrench,   rating: '4.9', iconColor: 'text-blue-600',    bg: 'bg-blue-100',    pos: 'top-6 left-4' },
+  { name: 'Andrea M.',  cat: 'Electricidad', icon: Zap,      rating: '5.0', iconColor: 'text-amber-600',   bg: 'bg-amber-100',   pos: 'top-14 right-4' },
+  { name: 'Sofía L.',   cat: 'Limpieza',     icon: Sparkles, rating: '4.8', iconColor: 'text-rose-600',    bg: 'bg-rose-100',    pos: 'bottom-20 left-8' },
+  { name: 'Daniel P.',  cat: 'Tutoría',      icon: BookOpen, rating: '4.9', iconColor: 'text-emerald-600', bg: 'bg-emerald-100', pos: 'bottom-6 right-4' },
+]
+
+const DASHBOARD_ITEMS: { label: string; time: string; amount: string; icon: LucideIcon; iconColor: string; bg: string }[] = [
+  { label: 'Limpieza de casa',     time: 'Hoy, 10:00 AM',  amount: '$180.000', icon: Sparkles, iconColor: 'text-rose-600',    bg: 'bg-rose-50' },
+  { label: 'Instalación eléctrica',time: 'Ayer, 2:30 PM',  amount: '$320.000', icon: Zap,      iconColor: 'text-amber-600',   bg: 'bg-amber-50' },
+  { label: 'Tutoría matemáticas',  time: 'Lun, 4:00 PM',   amount: '$95.000',  icon: BookOpen, iconColor: 'text-emerald-600', bg: 'bg-emerald-50' },
+]
+
+const QUICK_CATS: { label: string; icon: LucideIcon }[] = [
+  { label: 'Plomería',     icon: Wrench },
+  { label: 'Electricidad', icon: Zap },
+  { label: 'Limpieza',     icon: Sparkles },
+  { label: 'Tutoría',      icon: BookOpen },
 ]
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -87,8 +101,9 @@ export default function LandingPage() {
 
           {/* Left */}
           <div className="flex flex-col items-start space-y-8">
-            <div className="inline-flex items-center rounded-full bg-primary/10 text-primary px-4 py-1.5 text-sm font-medium">
-              🚀 Ya disponible en Colombia
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-4 py-1.5 text-sm font-medium">
+              <Rocket size={14} />
+              Ya disponible en Colombia
             </div>
 
             <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-tight">
@@ -119,13 +134,14 @@ export default function LandingPage() {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {['🔧 Plomería', '⚡ Electricidad', '🧹 Limpieza', '📚 Tutoría'].map((tag) => (
+                {QUICK_CATS.map(({ label, icon: Icon }) => (
                   <Link
-                    key={tag}
+                    key={label}
                     href="/register"
-                    className="rounded-full border hover:border-primary/50 hover:bg-primary/5 px-4 py-1.5 text-sm font-medium text-foreground transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-full border hover:border-primary/50 hover:bg-primary/5 px-4 py-1.5 text-sm font-medium text-foreground transition-colors"
                   >
-                    {tag}
+                    <Icon size={13} className="text-muted-foreground" />
+                    {label}
                   </Link>
                 ))}
               </div>
@@ -146,7 +162,6 @@ export default function LandingPage() {
 
           {/* Right — mapa estilizado */}
           <div className="relative hidden lg:block h-[480px] rounded-3xl bg-blue-50 overflow-hidden border border-blue-100 shadow-xl">
-            {/* Grid map background */}
             <div
               className="absolute inset-0 opacity-20"
               style={{
@@ -155,7 +170,6 @@ export default function LandingPage() {
                 backgroundSize: '40px 40px',
               }}
             />
-            {/* Street lines */}
             <div className="absolute top-1/4 left-0 right-0 h-2 bg-white/60 -rotate-[3deg] scale-110" />
             <div className="absolute top-0 bottom-0 left-1/3 w-3 bg-white/60 rotate-[12deg] scale-110" />
             <div className="absolute top-2/3 left-0 right-0 h-3 bg-white/60 rotate-[6deg] scale-110" />
@@ -172,17 +186,22 @@ export default function LandingPage() {
             </div>
 
             {/* Provider cards */}
-            {MOCK_PROVIDERS.map((p) => (
+            {MOCK_PROVIDERS.map(({ name, cat, icon: Icon, rating, iconColor, bg, pos }) => (
               <div
-                key={p.name}
-                className={`absolute ${p.pos} bg-white rounded-xl shadow-lg p-3 flex items-center gap-3 w-44 z-20`}
+                key={name}
+                className={`absolute ${pos} bg-white rounded-xl shadow-lg p-3 flex items-center gap-3 w-44 z-20`}
               >
-                <div className={`w-10 h-10 rounded-full ${p.bg} flex items-center justify-center text-xl shrink-0`}>
-                  {p.emoji}
+                <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center shrink-0`}>
+                  <Icon size={18} className={iconColor} />
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-sm font-semibold truncate">{p.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{p.cat} · ⭐ {p.rating}</p>
+                  <p className="text-sm font-semibold truncate">{name}</p>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <span className="truncate">{cat}</span>
+                    <span>·</span>
+                    <Star size={10} className="fill-amber-400 text-amber-400 shrink-0" />
+                    <span>{rating}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -194,9 +213,12 @@ export default function LandingPage() {
       <section className="bg-primary text-primary-foreground py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {STATS.map((s) => (
+            {STATS.map((s, i) => (
               <div key={s.label} className="flex flex-col items-center gap-1">
-                <span className="text-4xl font-bold tracking-tight">{s.value}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-4xl font-bold tracking-tight">{s.value}</span>
+                  {i === 2 && <Star size={20} className="fill-amber-300 text-amber-300 mb-1" />}
+                </div>
                 <span className="text-sm text-primary-foreground/80">{s.label}</span>
               </div>
             ))}
@@ -212,16 +234,16 @@ export default function LandingPage() {
             <p className="text-muted-foreground mt-2 text-lg">Encuentra al experto ideal para cualquier tarea.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {CATEGORIES.map((cat) => (
+            {CATEGORIES.map(({ name, icon: Icon, color, bg }) => (
               <Link
-                key={cat.name}
+                key={name}
                 href="/register"
                 className="group flex flex-col items-center gap-3 rounded-2xl border bg-background p-6 text-center hover:border-primary/50 hover:-translate-y-1 hover:shadow-md transition-all"
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl ${cat.bg} group-hover:scale-110 transition-transform`}>
-                  {cat.emoji}
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${bg} group-hover:scale-110 transition-transform`}>
+                  <Icon size={26} className={color} />
                 </div>
-                <span className="text-sm font-medium group-hover:text-primary transition-colors">{cat.name}</span>
+                <span className="text-sm font-medium group-hover:text-primary transition-colors">{name}</span>
               </Link>
             ))}
           </div>
@@ -263,10 +285,10 @@ export default function LandingPage() {
             <p className="text-muted-foreground mt-2">Cada aspecto de Lokro está diseñado para que estés protegido.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-12">
-            {TRUST.map(({ emoji, title, desc }) => (
+            {TRUST.map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex flex-col items-center text-center">
-                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-4xl mb-6">
-                  {emoji}
+                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                  <Icon size={32} className="text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-sm">{desc}</p>
@@ -314,20 +336,18 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="space-y-1">
-                {[
-                  { label: 'Limpieza de casa', time: 'Hoy, 10:00 AM', amount: '$180.000', emoji: '🧹', bg: 'bg-rose-50' },
-                  { label: 'Instalación eléctrica', time: 'Ayer, 2:30 PM', amount: '$320.000', emoji: '⚡', bg: 'bg-amber-50' },
-                  { label: 'Tutoría matemáticas', time: 'Lun, 4:00 PM', amount: '$95.000', emoji: '📚', bg: 'bg-emerald-50' },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-xl transition-colors">
+                {DASHBOARD_ITEMS.map(({ label, time, amount, icon: Icon, iconColor, bg }) => (
+                  <div key={label} className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-xl transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full ${item.bg} flex items-center justify-center text-lg`}>{item.emoji}</div>
+                      <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center`}>
+                        <Icon size={18} className={iconColor} />
+                      </div>
                       <div>
-                        <p className="text-sm font-semibold">{item.label}</p>
-                        <p className="text-xs text-muted-foreground">{item.time}</p>
+                        <p className="text-sm font-semibold">{label}</p>
+                        <p className="text-xs text-muted-foreground">{time}</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold">{item.amount}</span>
+                    <span className="text-sm font-bold">{amount}</span>
                   </div>
                 ))}
               </div>
