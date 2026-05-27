@@ -34,6 +34,7 @@ interface LogoProps {
   className?: string
   size?: 'sm' | 'md' | 'lg'
   iconOnly?: boolean
+  href?: string
 }
 
 const sizes = {
@@ -42,10 +43,10 @@ const sizes = {
   lg: { icon: 'h-12 w-10', text: 'text-4xl' },
 }
 
-export function Logo({ className, size = 'md', iconOnly = false }: LogoProps) {
+export function Logo({ className, size = 'md', iconOnly = false, href = '/' }: LogoProps) {
   return (
     <Link
-      href="/"
+      href={href}
       className={cn('flex items-center gap-2 shrink-0 select-none', className)}
     >
       <LogoMark className={sizes[size].icon} />
