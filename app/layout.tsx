@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 export const dynamic = 'force-dynamic'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
   title: {
@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="es" className={`${plusJakarta.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full bg-background font-sans text-foreground">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
