@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Lokro — Presentación de Arquitectura</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:   #2563EB;
+    --blue-l: #EFF6FF;
+    --dark:   #0F172A;
+    --gray:   #64748B;
+    --border: #E2E8F0;
+    --light:  #F8FAFC;
+    --green:  #059669;
+    --green-l:#D1FAE5;
+    --amber:  #D97706;
+    --amber-l:#FEF3C7;
+    --red:    #DC2626;
+    --red-l:  #FEE2E2;
+    --purple: #7C3AED;
+    --purple-l:#EDE9FE;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11pt;
+    color: var(--dark);
+    background: white;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 36px;
+    line-height: 1.6;
+  }
+
+  /* ─── PORTADA ─── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 0 40px;
+    page-break-after: always;
+  }
+  .cover-logo {
+    font-size: 38pt;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .cover-logo span { color: var(--blue); }
+  .cover-tagline {
+    font-size: 14pt;
+    color: var(--gray);
+    font-weight: 500;
+    margin-bottom: 40px;
+  }
+  .cover-desc {
+    font-size: 13pt;
+    line-height: 1.7;
+    color: var(--dark);
+    max-width: 600px;
+    margin-bottom: 48px;
+    padding: 24px 28px;
+    background: var(--blue-l);
+    border-radius: 16px;
+    border-left: 5px solid var(--blue);
+  }
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
+  .pill {
+    background: var(--light);
+    border: 1px solid var(--border);
+    padding: 8px 18px;
+    border-radius: 99px;
+    font-size: 10pt;
+    font-weight: 600;
+    color: var(--dark);
+  }
+  .cover-info {
+    display: flex; gap: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    font-size: 10pt;
+  }
+  .cover-info div label { color: var(--gray); display: block; font-size: 9pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .cover-info div span { font-weight: 700; font-size: 11pt; }
+
+  /* ─── SECCIONES ─── */
+  .section { padding: 48px 0 20px; }
+  .section-tag {
+    display: inline-block;
+    background: var(--blue-l);
+    color: var(--blue);
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 99px;
+    margin-bottom: 12px;
+  }
+  h2 {
+    font-size: 22pt;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .section-sub {
+    font-size: 12pt;
+    color: var(--gray);
+    margin-bottom: 28px;
+    font-weight: 400;
+  }
+  h3 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--dark);
+    margin: 28px 0 10px;
+  }
+  p { color: var(--gray); margin-bottom: 10px; }
+  strong { color: var(--dark); }
+
+  /* ─── CARDS ─── */
+  .card-grid { display: grid; gap: 16px; margin: 16px 0; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .card {
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    background: white;
+  }
+  .card-icon {
+    font-size: 26pt;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .card h4 { font-size: 11pt; font-weight: 700; color: var(--dark); margin-bottom: 5px; }
+  .card p { font-size: 9.5pt; margin: 0; }
+
+  /* ─── STAT BOXES ─── */
+  .stat-box {
+    text-align: center;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 16px;
+    background: var(--light);
+  }
+  .stat-box .num { font-size: 30pt; font-weight: 800; color: var(--blue); line-height: 1; }
+  .stat-box .label { font-size: 9.5pt; color: var(--gray); margin-top: 4px; font-weight: 500; }
+
+  /* ─── FLOW ─── */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+  .step { display: flex; gap: 18px; align-items: flex-start; position: relative; }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 16px; top: 36px; bottom: -4px;
+    width: 2px; background: var(--border);
+  }
+  .step-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--blue); color: white;
+    font-weight: 800; font-size: 11pt;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; z-index: 1; position: relative;
+    margin-top: 2px;
+  }
+  .step-body { padding-bottom: 22px; flex: 1; }
+  .step-body strong { display: block; font-size: 11pt; margin-bottom: 3px; }
+  .step-body span { font-size: 10pt; color: var(--gray); }
+
+  /* ─── HIGHLIGHT BOX ─── */
+  .highlight {
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .hl-blue   { background: var(--blue-l);   border-left: 5px solid var(--blue); }
+  .hl-green  { background: var(--green-l);  border-left: 5px solid var(--green); }
+  .hl-amber  { background: var(--amber-l);  border-left: 5px solid var(--amber); }
+  .hl-purple { background: var(--purple-l); border-left: 5px solid var(--purple); }
+  .hl-red    { background: var(--red-l);    border-left: 5px solid var(--red); }
+
+  .highlight p { margin: 0; font-size: 10.5pt; }
+  .highlight strong { font-size: 11pt; display: block; margin-bottom: 4px; }
+
+  /* ─── TABLE ─── */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
+  th { background: var(--dark); color: white; padding: 10px 16px; text-align: left; font-size: 9.5pt; font-weight: 600; }
+  th:first-child { border-radius: 8px 0 0 0; }
+  th:last-child  { border-radius: 0 8px 0 0; }
+  td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--gray); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--light); }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--dark); }
+
+  /* ─── BADGE ─── */
+  .badge {
+    display: inline-block;
+    padding: 3px 12px; border-radius: 99px;
+    font-size: 8.5pt; font-weight: 700;
+  }
+  .b-green  { background: var(--green-l);  color: var(--green); }
+  .b-blue   { background: var(--blue-l);   color: var(--blue); }
+  .b-amber  { background: var(--amber-l);  color: var(--amber); }
+  .b-red    { background: var(--red-l);    color: var(--red); }
+  .b-purple { background: var(--purple-l); color: var(--purple); }
+
+  /* ─── DIVIDER ─── */
+  .divider { border: none; border-top: 2px solid var(--border); margin: 36px 0; }
+
+  /* ─── BREAK ─── */
+  .break { page-break-before: always; }
+
+  /* ─── ARROW ROW ─── */
+  .arrow-row {
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap; margin: 16px 0;
+  }
+  .arrow-box {
+    background: var(--light); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 12px 18px;
+    font-size: 10pt; font-weight: 600; text-align: center;
+    flex: 1; min-width: 100px;
+  }
+  .arrow-box small { display: block; font-weight: 400; color: var(--gray); font-size: 8.5pt; margin-top: 2px; }
+  .arrow { font-size: 18pt; color: var(--blue); font-weight: 700; flex-shrink: 0; }
+
+  @media print {
+    body { padding: 0 24px; }
+    .cover { page-break-after: always; }
+    h2, h3 { page-break-after: avoid; }
+    .card, .step, .highlight, tr { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ PORTADA -->
+<div class="cover">
+  <div class="cover-logo"><span>Lok</span>ro</div>
+  <div class="cover-tagline">Marketplace de servicios locales por geolocalización</div>
+
+  <div class="cover-desc">
+    Lokro es una aplicación web que conecta a personas con profesionales de servicios cercanos — como plomeros, electricistas o tutores — usando la ubicación GPS en tiempo real.
+  </div>
+
+  <div class="pills">
+    <span class="pill">🌐 Aplicación Web</span>
+    <span class="pill">📍 Geolocalización</span>
+    <span class="pill">💬 Chat en tiempo real</span>
+    <span class="pill">💳 Pagos en línea</span>
+    <span class="pill">📊 Panel de administración</span>
+  </div>
+
+  <div class="cover-info">
+    <div><label>Versión</label><span>1.0 — Lista para producción</span></div>
+    <div><label>Fecha</label><span>Mayo 2026</span></div>
+    <div><label>Autor</label><span>Misael Gallo</span></div>
+  </div>
+</div>
+
+
+<!-- ══════════════ QUÉ ES -->
+<div class="section">
+  <div class="section-tag">¿Qué es Lokro?</div>
+  <h2>Una app para conectar personas<br>con profesionales cercanos</h2>
+  <p class="section-sub">Como un Uber, pero para servicios del hogar y el trabajo</p>
+
+  <div class="card-grid g3">
+    <div class="card">
+      <span class="card-icon">👤</span>
+      <h4>Usuario</h4>
+      <p>Busca un profesional en el mapa, hace la solicitud, paga y hace seguimiento en tiempo real.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔧</span>
+      <h4>Prestador</h4>
+      <p>Publica su perfil, recibe solicitudes, acepta trabajos y cobra directamente por la plataforma.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🛡️</span>
+      <h4>Administrador</h4>
+      <p>Gestiona usuarios, modera solicitudes y controla el funcionamiento de la plataforma.</p>
+    </div>
+  </div>
+
+  <div class="highlight hl-blue" style="margin-top:20px;">
+    <strong>Modelo de negocio</strong>
+    <p>Lokro cobra una <strong>comisión del 10%</strong> sobre cada servicio completado al prestador. Para el usuario siempre es gratis usar la plataforma.</p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ TECNOLOGÍAS -->
+<div class="section break">
+  <div class="section-tag">Tecnologías</div>
+  <h2>¿Con qué está construido?</h2>
+  <p class="section-sub">Las herramientas que hacen funcionar Lokro</p>
+
+  <div class="card-grid g2">
+    <div class="card">
+      <span class="card-icon">⚡</span>
+      <h4>Next.js — La base de la aplicación</h4>
+      <p>Es el framework principal. Permite que la app funcione rápido, que Google la encuentre fácilmente y que todo el código esté en un solo lugar.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🗄️</span>
+      <h4>Supabase — La base de datos</h4>
+      <p>Guarda toda la información: usuarios, solicitudes, mensajes, pagos. También maneja el inicio de sesión y las notificaciones en tiempo real.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🗺️</span>
+      <h4>Mapbox — Los mapas</h4>
+      <p>Muestra el mapa interactivo donde aparecen los prestadores disponibles y permite hacer seguimiento GPS en tiempo real.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">💳</span>
+      <h4>Mercado Pago — Los pagos</h4>
+      <p>Procesa los pagos de forma segura. El dinero queda retenido hasta que el usuario confirma que el trabajo se hizo bien.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">📧</span>
+      <h4>Resend — Los emails</h4>
+      <p>Envía correos automáticos cuando se acepta una solicitud, cuando se hace el pago o cuando el servicio se completa.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">☁️</span>
+      <h4>Vercel — El servidor</h4>
+      <p>Es donde vive la aplicación en internet. Cada vez que se sube un cambio al repositorio, Vercel lo publica automáticamente.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ ARQUITECTURA -->
+<div class="section break">
+  <div class="section-tag">Arquitectura</div>
+  <h2>¿Cómo está organizada la app?</h2>
+  <p class="section-sub">Todo vive en un mismo proyecto, organizado por tipo de usuario</p>
+
+  <div class="highlight hl-blue">
+    <strong>Tipo de arquitectura: Monolito moderno (JAMstack)</strong>
+    <p>No hay un servidor separado. El frontend y el backend viven juntos en Next.js. La base de datos (Supabase) hace el trabajo pesado de seguridad y datos en tiempo real.</p>
+  </div>
+
+  <h3>Las 5 zonas de la aplicación</h3>
+  <div class="card-grid g2" style="margin-top:12px;">
+    <div class="card" style="border-color:#BFDBFE;">
+      <span class="card-icon">🏠</span>
+      <h4>Zona pública (Landing)</h4>
+      <p>La página de inicio que ve cualquier visitante. No requiere cuenta. Explica qué es Lokro y tiene los botones de registro.</p>
+    </div>
+    <div class="card" style="border-color:#A7F3D0;">
+      <span class="card-icon">👤</span>
+      <h4>Zona de Usuario</h4>
+      <p>Mapa, búsqueda de profesionales, solicitar servicio, pagar, chat, tracking y perfil personal.</p>
+    </div>
+    <div class="card" style="border-color:#FDE68A;">
+      <span class="card-icon">🔧</span>
+      <h4>Zona de Prestador</h4>
+      <p>Dashboard de solicitudes, agenda, ingresos, edición de perfil y portafolio.</p>
+    </div>
+    <div class="card" style="border-color:#C4B5FD;">
+      <span class="card-icon">🛡️</span>
+      <h4>Zona de Admin</h4>
+      <p>Panel para ver todos los usuarios, solicitudes y prestadores. Puede cambiar roles y cancelar servicios.</p>
+    </div>
+    <div class="card" style="border-color:#FECACA;grid-column:span 2;">
+      <span class="card-icon">🔌</span>
+      <h4>API interna (conectores)</h4>
+      <p>Rutas internas que conectan con Mercado Pago (crear cobro, recibir confirmación de pago) y con Resend (enviar emails). El usuario nunca las ve directamente.</p>
+    </div>
+  </div>
+
+  <h3>¿Cómo se protege cada zona?</h3>
+  <p>Hay dos capas de protección que trabajan juntas:</p>
+  <div class="card-grid g2">
+    <div class="highlight hl-green" style="margin:0;border-radius:14px;">
+      <strong>🚦 Capa 1 — Middleware</strong>
+      <p>Es el portero de la app. Antes de que cargue cualquier página, verifica si el usuario tiene sesión y si su rol le permite entrar. Si no tiene permiso, lo redirige.</p>
+    </div>
+    <div class="highlight hl-purple" style="margin:0;border-radius:14px;">
+      <strong>🔒 Capa 2 — Seguridad en la base de datos (RLS)</strong>
+      <p>Aunque alguien logre bypassear el middleware, la base de datos tiene sus propias reglas. Un usuario nunca puede ver los datos de otro usuario, sin importar qué.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ BASE DE DATOS -->
+<div class="section break">
+  <div class="section-tag">Base de datos</div>
+  <h2>¿Qué información guarda Lokro?</h2>
+  <p class="section-sub">12 tablas que guardan todo lo que pasa en la plataforma</p>
+
+  <table>
+    <tr>
+      <th>Tabla</th>
+      <th>¿Qué guarda?</th>
+    </tr>
+    <tr>
+      <td><strong>users</strong></td>
+      <td>Todos los usuarios: nombre, email, rol (usuario / prestador / admin) y ubicación GPS</td>
+    </tr>
+    <tr>
+      <td><strong>provider_profiles</strong></td>
+      <td>El perfil del prestador: descripción, tarifa por hora, calificación promedio, si está disponible</td>
+    </tr>
+    <tr>
+      <td><strong>service_requests</strong></td>
+      <td>Cada solicitud de servicio: quién la pidió, a quién, qué necesita, dónde, cuándo y en qué estado está</td>
+    </tr>
+    <tr>
+      <td><strong>messages</strong></td>
+      <td>Los mensajes del chat entre usuario y prestador</td>
+    </tr>
+    <tr>
+      <td><strong>payments</strong></td>
+      <td>El pago de cada servicio: monto total, comisión de Lokro (10%) y lo que recibe el prestador</td>
+    </tr>
+    <tr>
+      <td><strong>reviews</strong></td>
+      <td>Las calificaciones que se dejan usuario y prestador mutuamente al terminar</td>
+    </tr>
+    <tr>
+      <td><strong>notifications</strong></td>
+      <td>Las notificaciones dentro de la app (nueva solicitud, pago recibido, etc.)</td>
+    </tr>
+    <tr>
+      <td><strong>provider_locations</strong></td>
+      <td>La ubicación GPS del prestador actualizada en tiempo real durante el servicio</td>
+    </tr>
+    <tr>
+      <td><strong>categories</strong></td>
+      <td>Las categorías de servicio: Plomería, Electricidad, Limpieza, Tutoría, etc.</td>
+    </tr>
+  </table>
+
+  <div class="highlight hl-amber" style="margin-top:16px;">
+    <strong>Automatizaciones en la base de datos</strong>
+    <p>Cuando alguien deja una calificación, la base de datos <strong>recalcula automáticamente</strong> el promedio del prestador sin que el código tenga que pedirlo. Cuando un usuario se registra, la base de datos <strong>crea su perfil automáticamente</strong>.</p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ FLUJOS -->
+<div class="section break">
+  <div class="section-tag">Flujos principales</div>
+  <h2>¿Cómo funciona paso a paso?</h2>
+  <p class="section-sub">Los recorridos más importantes dentro de la app</p>
+
+  <h3>Flujo 1 — Registro e inicio de sesión</h3>
+  <div class="flow">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>El usuario entra a la app y se registra</strong>
+        <span>Puede registrarse con email y contraseña, o con su cuenta de Google con un solo clic. Elige si quiere ser Usuario o Prestador.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>La base de datos crea su perfil automáticamente</strong>
+        <span>Sin que nadie tenga que hacer nada manualmente, el sistema crea su ficha en la plataforma. Si es prestador, también crea su perfil vacío listo para completar.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>La app lo redirige al lugar correcto</strong>
+        <span>Usuario → va al mapa de inicio. Prestador → va a completar su perfil. Admin → va al panel de control.</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Flujo 2 — Solicitar un servicio (Usuario)</h3>
+  <div class="flow">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Busca en el mapa</strong>
+        <span>Ve un mapa con puntos que representan prestadores disponibles cerca de su ubicación. Puede filtrar por categoría, precio o calificación.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Revisa el perfil del prestador</strong>
+        <span>Antes de contratar, puede ver la descripción, fotos de trabajos anteriores, calificación y precio por hora.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Hace la solicitud</strong>
+        <span>Describe qué necesita, elige fecha y hora, y comparte su ubicación. La solicitud queda en estado "Pendiente".</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>El prestador acepta y el usuario paga</strong>
+        <span>Cuando el prestador acepta, el usuario recibe una notificación y pasa a pagar de forma segura con Mercado Pago. El dinero queda retenido hasta que el trabajo se complete.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <strong>Seguimiento en tiempo real</strong>
+        <span>El usuario puede ver en el mapa exactamente dónde está el prestador en camino, y chatear con él directamente.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <strong>Calificación mutua</strong>
+        <span>Al terminar, usuario y prestador se califican entre sí. El sistema actualiza automáticamente el promedio del prestador.</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Flujo 3 — Cómo funciona el pago</h3>
+  <div class="arrow-row">
+    <div class="arrow-box">
+      👤 Usuario<br>
+      <small>Hace clic en "Pagar"</small>
+    </div>
+    <div class="arrow">→</div>
+    <div class="arrow-box">
+      🔌 Lokro<br>
+      <small>Crea la orden en Mercado Pago</small>
+    </div>
+    <div class="arrow">→</div>
+    <div class="arrow-box">
+      💳 Mercado Pago<br>
+      <small>Usuario paga en el checkout</small>
+    </div>
+    <div class="arrow">→</div>
+    <div class="arrow-box">
+      ✅ Confirmación<br>
+      <small>MP avisa a Lokro que se pagó</small>
+    </div>
+    <div class="arrow">→</div>
+    <div class="arrow-box">
+      🔧 Servicio activo<br>
+      <small>El prestador puede comenzar</small>
+    </div>
+  </div>
+  <div class="highlight hl-green" style="margin-top:8px;">
+    <strong>¿Por qué es seguro?</strong>
+    <p>El dinero nunca lo toca Lokro directamente. Mercado Pago lo retiene y solo lo libera al prestador cuando el servicio se completa. Si hay un problema, el usuario puede reclamar el reembolso.</p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ TIEMPO REAL -->
+<div class="section break">
+  <div class="section-tag">Tiempo real</div>
+  <h2>¿Qué pasa al instante?</h2>
+  <p class="section-sub">Tres cosas en la app se actualizan sin necesidad de recargar la página</p>
+
+  <div class="card-grid g3">
+    <div class="card" style="text-align:center;padding:28px 20px;">
+      <span class="card-icon">💬</span>
+      <h4>Chat</h4>
+      <p>Los mensajes entre usuario y prestador aparecen al instante, como WhatsApp.</p>
+    </div>
+    <div class="card" style="text-align:center;padding:28px 20px;">
+      <span class="card-icon">📍</span>
+      <h4>Tracking GPS</h4>
+      <p>El punto del prestador se mueve en el mapa del usuario mientras se acerca al domicilio.</p>
+    </div>
+    <div class="card" style="text-align:center;padding:28px 20px;">
+      <span class="card-icon">🔔</span>
+      <h4>Notificaciones</h4>
+      <p>Cuando llega una nueva solicitud o hay una actualización, aparece el aviso sin recargar.</p>
+    </div>
+  </div>
+
+  <div class="highlight hl-blue" style="margin-top:16px;">
+    <strong>¿Cómo funciona técnicamente?</strong>
+    <p>Supabase mantiene una conexión permanente entre el servidor y el navegador (WebSocket). Cuando algo cambia en la base de datos, el aviso llega al instante al dispositivo del usuario, como si fuera una app móvil nativa.</p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ DECISIONES -->
+<div class="section break">
+  <div class="section-tag">Decisiones clave</div>
+  <h2>¿Por qué se eligió cada tecnología?</h2>
+  <p class="section-sub">Las razones detrás de las herramientas usadas</p>
+
+  <table>
+    <tr>
+      <th>Decisión</th>
+      <th>¿Por qué?</th>
+      <th>Alternativa descartada</th>
+    </tr>
+    <tr>
+      <td><strong>Next.js como base</strong></td>
+      <td>Permite que Google indexe la app (SEO) y que cargue rápido. Todo en un solo proyecto sin servidor separado.</td>
+      <td>React puro (sin SEO), servidor Express aparte (más complejo)</td>
+    </tr>
+    <tr>
+      <td><strong>Supabase como base de datos</strong></td>
+      <td>Incluye base de datos, login, archivos y tiempo real en un solo servicio. Ahorra mucho tiempo de desarrollo.</td>
+      <td>Firebase (no tan potente), servidor propio (más costoso)</td>
+    </tr>
+    <tr>
+      <td><strong>Mercado Pago</strong></td>
+      <td>Es el método de pago más usado en Colombia y Latinoamérica. Acepta PSE, efectivo y tarjetas locales.</td>
+      <td>Stripe (mejor tecnología pero menos usuarios en Colombia)</td>
+    </tr>
+    <tr>
+      <td><strong>Seguridad en la base de datos (RLS)</strong></td>
+      <td>Aunque haya un error en el código, la base de datos garantiza que ningún usuario vea datos de otro. Es una red de seguridad extra.</td>
+      <td>Solo validar en el código (más frágil)</td>
+    </tr>
+    <tr>
+      <td><strong>Mapbox para los mapas</strong></td>
+      <td>Mapas más personalizables y con mejor rendimiento que Google Maps para este caso de uso.</td>
+      <td>Google Maps (más costoso a escala)</td>
+    </tr>
+  </table>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ ESTADO -->
+<div class="section break">
+  <div class="section-tag">Estado del proyecto</div>
+  <h2>¿Qué está listo?</h2>
+  <p class="section-sub">El desarrollo está 100% completo — solo falta configuración de producción</p>
+
+  <div class="card-grid g2">
+    <div class="highlight hl-green" style="margin:0;border-radius:14px;">
+      <strong>✅ Completado</strong>
+      <p style="margin-top:8px;">Registro y login · Mapa con prestadores · Solicitar servicio · Pago seguro · Chat en tiempo real · Tracking GPS · Notificaciones · Panel de admin · Emails automáticos · SEO · Seguridad RLS</p>
+    </div>
+    <div class="highlight hl-amber" style="margin:0;border-radius:14px;">
+      <strong>⏳ Pendiente (configuración del equipo)</strong>
+      <p style="margin-top:8px;">Activar las llaves de Mercado Pago en producción · Verificar el dominio de email · Configurar el webhook de pagos con la URL final · Agregar imagen de previsualización para redes sociales</p>
+    </div>
+  </div>
+
+  <h3>Números del proyecto</h3>
+  <div class="card-grid g4" style="margin-top:12px;">
+    <div class="stat-box">
+      <div class="num">6</div>
+      <div class="label">Fases completadas</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">12</div>
+      <div class="label">Tablas en la base de datos</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">3</div>
+      <div class="label">Roles de usuario</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">12</div>
+      <div class="label">Bugs corregidos en auditoría</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ══════════════ CIERRE -->
+<div style="padding:40px 0 60px;text-align:center;">
+  <div style="font-size:28pt;font-weight:800;margin-bottom:8px;"><span style="color:var(--blue);">Lok</span>ro</div>
+  <div style="color:var(--gray);font-size:11pt;margin-bottom:24px;">Servicios locales a un toque de distancia</div>
+  <div style="display:inline-flex;gap:16px;font-size:10pt;color:var(--gray);">
+    <span>🌐 Vercel (producción)</span>
+    <span>·</span>
+    <span>📦 GitHub (repositorio)</span>
+    <span>·</span>
+    <span>🗄️ Supabase (base de datos)</span>
+  </div>
+  <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);color:#94A3B8;font-size:9pt;">
+    Documento de presentación · Mayo 2026 · Misael Gallo
+  </div>
+</div>
+
+</body>
+</html>
