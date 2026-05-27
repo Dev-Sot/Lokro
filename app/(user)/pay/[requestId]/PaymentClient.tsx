@@ -45,6 +45,14 @@ export function PaymentClient({ requestId, amount }: Props) {
     )
   }
 
+  if (!initPoint) {
+    return (
+      <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+        No se pudo obtener el enlace de pago. Recarga la página e intenta de nuevo.
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       <Button
@@ -52,7 +60,7 @@ export function PaymentClient({ requestId, amount }: Props) {
         className="w-full gap-2 bg-[#009EE3] hover:bg-[#0082be] text-white"
         asChild
       >
-        <a href={initPoint!}>
+        <a href={initPoint}>
           <CreditCard size={18} />
           Pagar con Mercado Pago
         </a>
