@@ -31,15 +31,25 @@ export async function POST(request: Request) {
   const supabase = await createAdminClient()
 
   if (paymentData.status === 'approved') {
-    await supabase
+    const { error: paymentUpdateError } = await supabase
       .from('payments')
       .update({ status: 'PAID' })
       .eq('request_id', requestId)
 
-    await supabase
+    if (paymentUpdateError) {
+      console.error('Webhook: failed to update payment status', paymentUpdateError)
+      return NextResponse.json({ error: 'Payment update failed' }, { status: 500 })
+    }
+
+    const { error: requestUpdateError } = await supabase
       .from('service_requests')
       .update({ status: 'IN_PROGRESS' })
       .eq('id', requestId)
+
+    if (requestUpdateError) {
+      console.error('Webhook: failed to update request status', requestUpdateError)
+      return NextResponse.json({ error: 'Request update failed' }, { status: 500 })
+    }
 
     const { data: serviceReq } = await supabase
       .from('service_requests')
@@ -55,28 +65,32 @@ export async function POST(request: Request) {
         .single()
 
       if (providerProfile) {
-        await supabase.from('notifications').insert({
+        const { error: provNotifError } = await supabase.from('notifications').insert({
           user_id: providerProfile.user_id,
           type: 'PAYMENT_RECEIVED',
           title: 'Pago recibido',
           message: 'Has recibido el pago por tu servicio. El trabajo puede comenzar.',
           read: false,
         })
+        if (provNotifError) console.error('Webhook: provider notification failed', provNotifError)
       }
 
-      await supabase.from('notifications').insert({
+      const { error: userNotifError } = await supabase.from('notifications').insert({
         user_id: serviceReq.user_id,
         type: 'PROVIDER_EN_ROUTE',
         title: 'Prestador en camino',
         message: 'Tu pago fue confirmado. El prestador está en camino.',
         read: false,
       })
+      if (userNotifError) console.error('Webhook: user notification failed', userNotifError)
     }
   } else if (paymentData.status === 'rejected' || paymentData.status === 'cancelled') {
-    await supabase
+    const { error: refundError } = await supabase
       .from('payments')
       .update({ status: 'REFUNDED' })
       .eq('request_id', requestId)
+
+    if (refundError) console.error('Webhook: failed to update payment to REFUNDED', refundError)
   }
 
   return NextResponse.json({ received: true })
