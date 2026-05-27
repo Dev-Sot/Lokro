@@ -127,13 +127,17 @@ export function ChatWindow({ request, currentUser, otherUser, isProvider }: Chat
         filter: `request_id=eq.${request.id}`,
       }, async (payload) => {
         const newMsg = payload.new as Message
-        const { data: sender } = await supabase
+        const { data: sender, error: senderError } = await supabase
           .from('users')
           .select('id, name, avatar_url')
           .eq('id', newMsg.sender_id)
           .single()
 
-        setMessages((prev) => [...prev, { ...newMsg, sender: sender ?? undefined } as Message])
+        if (senderError || !sender) {
+          console.error('ChatWindow: could not fetch sender', senderError)
+        } else {
+          setMessages((prev) => [...prev, { ...newMsg, sender } as Message])
+        }
         setTyping(false)
 
         if (newMsg.sender_id !== currentUser.id) {
