@@ -671,6 +671,118 @@
 <hr class="divider" />
 
 
+<!-- ══════════════ AUDITORÍA DE SEGURIDAD -->
+<div class="section break">
+  <div class="section-tag">Auditoría de seguridad</div>
+  <h2>Vulnerabilidades encontradas y corregidas</h2>
+  <p class="section-sub">Se realizó una auditoría completa de sanitización, autorización y validación de datos</p>
+
+  <div class="highlight hl-green" style="margin-bottom:24px;">
+    <strong>Resultado: 6 vulnerabilidades corregidas</strong>
+    <p>Se auditaron todas las rutas de API, Server Actions, formularios y subida de archivos. Ninguna vulnerabilidad quedó abierta.</p>
+  </div>
+
+  <h3>Vulnerabilidades críticas (2)</h3>
+
+  <div class="flow">
+    <div class="step">
+      <div class="step-num" style="background:var(--red);">1</div>
+      <div class="step-body">
+        <strong>Webhook de pago aceptaba requests sin firma</strong>
+        <span><strong>Archivo:</strong> <code>app/api/webhooks/mercadopago/route.ts</code><br>
+        Si la variable de entorno <code>MERCADOPAGO_WEBHOOK_SECRET</code> no estaba configurada, <strong>cualquier atacante podía enviar una confirmación de pago falsa</strong> y activar servicios sin pagar. El código decía <code>if (!secret) return true</code> — se cambió a <code>return false</code> para que falle cerrado en lugar de abierto.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--red);">2</div>
+      <div class="step-body">
+        <strong>Cualquier prestador podía ver y manipular el tracking de cualquier servicio</strong>
+        <span><strong>Archivo:</strong> <code>app/(user)/tracking/[serviceId]/page.tsx</code><br>
+        El sistema verificaba si el usuario tenía el rol PROVIDER, pero no si era <em>el</em> prestador asignado a ese servicio. Un prestador podía entrar al tracking de cualquier solicitud y transmitir su GPS como si fuera el otro prestador. Se corrigió verificando que <code>providerProfile.id === request.provider_id</code> antes de dar acceso.</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Vulnerabilidades altas (2)</h3>
+
+  <div class="flow">
+    <div class="step">
+      <div class="step-num" style="background:var(--amber);">3</div>
+      <div class="step-body">
+        <strong>Escalada de privilegios — se podía asignar rol ADMIN desde la acción de cambio de rol</strong>
+        <span><strong>Archivo:</strong> <code>app/actions/admin.ts</code><br>
+        El parámetro <code>role</code> solo estaba validado por TypeScript, que no protege en tiempo de ejecución. Un llamado directo a la Server Action podía pasar <code>role: "ADMIN"</code>. Se agregó validación con <strong>Zod</strong> que solo permite <code>USER</code> o <code>PROVIDER</code>, bloqueando la asignación de ADMIN por esta vía.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--amber);">4</div>
+      <div class="step-body">
+        <strong>Inyección de filtros en la búsqueda del panel admin</strong>
+        <span><strong>Archivo:</strong> <code>app/(admin)/panel/usuarios/page.tsx</code><br>
+        El parámetro <code>q</code> de búsqueda se interpolaba directamente en el filtro <code>.or()</code> de PostgREST. Caracteres como <code>,</code> <code>(</code> <code>)</code> podían inyectar condiciones adicionales en la consulta. Se sanitiza el input eliminando esos caracteres y limitando a 60 caracteres antes de usarlo.</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Vulnerabilidades medias (2)</h3>
+
+  <div class="flow">
+    <div class="step">
+      <div class="step-num" style="background:var(--gray);">5</div>
+      <div class="step-body">
+        <strong>Subida de archivos sin validación de tipo real</strong>
+        <span><strong>Archivo:</strong> <code>lib/services/storage.ts</code><br>
+        El upload solo verificaba el tamaño y usaba la extensión del nombre del archivo para guardarlo. Un atacante podía renombrar cualquier archivo como <code>.jpg</code> y subirlo. Se agregó validación de <code>file.type</code> contra la lista permitida (<code>image/jpeg</code>, <code>image/png</code>, <code>image/webp</code>) y la extensión ahora se toma del MIME real, no del nombre.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--gray);">6</div>
+      <div class="step-body">
+        <strong>El monto del pago lo enviaba el cliente sin verificación</strong>
+        <span><strong>Archivo:</strong> <code>app/api/mercadopago/create-preference/route.ts</code><br>
+        El usuario podía manipular el monto que se enviaba al body del request. Se agregó validación de tipo (<code>typeof === 'number'</code>), verificación de que sea un número finito (<code>Number.isFinite()</code>) y un límite máximo de 100 millones de COP para evitar valores absurdos o ataques de desbordamiento.</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Capas de seguridad activas en el sistema</h3>
+  <div class="card-grid g3" style="margin-top:12px;">
+    <div class="card" style="border-color:#BFDBFE;">
+      <span class="card-icon">🚦</span>
+      <h4>Middleware de rutas</h4>
+      <p>Verifica el JWT y el rol del usuario antes de cargar cualquier página. Sin sesión válida, redirige a login.</p>
+    </div>
+    <div class="card" style="border-color:#C4B5FD;">
+      <span class="card-icon">🔒</span>
+      <h4>RLS en la base de datos</h4>
+      <p>Aunque haya un bug en el código, PostgreSQL garantiza que cada usuario solo puede leer y escribir sus propios datos.</p>
+    </div>
+    <div class="card" style="border-color:#A7F3D0;">
+      <span class="card-icon">✅</span>
+      <h4>Validación con Zod</h4>
+      <p>Todos los formularios y Server Actions validan los datos con esquemas Zod antes de tocar la base de datos.</p>
+    </div>
+    <div class="card" style="border-color:#FDE68A;">
+      <span class="card-icon">🔐</span>
+      <h4>JWT + Cookie HttpOnly</h4>
+      <p>La sesión se guarda en una cookie segura que JavaScript del navegador no puede leer, protegiendo contra XSS.</p>
+    </div>
+    <div class="card" style="border-color:#FECACA;">
+      <span class="card-icon">🔏</span>
+      <h4>HMAC en webhooks</h4>
+      <p>Cada notificación de pago de Mercado Pago se verifica con firma criptográfica SHA-256 antes de procesarse.</p>
+    </div>
+    <div class="card" style="border-color:#E9D5FF;">
+      <span class="card-icon">🛡️</span>
+      <h4>service_role en webhooks</h4>
+      <p>Solo las rutas internas de servidor usan la clave de administrador. El cliente nunca tiene acceso a ella.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
 <!-- ══════════════ ESTADO -->
 <div class="section break">
   <div class="section-tag">Estado del proyecto</div>
@@ -680,7 +792,7 @@
   <div class="card-grid g2">
     <div class="highlight hl-green" style="margin:0;border-radius:14px;">
       <strong>✅ Completado</strong>
-      <p style="margin-top:8px;">Registro y login · Mapa con prestadores · Solicitar servicio · Pago seguro · Chat en tiempo real · Tracking GPS · Notificaciones · Panel de admin · Emails automáticos · SEO · Seguridad RLS</p>
+      <p style="margin-top:8px;">Registro y login · Mapa con prestadores · Solicitar servicio · Pago seguro · Chat en tiempo real · Tracking GPS · Notificaciones · Panel de admin · Emails automáticos · SEO · Seguridad RLS · Auditoría de seguridad</p>
     </div>
     <div class="highlight hl-amber" style="margin:0;border-radius:14px;">
       <strong>⏳ Pendiente (configuración del equipo)</strong>
@@ -703,8 +815,8 @@
       <div class="label">Roles de usuario</div>
     </div>
     <div class="stat-box">
-      <div class="num">12</div>
-      <div class="label">Bugs corregidos en auditoría</div>
+      <div class="num">6</div>
+      <div class="label">Vulnerabilidades corregidas</div>
     </div>
   </div>
 </div>
