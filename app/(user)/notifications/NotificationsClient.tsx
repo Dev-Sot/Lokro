@@ -1,7 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Bell, CheckCheck } from 'lucide-react'
+import {
+  Bell, ClipboardList, CheckCircle2, Navigation,
+  PartyPopper, Star, DollarSign, type LucideIcon,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { formatRelativeTime, cn } from '@/lib/utils'
@@ -61,13 +64,13 @@ export function NotificationsClient({
     return () => { supabase.removeChannel(channel) }
   }, [userId, setUnreadNotifications])
 
-  const NOTIFICATION_ICONS: Record<string, string> = {
-    NEW_REQUEST: '📋',
-    REQUEST_ACCEPTED: '✅',
-    PROVIDER_EN_ROUTE: '🚗',
-    SERVICE_COMPLETED: '🎉',
-    NEW_REVIEW: '⭐',
-    PAYMENT_RECEIVED: '💰',
+  const NOTIFICATION_ICONS: Record<string, { icon: LucideIcon; bg: string; color: string }> = {
+    NEW_REQUEST:       { icon: ClipboardList,  bg: 'bg-blue-100 dark:bg-blue-950',   color: 'text-blue-600' },
+    REQUEST_ACCEPTED:  { icon: CheckCircle2,   bg: 'bg-green-100 dark:bg-green-950', color: 'text-green-600' },
+    PROVIDER_EN_ROUTE: { icon: Navigation,     bg: 'bg-indigo-100 dark:bg-indigo-950', color: 'text-indigo-600' },
+    SERVICE_COMPLETED: { icon: PartyPopper,    bg: 'bg-purple-100 dark:bg-purple-950', color: 'text-purple-600' },
+    NEW_REVIEW:        { icon: Star,           bg: 'bg-amber-100 dark:bg-amber-950',  color: 'text-amber-500' },
+    PAYMENT_RECEIVED:  { icon: DollarSign,     bg: 'bg-emerald-100 dark:bg-emerald-950', color: 'text-emerald-600' },
   }
 
   if (notifications.length === 0) {
@@ -90,9 +93,17 @@ export function NotificationsClient({
             !notification.read && 'bg-primary/5 border-primary/20'
           )}
         >
-          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xl shrink-0">
-            {NOTIFICATION_ICONS[notification.type] ?? '🔔'}
-          </div>
+          {(() => {
+            const entry = NOTIFICATION_ICONS[notification.type]
+            const Icon = entry?.icon ?? Bell
+            const bg = entry?.bg ?? 'bg-muted'
+            const color = entry?.color ?? 'text-muted-foreground'
+            return (
+              <div className={cn('h-10 w-10 rounded-full flex items-center justify-center shrink-0', bg)}>
+                <Icon size={18} className={color} />
+              </div>
+            )
+          })()}
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <p className="font-medium text-sm">{notification.title}</p>
