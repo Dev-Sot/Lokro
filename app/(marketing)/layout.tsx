@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Logo } from '@/components/shared/Logo'
 import { Button } from '@/components/ui/button'
+import { CookieBanner } from '@/components/shared/CookieBanner'
 
 export default function MarketingLayout({
   children,
@@ -33,6 +34,8 @@ export default function MarketingLayout({
       </header>
 
       <main className="flex-1">{children}</main>
+
+      <CookieBanner />
 
       {/* Footer */}
       <footer className="bg-slate-900 text-gray-400 py-16">
@@ -82,8 +85,8 @@ export default function MarketingLayout({
               <ul className="space-y-3 text-sm">
                 <li><Link href="#" className="hover:text-white transition-colors">Centro de ayuda</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors">Contacto</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Privacidad</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Términos</Link></li>
+                <li><Link href="/privacidad" className="hover:text-white transition-colors">Privacidad</Link></li>
+                <li><Link href="/terminos" className="hover:text-white transition-colors">Términos</Link></li>
               </ul>
             </div>
           </div>
