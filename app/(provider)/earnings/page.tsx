@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 import { Pagination } from '@/components/shared/Pagination'
+import { EarningsExportButton } from '@/components/provider/EarningsExportButton'
 import { DollarSign, TrendingUp, ArrowUpRight } from 'lucide-react'
 import type { ServiceRequestStatus } from '@/types'
 
@@ -103,7 +104,10 @@ export default async function EarningsPage({ searchParams }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-      <h1 className="text-2xl font-bold">Ingresos</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold">Ingresos</h1>
+        <EarningsExportButton />
+      </div>
 
       <div className="grid sm:grid-cols-3 gap-4">
         {[
