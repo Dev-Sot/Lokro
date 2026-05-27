@@ -14,8 +14,11 @@ interface Props {
 }
 
 export default async function AdminUsuariosPage({ searchParams }: Props) {
-  const { page: pageParam, role, q } = await searchParams
+  const { page: pageParam, role, q: rawQ } = await searchParams
   const currentPage = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
+
+  // Sanitize search: allow only safe chars, strip PostgREST filter operators
+  const q = rawQ ? rawQ.replace(/[%(),]/g, '').slice(0, 60).trim() : undefined
 
   const supabase = await createClient()
 
@@ -44,7 +47,7 @@ export default async function AdminUsuariosPage({ searchParams }: Props) {
     dataQuery = dataQuery.eq('role', role)
   }
   if (q) {
-    dataQuery = dataQuery.or(`name.ilike.%${q}%,email.ilike.%${q}%`)
+    dataQuery = dataQuery.or(`name.ilike.%${q}%,email.ilike.%${q}%`) // q already sanitized above
   }
 
   const { data: users } = await dataQuery
