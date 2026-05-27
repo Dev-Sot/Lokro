@@ -88,11 +88,6 @@ export default function LandingPage() {
       <section className="relative bg-gradient-to-br from-primary/8 via-background to-background pt-20 pb-28">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              +1,200 profesionales activos ahora mismo
-            </div>
-
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
               Servicios locales
               <span className="text-primary block">a un toque</span>
@@ -116,22 +111,6 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            <div className="flex items-center gap-6 pt-2">
-              <div className="text-center">
-                <p className="text-2xl font-bold">10K+</p>
-                <p className="text-xs text-muted-foreground">Servicios completados</p>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div className="text-center">
-                <p className="text-2xl font-bold">4.8★</p>
-                <p className="text-xs text-muted-foreground">Calificación media</p>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div className="text-center">
-                <p className="text-2xl font-bold">98%</p>
-                <p className="text-xs text-muted-foreground">Satisfacción</p>
-              </div>
-            </div>
           </div>
 
           {/* Hero visual — mapa con tarjetas de prestadores */}
@@ -312,10 +291,6 @@ export default function LandingPage() {
                 <p className="text-xs text-muted-foreground">Próximo pago en</p>
                 <p className="font-bold text-primary text-lg">2 días</p>
               </div>
-            </div>
-            {/* Badge flotante */}
-            <div className="absolute -top-4 -right-4 bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-              +23% vs mes anterior
             </div>
           </div>
 
