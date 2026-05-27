@@ -19,14 +19,24 @@ import {
   ClipboardList,
   TrendingUp,
 } from 'lucide-react'
+import { StarRating } from '@/components/shared/StarRating'
 import type { ServiceRequest, ProviderProfile } from '@/types'
+
+export interface ReviewItem {
+  id: string
+  rating: number
+  comment: string | null
+  created_at: string
+  author: { name: string; avatar_url: string | null } | null
+}
 
 interface DashboardClientProps {
   initialProfile: ProviderProfile
   userId: string
+  reviews: ReviewItem[]
 }
 
-export function DashboardClient({ initialProfile, userId }: DashboardClientProps) {
+export function DashboardClient({ initialProfile, userId, reviews }: DashboardClientProps) {
   const [available, setAvailable] = useState(initialProfile.available)
   const [updating, setUpdating] = useState(false)
   const [requests, setRequests] = useState<ServiceRequest[]>([])
@@ -174,18 +184,49 @@ export function DashboardClient({ initialProfile, userId }: DashboardClientProps
         ))}
       </div>
 
-      {/* Rating */}
-      <div className="rounded-xl border bg-card p-4 flex items-center gap-4">
-        <div className="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center">
-          <Star size={24} className="text-amber-500 fill-amber-500" />
+      {/* Reviews */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+            <Star size={20} className="text-amber-500 fill-amber-500" />
+          </div>
+          <div>
+            <p className="font-semibold text-lg leading-none">{initialProfile.average_rating.toFixed(1)} <span className="text-muted-foreground font-normal text-sm">/ 5</span></p>
+            <p className="text-sm text-muted-foreground">{initialProfile.total_reviews} reseña{initialProfile.total_reviews !== 1 ? 's' : ''} de clientes</p>
+          </div>
         </div>
-        <div>
-          <p className="text-2xl font-bold">{initialProfile.average_rating.toFixed(1)}</p>
-          <p className="text-sm text-muted-foreground">
-            {initialProfile.total_reviews} reseñas · Calificación promedio
-          </p>
-        </div>
-      </div>
+
+        {reviews.length === 0 ? (
+          <div className="rounded-xl border bg-muted/30 p-8 text-center text-muted-foreground">
+            <Star size={28} className="mx-auto mb-2 opacity-30" />
+            <p className="text-sm">Aún no tienes reseñas. ¡Completa servicios para recibir calificaciones!</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {reviews.map((review) => (
+              <div key={review.id} className="rounded-xl border bg-card p-4 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <UserAvatar
+                      name={review.author?.name ?? '?'}
+                      avatarUrl={review.author?.avatar_url ?? null}
+                      size="sm"
+                    />
+                    <p className="text-sm font-medium">{review.author?.name ?? 'Cliente'}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {formatRelativeTime(review.created_at)}
+                  </span>
+                </div>
+                <StarRating rating={review.rating} size={13} />
+                {review.comment && (
+                  <p className="text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Pending requests */}
       {pending.length > 0 && (
