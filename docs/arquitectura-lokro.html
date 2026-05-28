@@ -441,80 +441,167 @@
 <!-- SEGURIDAD -->
 <div class="section break">
   <div class="section-tag">Seguridad</div>
-  <h2>Lo que implementé</h2>
-  <p class="section-sub">Cada medida responde a un vector de ataque real que identificamos en la auditoría</p>
+  <h2>Lo que implementé — y por qué importa</h2>
+  <p class="section-sub">Auditoría completa del código: cada vulnerabilidad identificada, corregida y documentada</p>
 
-  <div class="highlight hl-blue" style="margin-bottom:22px;">
-    <strong>Filosofía: fail-closed</strong>
-    <p>Si algo falla o no está configurado, el sistema bloquea por defecto. Nunca permite el acceso "por si acaso" o "en modo desarrollo". Esto se aplica en todos los puntos de entrada críticos.</p>
+  <div class="highlight hl-red" style="margin-bottom:10px;">
+    <strong>Principio: fail-closed</strong>
+    <p>Cuando algo falla o no está configurado, el sistema bloquea por defecto. En ningún caso se permite el acceso "provisional" o "en modo desarrollo". Si el secreto del webhook no está, se rechazan <em>todas</em> las peticiones. Si el JWT no es válido, se redirige a login. Nunca al revés.</p>
   </div>
 
+  <div class="highlight hl-blue" style="margin-bottom:22px;">
+    <strong>4 capas de defensa independientes</strong>
+    <p>Cada capa asume que la anterior puede estar comprometida o tener un bug. Si el middleware falla, RLS bloquea en la BD. Si RLS no cubre un caso, Zod rechaza el input. Si Zod pasa algo, el servidor valida de nuevo. Nunca una sola barrera.</p>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <span style="background:#BFDBFE;color:#1D4ED8;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">① Middleware JWT</span>
+      <span style="font-size:14pt;color:#94A3B8;">→</span>
+      <span style="background:#C4B5FD;color:#5B21B6;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">② RLS en PostgreSQL</span>
+      <span style="font-size:14pt;color:#94A3B8;">→</span>
+      <span style="background:#A7F3D0;color:#065F46;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">③ Validación Zod</span>
+      <span style="font-size:14pt;color:#94A3B8;">→</span>
+      <span style="background:#FEE2E2;color:#991B1B;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">④ Verificación en servidor</span>
+    </div>
+  </div>
+
+  <!-- 1 -->
   <div class="sec-measure">
     <div class="sec-measure-head">
       <div class="sec-num">1</div>
-      <div class="sec-title">JWT en cookie HttpOnly — protección contra XSS</div>
+      <div class="sec-title">JWT en cookie HttpOnly — contra robo de sesión (XSS)</div>
     </div>
-    <p class="sec-why">El token de sesión del usuario se guarda en una cookie con el flag <code>HttpOnly</code>. Esto significa que <strong>ningún JavaScript del navegador puede leerlo</strong> — ni el nuestro ni el de un atacante que inyecte código malicioso en la página. Es la defensa básica contra XSS que afecta autenticación.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> si un atacante logra inyectar JavaScript en la página (XSS), puede hacer <code>document.cookie</code> y robar el token de sesión. Con ese token puede operar como cualquier usuario sin conocer su contraseña.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el flag <code>HttpOnly</code> hace que el navegador nunca exponga la cookie a JavaScript. <code>document.cookie</code> devuelve vacío. El token solo viaja en la cabecera HTTP — inaccesible para cualquier script.</p>
+      </div>
+    </div>
   </div>
 
+  <!-- 2 -->
   <div class="sec-measure">
     <div class="sec-measure-head">
       <div class="sec-num">2</div>
-      <div class="sec-title">Middleware + RLS — protección de rutas en dos capas</div>
+      <div class="sec-title">Middleware + RLS — dos capas que no dependen la una de la otra</div>
     </div>
-    <p class="sec-why">El middleware de Next.js verifica el JWT y el rol antes de cargar cualquier página. Si eso fallara, la base de datos tiene RLS activado — PostgreSQL bloquea el acceso a nivel de fila según el usuario autenticado. Un bug en el código de la app no puede exponer datos de otro usuario porque la BD tiene su propia política independiente.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> si el middleware tiene un bug o alguien accede directamente a la API, puede leer datos de cualquier usuario. Una sola capa de protección es un punto único de falla.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el middleware verifica el JWT antes de cada página. Pero aunque ese código fallara, PostgreSQL aplica sus propias políticas RLS por usuario autenticado — directamente en la base de datos, sin pasar por el código de la app.</p>
+      </div>
+    </div>
   </div>
 
+  <!-- 3 -->
   <div class="sec-measure">
     <div class="sec-measure-head">
       <div class="sec-num">3</div>
-      <div class="sec-title">Verificación de identidad en tracking GPS</div>
+      <div class="sec-title">Escalada de privilegios bloqueada con Zod — nadie se hace ADMIN solo</div>
     </div>
-    <p class="sec-why">Antes de mostrar la pantalla de seguimiento, verifico que el prestador autenticado sea el asignado a esa solicitud específica. Sin esta verificación, cualquier prestador registrado podría ver el seguimiento de servicios de otros. El código compara <code>providerProfile.id === request.provider_id</code> — si no coincide, redirige.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> la función <code>setUserRole()</code> tomaba el rol directamente del cuerpo de la petición. Un atacante podía enviar <code>&#123; role: "ADMIN" &#125;</code> desde las DevTools del navegador y darse acceso total al panel de administración.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> antes de tocar la BD, Zod valida con <code>z.enum(['USER', 'PROVIDER'])</code>. Cualquier otro valor — incluyendo <code>"ADMIN"</code> — lanza un error y la función termina sin ejecutar nada.</p>
+      </div>
+    </div>
   </div>
 
+  <!-- 4 -->
   <div class="sec-measure">
     <div class="sec-measure-head">
       <div class="sec-num">4</div>
-      <div class="sec-title">Validación de rol con Zod — no se puede escalar a ADMIN</div>
+      <div class="sec-title">Verificación de identidad en tracking GPS — acceso cruzado bloqueado</div>
     </div>
-    <p class="sec-why">La función que cambia roles de usuario acepta solo <code>USER</code> o <code>PROVIDER</code>. Aunque alguien manipule la petición y envíe <code>role: "ADMIN"</code>, Zod rechaza el valor antes de que llegue a la base de datos. El esquema es explícito: <code>z.enum(['USER', 'PROVIDER'])</code>.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> cualquier prestador autenticado podía ir a <code>/tracking/[cualquier-id]</code> y ver la ubicación GPS en tiempo real de un servicio que no era el suyo — incluyendo los datos del cliente.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el servidor consulta qué prestador está asignado a esa solicitud y compara con el usuario autenticado: <code>providerProfile.id === request.provider_id</code>. Si no coincide, redirige inmediatamente sin mostrar nada.</p>
+      </div>
+    </div>
   </div>
 
+  <!-- 5 -->
   <div class="sec-measure">
     <div class="sec-measure-head">
       <div class="sec-num">5</div>
-      <div class="sec-title">HMAC-SHA256 en webhooks de Mercado Pago</div>
+      <div class="sec-title">HMAC-SHA256 en webhook de pagos — nadie puede fingir un pago aprobado</div>
     </div>
-    <p class="sec-why">El servidor de Mercado Pago firma cada notificación de pago con una clave secreta. Verifico esa firma antes de actualizar cualquier estado en la base de datos. Si el secreto no está configurado, el sistema rechaza <strong>todas</strong> las peticiones (fail-closed) — no permite pagos sin verificar. Sin esto, cualquiera podría fingir que un pago fue aprobado.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> el endpoint <code>/api/webhooks/mercadopago</code> era público. Cualquiera podía hacer un <code>POST</code> con un payload falso que dijera <code>status: "approved"</code> y desbloquear un servicio sin pagar. El webhook original tenía <code>if (!secret) return true</code> — es decir, si la clave no estaba configurada, dejaba pasar todo.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> cada notificación llega firmada con HMAC-SHA256. El servidor recalcula la firma con la clave secreta compartida y la compara. Si no coinciden → 401. Si la clave no existe → 401 también (fail-closed). Solo Mercado Pago puede producir una firma válida.</p>
+      </div>
+    </div>
   </div>
 
+  <!-- 6 -->
   <div class="sec-measure">
     <div class="sec-measure-head">
       <div class="sec-num">6</div>
-      <div class="sec-title">Validación del monto antes de crear el pago</div>
+      <div class="sec-title">Validación del monto en servidor — contra manipulación de precios</div>
     </div>
-    <p class="sec-why">El monto del pago se valida en el servidor: debe ser un número finito, mayor a $100 COP y menor a $100.000.000 COP. Sin este límite, un atacante podría manipular el valor desde el cliente e intentar crear preferencias de pago con montos absurdos o negativos.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> el monto viajaba desde el frontend al servidor sin verificación. Un atacante con DevTools podía interceptar la petición y cambiar el monto a $1 COP antes de que llegara, pagando un servicio a precio arbitrario.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el servidor valida que el monto sea un número finito entre <strong>$100 y $100.000.000 COP</strong>. Cualquier valor fuera de ese rango — incluyendo negativos, <code>Infinity</code> o <code>NaN</code> — devuelve 400 y no crea la preferencia.</p>
+      </div>
+    </div>
   </div>
 
+  <!-- 7 -->
   <div class="sec-measure">
     <div class="sec-measure-head">
       <div class="sec-num">7</div>
-      <div class="sec-title">Validación de archivos por MIME type real</div>
+      <div class="sec-title">Validación de archivos por MIME type — contra upload de ejecutables</div>
     </div>
-    <p class="sec-why">Cuando un prestador sube fotos de perfil o portafolio, verifico el <code>Content-Type</code> real del archivo — no solo la extensión del nombre. Un archivo <code>malware.jpg</code> que en realidad es un ejecutable es rechazado. Solo se aceptan <code>image/jpeg</code>, <code>image/png</code> e <code>image/webp</code>.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> la validación original miraba solo la extensión del nombre del archivo. Un atacante podía renombrar <code>script.exe</code> a <code>foto.jpg</code> y subirlo al storage. Si ese archivo se servía sin restricción, podía ejecutarse en ciertos contextos.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> se verifica el <code>Content-Type</code> real del archivo — el tipo MIME que el navegador detecta del contenido binario, no del nombre. Solo pasan <code>image/jpeg</code>, <code>image/png</code> e <code>image/webp</code>. La extensión del archivo guardado también se deriva del MIME, no del nombre original.</p>
+      </div>
+    </div>
   </div>
 
-  <h3>Resumen de puntos de entrada validados</h3>
+  <!-- 8 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">8</div>
+      <div class="sec-title">Sanitización de búsquedas en el admin — contra inyección en PostgREST</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> el parámetro de búsqueda <code>?q=</code> en el panel admin se pasaba directamente al filtro de PostgREST (la capa que convierte URLs en queries SQL). Un input como <code>q=a),(b</code> podía romper la estructura del filtro e inyectar condiciones no previstas en la consulta.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> antes de usar el parámetro se eliminan los caracteres especiales <code>( ) , % </code> que tienen significado en la sintaxis de PostgREST, y se limita la longitud a 60 caracteres. Lo que llega al filtro es texto limpio.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Resumen — ataque vs. defensa</h3>
   <table>
-    <tr><th>Punto de entrada</th><th>Qué se valida y por qué</th></tr>
-    <tr><td><strong>Cambio de rol</strong></td><td>Solo USER o PROVIDER — previene escalada de privilegios a ADMIN</td></tr>
-    <tr><td><strong>Monto del pago</strong></td><td>Número finito, $100–$100M COP — previene manipulación de valores desde el cliente</td></tr>
-    <tr><td><strong>Búsqueda admin</strong></td><td>Se eliminan caracteres <code>( ) , %</code> — previene inyección de operadores en filtros PostgREST</td></tr>
-    <tr><td><strong>Subida de archivos</strong></td><td>MIME type real verificado, no la extensión — previene upload de archivos maliciosos</td></tr>
-    <tr><td><strong>Tracking GPS</strong></td><td>Prestador autenticado debe coincidir con el asignado — previene acceso cruzado entre servicios</td></tr>
-    <tr><td><strong>Webhook de pagos</strong></td><td>Firma HMAC verificada, fail-closed sin secreto — previene fraudes de pago falso</td></tr>
-    <tr><td><strong>Sesión de usuario</strong></td><td>JWT en cookie HttpOnly — inaccesible para JavaScript, previene robo de sesión por XSS</td></tr>
+    <tr><th>Ataque evitado</th><th>Medida implementada</th><th>Dónde aplica</th></tr>
+    <tr><td><strong>Robo de sesión por XSS</strong></td><td>Cookie HttpOnly — JavaScript no puede leer el JWT</td><td>Toda la app</td></tr>
+    <tr><td><strong>Acceso sin autenticación</strong></td><td>Middleware + RLS independiente en PostgreSQL</td><td>Toda la app</td></tr>
+    <tr><td><strong>Escalada de privilegios a ADMIN</strong></td><td>Zod: <code>z.enum(['USER','PROVIDER'])</code> bloquea cualquier otro valor</td><td>Panel admin</td></tr>
+    <tr><td><strong>Acceso cruzado entre servicios GPS</strong></td><td>Comparación <code>providerProfile.id === request.provider_id</code></td><td>Tracking</td></tr>
+    <tr><td><strong>Pago falso sin pagar</strong></td><td>HMAC-SHA256 verificado, fail-closed si falta el secreto</td><td>Webhook MP</td></tr>
+    <tr><td><strong>Manipulación del monto</strong></td><td>Validación servidor: número finito, $100–$100M COP</td><td>Creación de pago</td></tr>
+    <tr><td><strong>Upload de ejecutables</strong></td><td>MIME type real verificado, extensión derivada del tipo</td><td>Subida de archivos</td></tr>
+    <tr><td><strong>Inyección en filtros SQL</strong></td><td>Sanitización de caracteres especiales en búsquedas admin</td><td>Panel admin</td></tr>
   </table>
 </div>
 
