@@ -36,6 +36,7 @@
   strong { color:var(--dark); }
   ul { padding-left:18px; color:var(--gray); }
   ul li { margin-bottom:5px; }
+  code { background:var(--light); border:1px solid var(--border); padding:1px 6px; border-radius:5px; font-size:9.5pt; font-family:monospace; color:var(--dark); }
 
   /* CARDS */
   .card-grid { display:grid; gap:14px; margin:14px 0; }
@@ -46,6 +47,15 @@
   .card-icon { font-size:24pt; margin-bottom:8px; display:block; }
   .card h4 { font-size:11pt; font-weight:700; color:var(--dark); margin-bottom:4px; }
   .card p { font-size:9.5pt; margin:0; }
+
+  /* PERSON CARD */
+  .person-card { border:1.5px solid var(--border); border-radius:16px; padding:22px 20px; background:white; display:flex; gap:16px; align-items:flex-start; }
+  .person-avatar { width:52px; height:52px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; color:white; font-size:20pt; font-weight:800; flex-shrink:0; }
+  .person-avatar.gray { background:#64748B; }
+  .person-name { font-size:13pt; font-weight:700; margin-bottom:2px; }
+  .person-role { font-size:10pt; color:var(--blue); font-weight:600; margin-bottom:8px; }
+  .person-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .person-tag { background:var(--light); border:1px solid var(--border); padding:3px 10px; border-radius:99px; font-size:8.5pt; font-weight:600; color:var(--gray); }
 
   /* STATS */
   .stat-box { text-align:center; border:1.5px solid var(--border); border-radius:14px; padding:20px 12px; background:var(--light); }
@@ -67,8 +77,26 @@
   .hl-green  { background:var(--green-l);  border-left:5px solid var(--green); }
   .hl-amber  { background:var(--amber-l);  border-left:5px solid var(--amber); }
   .hl-purple { background:var(--purple-l); border-left:5px solid var(--purple); }
+  .hl-red    { background:var(--red-l);    border-left:5px solid var(--red); }
   .highlight p { margin:0; font-size:10.5pt; }
   .highlight strong { font-size:11pt; display:block; margin-bottom:4px; }
+
+  /* SERVICE BLOCK */
+  .service-block { border:1.5px solid var(--border); border-radius:16px; padding:20px; margin-bottom:14px; }
+  .service-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .service-badge { font-size:9pt; font-weight:700; padding:3px 12px; border-radius:99px; }
+  .service-name { font-size:13pt; font-weight:800; }
+  .service-desc { font-size:10pt; color:var(--gray); margin-bottom:10px; }
+  .service-uses { display:flex; flex-wrap:wrap; gap:6px; }
+  .service-use { background:var(--light); border:1px solid var(--border); padding:4px 12px; border-radius:8px; font-size:9pt; font-weight:600; }
+
+  /* SECURITY MEASURE */
+  .sec-measure { border-radius:14px; border:1.5px solid var(--border); padding:18px; margin-bottom:12px; }
+  .sec-measure-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .sec-num { width:28px; height:28px; border-radius:50%; background:var(--dark); color:white; font-weight:800; font-size:10pt; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .sec-title { font-size:12pt; font-weight:700; }
+  .sec-why { font-size:9.5pt; color:var(--gray); margin-top:4px; }
+  .sec-why strong { color:var(--dark); font-size:9.5pt; }
 
   /* TABLE */
   table { width:100%; border-collapse:collapse; margin:12px 0; font-size:10pt; }
@@ -92,7 +120,7 @@
     body { padding:0 24px; }
     .cover { page-break-after:always; }
     h2, h3 { page-break-after:avoid; }
-    .card, .step, .highlight, tr { page-break-inside:avoid; }
+    .card, .step, .highlight, tr, .service-block, .sec-measure { page-break-inside:avoid; }
   }
 </style>
 </head>
@@ -103,10 +131,12 @@
   <div class="cover-logo"><span>Lok</span>ro</div>
   <div class="cover-tagline">Marketplace de servicios locales por geolocalización</div>
   <div class="cover-desc">
-    Plataforma web que conecta usuarios con prestadores de servicios cercanos usando GPS en tiempo real — como un Uber para el hogar.
+    Plataforma web que conecta usuarios con prestadores de servicios cercanos usando GPS en tiempo real. El usuario ve en el mapa quién está disponible, solicita, paga y hace seguimiento en vivo — como un Uber para el hogar.
   </div>
   <div class="pills">
     <span class="pill">Next.js 16</span>
+    <span class="pill">React 19</span>
+    <span class="pill">TypeScript</span>
     <span class="pill">Supabase</span>
     <span class="pill">Mapbox</span>
     <span class="pill">Mercado Pago</span>
@@ -115,108 +145,233 @@
   <div class="cover-info">
     <div><label>Versión</label><span>1.0 · Producción</span></div>
     <div><label>Fecha</label><span>Mayo 2026</span></div>
-    <div><label>Autor</label><span>Misael Gallo</span></div>
+    <div><label>Desarrollador principal</label><span>Misael Gallo</span></div>
   </div>
 </div>
 
 
-<!-- QUÉ ES -->
+<!-- QUIÉNES SOMOS -->
 <div class="section">
-  <div class="section-tag">¿Qué es?</div>
-  <h2>Lokro en una frase</h2>
-  <p class="section-sub">Tres roles, un objetivo: conectar servicio con quien lo necesita</p>
+  <div class="section-tag">El equipo</div>
+  <h2>Quiénes somos</h2>
+  <p class="section-sub">Dos personas, dos frentes: producto y plataforma</p>
 
-  <div class="card-grid g3">
+  <div class="card-grid g2">
+    <div class="person-card">
+      <div class="person-avatar">M</div>
+      <div>
+        <div class="person-name">Misael Gallo</div>
+        <div class="person-role">Desarrollador principal</div>
+        <p style="font-size:9.5pt;margin:0 0 4px;">Responsable de toda la arquitectura del sistema, el frontend y la seguridad. Construyó el producto de cero: desde la base de datos hasta la interfaz.</p>
+        <div class="person-tags">
+          <span class="person-tag">Arquitectura</span>
+          <span class="person-tag">Frontend</span>
+          <span class="person-tag">Base de datos</span>
+          <span class="person-tag">Seguridad</span>
+          <span class="person-tag">Deploy</span>
+        </div>
+      </div>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar gray">C</div>
+      <div>
+        <div class="person-name">Compañero de equipo</div>
+        <div class="person-role" style="color:var(--gray);">Integración de servicios externos</div>
+        <p style="font-size:9.5pt;margin:0 0 4px;">Encargado de gestionar las credenciales de producción, configurar las variables de entorno en Vercel y la cuenta de Mercado Pago.</p>
+        <div class="person-tags">
+          <span class="person-tag">Mercado Pago</span>
+          <span class="person-tag">Resend / Emails</span>
+          <span class="person-tag">Config Vercel</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid g3" style="margin-top:20px;">
     <div class="card">
       <span class="card-icon">👤</span>
       <h4>Usuario</h4>
-      <p>Busca en el mapa, solicita, paga y hace seguimiento en tiempo real.</p>
+      <p>Busca en el mapa, solicita, paga y hace seguimiento GPS en tiempo real.</p>
     </div>
     <div class="card">
       <span class="card-icon">🔧</span>
       <h4>Prestador</h4>
-      <p>Publica su perfil, acepta trabajos y cobra por la plataforma.</p>
+      <p>Publica su perfil, acepta trabajos y cobra directamente por la plataforma.</p>
     </div>
     <div class="card">
       <span class="card-icon">🛡️</span>
       <h4>Admin</h4>
-      <p>Gestiona usuarios, modera solicitudes y controla la plataforma.</p>
+      <p>Gestiona usuarios, asigna roles y modera solicitudes desde un panel privado.</p>
     </div>
   </div>
 
   <div class="highlight hl-blue" style="margin-top:18px;">
     <strong>Modelo de negocio</strong>
-    <p>Lokro cobra <strong>10% de comisión</strong> sobre cada servicio completado al prestador. Para el usuario siempre es gratis.</p>
+    <p>Lokro cobra <strong>10% de comisión</strong> sobre cada servicio completado — descontado automáticamente al pagar. Para el usuario siempre es gratis.</p>
   </div>
 </div>
 
 <hr class="divider" />
 
 
-<!-- TECNOLOGÍAS -->
+<!-- CÓMO SE CONSTRUYÓ EL FRONTEND -->
 <div class="section break">
-  <div class="section-tag">Tecnologías</div>
-  <h2>Stack técnico</h2>
-  <p class="section-sub">Todo el proyecto en un solo repositorio, desplegado en Vercel</p>
+  <div class="section-tag">Frontend</div>
+  <h2>Cómo se construyó</h2>
+  <p class="section-sub">Un solo proyecto que hace de frontend y de backend al mismo tiempo</p>
 
+  <div class="highlight hl-blue">
+    <strong>Next.js App Router — monolito moderno</strong>
+    <p>No hay un servidor separado. Next.js unifica el frontend (lo que ve el usuario) y el backend (APIs, autenticación, lógica de negocio) en un solo proyecto. Vercel lo despliega automáticamente con cada push.</p>
+  </div>
+
+  <h3>Estructura de rutas — 4 zonas</h3>
+  <p style="font-size:10pt;color:var(--gray);margin-bottom:12px;">Next.js permite agrupar rutas entre paréntesis para separar lógica sin afectar la URL. Cada zona tiene su propio layout, middleware y restricciones de acceso.</p>
+
+  <div class="card-grid g2">
+    <div class="card" style="border-color:#BFDBFE;">
+      <h4 style="font-family:monospace;font-size:11pt;">(marketing)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Landing, registro, login, términos, privacidad. <strong>Sin autenticación.</strong> Accesible por cualquiera.</p>
+    </div>
+    <div class="card" style="border-color:#A7F3D0;">
+      <h4 style="font-family:monospace;font-size:11pt;">(user)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Mapa, solicitudes, pago, chat, tracking GPS. Requiere <strong>rol USER</strong>.</p>
+    </div>
+    <div class="card" style="border-color:#FDE68A;">
+      <h4 style="font-family:monospace;font-size:11pt;">(provider)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Dashboard, agenda, ingresos, perfil. Requiere <strong>rol PROVIDER</strong>.</p>
+    </div>
+    <div class="card" style="border-color:#C4B5FD;">
+      <h4 style="font-family:monospace;font-size:11pt;">(admin)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Panel de gestión. Requiere <strong>rol ADMIN</strong>. Solo el equipo accede.</p>
+    </div>
+  </div>
+
+  <h3>Server Components vs. Client Components</h3>
+  <div class="card-grid g2">
+    <div class="card">
+      <h4>⚙️ Server Components</h4>
+      <p style="font-size:9.5pt;">Corren en el servidor — cargan datos de la BD directamente y envían el HTML listo al navegador. Más rápido, más seguro: las claves API nunca llegan al cliente.</p>
+    </div>
+    <div class="card">
+      <h4>🖥️ Client Components</h4>
+      <p style="font-size:9.5pt;">Corren en el navegador — usados para el mapa interactivo, el chat en tiempo real, el seguimiento GPS y las notificaciones en vivo.</p>
+    </div>
+  </div>
+
+  <h3>Herramientas del frontend</h3>
   <table>
-    <tr><th>Tecnología</th><th>Rol en el proyecto</th></tr>
-    <tr><td><strong>Next.js 16</strong></td><td>Framework principal — frontend + backend en un solo proyecto, con SSR para SEO</td></tr>
-    <tr><td><strong>Supabase</strong></td><td>Base de datos PostgreSQL, autenticación, almacenamiento y WebSockets en tiempo real</td></tr>
-    <tr><td><strong>Mapbox</strong></td><td>Mapa interactivo y seguimiento GPS en tiempo real</td></tr>
-    <tr><td><strong>Mercado Pago</strong></td><td>Procesamiento de pagos (PSE, tarjetas, efectivo) — PCI DSS</td></tr>
-    <tr><td><strong>Resend</strong></td><td>Envío de emails transaccionales (confirmaciones, notificaciones)</td></tr>
-    <tr><td><strong>Vercel</strong></td><td>Hosting y CI/CD — deploy automático en cada push a main</td></tr>
-    <tr><td><strong>Zustand</strong></td><td>Estado global en el cliente (sesión, notificaciones, mapa)</td></tr>
+    <tr><th>Herramienta</th><th>Qué hace en el proyecto</th></tr>
+    <tr><td><strong>TypeScript</strong></td><td>Tipado estático en todo el proyecto — los errores se detectan antes de ejecutar el código</td></tr>
+    <tr><td><strong>Tailwind CSS v4</strong></td><td>Estilos directamente en el componente, sin archivos CSS separados</td></tr>
+    <tr><td><strong>Zustand</strong></td><td>Estado global compartido entre componentes: sesión del usuario, conteo de notificaciones sin leer, estado del mapa</td></tr>
+    <tr><td><strong>React 19</strong></td><td>Interfaz declarativa con los últimos hooks y optimizaciones de rendering</td></tr>
+    <tr><td><strong>shadcn/ui</strong></td><td>Biblioteca de componentes UI accesibles y reutilizables (botones, formularios, modales)</td></tr>
   </table>
 </div>
 
 <hr class="divider" />
 
 
-<!-- ARQUITECTURA -->
+<!-- SERVICIOS IMPLEMENTADOS -->
 <div class="section break">
-  <div class="section-tag">Arquitectura</div>
-  <h2>Monolito moderno — JAMstack</h2>
-  <p class="section-sub">No hay servidor separado. Next.js maneja frontend y backend en un solo proyecto</p>
+  <div class="section-tag">Servicios</div>
+  <h2>Qué servicios usamos y para qué</h2>
+  <p class="section-sub">Cada servicio resuelve un problema concreto del producto</p>
 
-  <div class="card-grid g2">
-    <div class="card" style="border-color:#BFDBFE;">
-      <span class="card-icon">🏠</span>
-      <h4>Zona pública</h4>
-      <p>Landing, registro, login. Sin autenticación requerida.</p>
+  <!-- SUPABASE -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#D1FAE5;color:#059669;">Base de datos + Auth + Tiempo real</div>
+      <div class="service-name">Supabase</div>
     </div>
-    <div class="card" style="border-color:#A7F3D0;">
-      <span class="card-icon">👤</span>
-      <h4>Zona Usuario</h4>
-      <p>Mapa, solicitudes, pago, chat y tracking GPS.</p>
-    </div>
-    <div class="card" style="border-color:#FDE68A;">
-      <span class="card-icon">🔧</span>
-      <h4>Zona Prestador</h4>
-      <p>Panel, solicitudes, agenda, ingresos y perfil.</p>
-    </div>
-    <div class="card" style="border-color:#C4B5FD;">
-      <span class="card-icon">🛡️</span>
-      <h4>Zona Admin</h4>
-      <p>Gestión de usuarios, solicitudes y roles.</p>
-    </div>
-    <div class="card" style="border-color:#FECACA; grid-column:span 2;">
-      <span class="card-icon">🔌</span>
-      <h4>API interna</h4>
-      <p>Rutas de servidor para webhooks de Mercado Pago y envío de emails con Resend.</p>
+    <p class="service-desc">Es la columna vertebral del proyecto. Un solo servicio que nos da base de datos, autenticación, WebSockets y almacenamiento de archivos.</p>
+    <div class="card-grid g2" style="margin-top:10px;">
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">PostgreSQL + PostGIS</strong>
+        <p style="font-size:9pt;margin-top:4px;">12 tablas con relaciones. Las coordenadas GPS del prestador se guardan como tipo <code>POINT</code> geográfico, lo que permite hacer consultas de proximidad del tipo "mostrar prestadores a menos de 5 km".</p>
+      </div>
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">Auth (JWT + Google OAuth)</strong>
+        <p style="font-size:9pt;margin-top:4px;">Maneja login con email/contraseña y con Google. El token de sesión se guarda en una cookie <code>HttpOnly</code> — inaccesible para el JavaScript del navegador.</p>
+      </div>
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">Realtime — WebSockets</strong>
+        <p style="font-size:9pt;margin-top:4px;">Mantiene una conexión WebSocket permanente entre el servidor y el navegador. Cualquier cambio en la base de datos (nuevo mensaje, nueva notificación, posición GPS) llega al instante sin que el usuario recargue.</p>
+      </div>
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">Row Level Security (RLS)</strong>
+        <p style="font-size:9pt;margin-top:4px;">Políticas en la base de datos que bloquean accesos cruzados — un usuario no puede leer los datos de otro aunque haya un bug en el código de la aplicación.</p>
+      </div>
     </div>
   </div>
 
-  <h3>Protección de rutas — 2 capas</h3>
-  <div class="card-grid g2">
-    <div class="highlight hl-blue" style="margin:0;border-radius:14px;">
-      <strong>Middleware (Next.js)</strong>
-      <p>Verifica el JWT y el rol antes de cargar cada página. Sin sesión → redirige a login.</p>
+  <!-- MAPBOX -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#DBEAFE;color:#1D4ED8;">Mapas + GPS</div>
+      <div class="service-name">Mapbox</div>
     </div>
-    <div class="highlight hl-purple" style="margin:0;border-radius:14px;">
-      <strong>RLS (PostgreSQL)</strong>
-      <p>La base de datos aplica políticas de acceso por usuario, independiente del código.</p>
+    <p class="service-desc">Renderiza el mapa interactivo donde el usuario ve los prestadores disponibles y sigue su posición en tiempo real.</p>
+    <div class="service-uses">
+      <span class="service-use">Mapa de prestadores disponibles</span>
+      <span class="service-use">Marcadores por categoría de servicio</span>
+      <span class="service-use">Seguimiento GPS en vivo</span>
+      <span class="service-use">Actualización del punto cada 5 segundos</span>
+    </div>
+    <div class="highlight hl-purple" style="margin-top:12px;padding:12px 16px;">
+      <p style="font-size:9.5pt;"><strong>Cómo funciona el tracking:</strong> el prestador transmite sus coordenadas a la tabla <code>provider_locations</code>; el usuario tiene una suscripción Supabase Realtime activa sobre esa fila — cuando cambia, Mapbox mueve el marcador en el mapa.</p>
+    </div>
+  </div>
+
+  <!-- MERCADO PAGO -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#FEF3C7;color:#D97706;">Pagos</div>
+      <div class="service-name">Mercado Pago</div>
+    </div>
+    <p class="service-desc">Procesa todos los pagos de forma segura. Lokro nunca maneja datos de tarjeta directamente.</p>
+    <div class="arrow-row" style="margin:12px 0 8px;">
+      <div class="arrow-box">Usuario<small>Clic en "Pagar"</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">API Route<small>Crea preferencia</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">Mercado Pago<small>Checkout propio</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">Webhook<small>Notificación firmada</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">BD actualizada<small>Estado → PAID</small></div>
+    </div>
+    <p style="font-size:9.5pt;color:var(--gray);">El estado del pago <strong>solo cambia por el webhook</strong> — nunca por la URL de retorno. El webhook está firmado con HMAC-SHA256 y el servidor verifica la firma antes de hacer cualquier cambio.</p>
+  </div>
+
+  <!-- RESEND -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#F3E8FF;color:#7C3AED;">Emails</div>
+      <div class="service-name">Resend</div>
+    </div>
+    <p class="service-desc">Envío de emails transaccionales con alta tasa de entrega — no llegan a spam.</p>
+    <div class="service-uses">
+      <span class="service-use">Confirmación de registro</span>
+      <span class="service-use">Recuperación de contraseña</span>
+      <span class="service-use">Notificación de nueva solicitud</span>
+      <span class="service-use">Confirmación de pago</span>
+    </div>
+  </div>
+
+  <!-- VERCEL -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:var(--light);color:var(--gray);">Hosting + CI/CD</div>
+      <div class="service-name">Vercel</div>
+    </div>
+    <p class="service-desc">Hosting optimizado para Next.js. Cada push al repositorio genera un deploy automático en segundos.</p>
+    <div class="service-uses">
+      <span class="service-use">Deploy automático en cada push</span>
+      <span class="service-use">Preview por Pull Request</span>
+      <span class="service-use">CDN global — carga rápida</span>
+      <span class="service-use">Variables de entorno seguras</span>
     </div>
   </div>
 </div>
@@ -228,139 +383,28 @@
 <div class="section break">
   <div class="section-tag">Base de datos</div>
   <h2>12 tablas en PostgreSQL</h2>
-  <p class="section-sub">Todas con Row Level Security activado</p>
+  <p class="section-sub">Todas con Row Level Security activado. Los datos de un usuario nunca son visibles para otro.</p>
 
   <table>
-    <tr><th>Tabla</th><th>Contenido</th></tr>
-    <tr><td><strong>users</strong></td><td>Usuarios con rol, email y coordenadas GPS</td></tr>
-    <tr><td><strong>provider_profiles</strong></td><td>Tarifa, bio, calificación y disponibilidad del prestador</td></tr>
-    <tr><td><strong>service_requests</strong></td><td>Solicitudes con estado: PENDING → ACCEPTED → PAID → IN_PROGRESS → COMPLETED</td></tr>
-    <tr><td><strong>payments</strong></td><td>Monto total, comisión (10%) y pago neto al prestador</td></tr>
-    <tr><td><strong>messages</strong></td><td>Chat en tiempo real entre usuario y prestador</td></tr>
-    <tr><td><strong>reviews</strong></td><td>Calificaciones mutuas al terminar el servicio</td></tr>
-    <tr><td><strong>notifications</strong></td><td>Alertas en tiempo real dentro de la app</td></tr>
-    <tr><td><strong>provider_locations</strong></td><td>Posición GPS del prestador durante el servicio activo</td></tr>
+    <tr><th>Tabla</th><th>Qué guarda</th></tr>
+    <tr><td><strong>users</strong></td><td>Perfil del usuario: nombre, email, rol (USER / PROVIDER / ADMIN) y coordenadas</td></tr>
+    <tr><td><strong>provider_profiles</strong></td><td>Datos del prestador: tarifa, bio, categorías, calificación promedio y disponibilidad</td></tr>
+    <tr><td><strong>service_requests</strong></td><td>Solicitudes con su estado completo: PENDING → ACCEPTED → PAID → IN_PROGRESS → COMPLETED</td></tr>
+    <tr><td><strong>payments</strong></td><td>Monto total, comisión del 10% y pago neto al prestador por cada servicio</td></tr>
+    <tr><td><strong>messages</strong></td><td>Mensajes del chat en tiempo real entre usuario y prestador</td></tr>
+    <tr><td><strong>reviews</strong></td><td>Calificaciones mutuas al finalizar el servicio (usuario al prestador y viceversa)</td></tr>
+    <tr><td><strong>notifications</strong></td><td>Alertas en tiempo real dentro de la app, con estado de leído/no leído</td></tr>
+    <tr><td><strong>provider_locations</strong></td><td>Posición GPS del prestador durante el servicio activo — se actualiza cada 5 segundos</td></tr>
   </table>
 
-  <div class="highlight hl-amber" style="margin-top:14px;">
-    <strong>Automatizaciones en la base de datos</strong>
-    <p>Un <strong>trigger PostgreSQL</strong> recalcula el promedio de calificación del prestador automáticamente cada vez que llega una reseña nueva.</p>
-  </div>
-</div>
-
-<hr class="divider" />
-
-
-<!-- FLUJOS -->
-<div class="section break">
-  <div class="section-tag">Flujos</div>
-  <h2>Cómo funciona por dentro</h2>
-  <p class="section-sub">Los tres flujos más importantes del sistema</p>
-
-  <h3>Flujo 1 — Registro</h3>
-  <div class="flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <strong>Email/contraseña o Google OAuth 2.0</strong>
-        <span>Supabase Auth gestiona ambos. Con Google: redirige → obtiene token → intercambia por JWT en cookie <code>HttpOnly</code>.</span>
-      </div>
+  <div class="card-grid g2" style="margin-top:16px;">
+    <div class="highlight hl-amber" style="margin:0;border-radius:14px;">
+      <strong>Trigger automático — calificaciones</strong>
+      <p>Cada vez que llega una reseña nueva, un trigger de PostgreSQL recalcula el promedio de calificación del prestador. No hay lógica manual en el código de la app.</p>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <strong>Trigger PostgreSQL crea el perfil automáticamente</strong>
-        <span><code>on_auth_user_created</code> inserta la fila en <code>users</code>. Si es prestador, también crea su <code>provider_profile</code> vacío.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <strong>Middleware redirige según el rol</strong>
-        <span>USER → <code>/home</code> · PROVIDER → <code>/dashboard</code> · ADMIN → <code>/panel</code></span>
-      </div>
-    </div>
-  </div>
-
-  <h3>Flujo 2 — Solicitud de servicio</h3>
-
-  <div class="highlight hl-purple" style="margin-bottom:12px;">
-    <strong>Estados de la solicitud</strong>
-    <p style="margin-top:8px;">
-      <span style="background:#F5F3FF;border:1px solid #C4B5FD;padding:3px 10px;border-radius:6px;font-size:9.5pt;font-weight:600;">PENDING</span>
-      → <span style="background:#EFF6FF;border:1px solid #BFDBFE;padding:3px 10px;border-radius:6px;font-size:9.5pt;font-weight:600;">ACCEPTED</span>
-      → <span style="background:#FEF3C7;border:1px solid #FDE68A;padding:3px 10px;border-radius:6px;font-size:9.5pt;font-weight:600;">PAID</span>
-      → <span style="background:#D1FAE5;border:1px solid #6EE7B7;padding:3px 10px;border-radius:6px;font-size:9.5pt;font-weight:600;">IN_PROGRESS</span>
-      → <span style="background:#D1FAE5;border:1px solid #059669;padding:3px 10px;border-radius:6px;font-size:9.5pt;font-weight:600;">COMPLETED</span>
-    </p>
-  </div>
-
-  <div class="flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <strong>Mapa con prestadores disponibles (Mapbox + PostGIS)</strong>
-        <span>Consulta <code>provider_profiles</code> donde <code>available = true</code>. Coordenadas como tipo POINT — permite queries de proximidad geográfica.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <strong>INSERT en <code>service_requests</code> → estado PENDING</strong>
-        <span>Server Action inserta la solicitud y notifica al prestador vía Supabase Realtime (WebSocket).</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <strong>Prestador acepta → ACCEPTED · Tracking GPS en tiempo real</strong>
-        <span>El prestador transmite su posición a <code>provider_locations</code>. El usuario tiene una suscripción Realtime activa y ve el punto moverse en el mapa.</span>
-      </div>
-    </div>
-  </div>
-
-  <h3>Flujo 3 — Pago</h3>
-  <div class="arrow-row">
-    <div class="arrow-box">Usuario<small>Clic en "Pagar"</small></div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">API Route<small>POST /api/payments/create</small></div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">Mercado Pago<small>Checkout PCI DSS</small></div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">Webhook<small>POST /api/webhooks/mp</small></div>
-    <div class="arrow">→</div>
-    <div class="arrow-box">Estado PAID<small>service_role bypassa RLS</small></div>
-  </div>
-  <div class="highlight hl-amber" style="margin-top:6px;">
-    <strong>El webhook es la única fuente de verdad</strong>
-    <p>No se confía en la URL de retorno — solo la notificación del servidor de MP (firmada con HMAC-SHA256) actualiza el estado del pago.</p>
-  </div>
-</div>
-
-<hr class="divider" />
-
-
-<!-- TIEMPO REAL -->
-<div class="section break">
-  <div class="section-tag">Tiempo real</div>
-  <h2>Tres funciones en vivo</h2>
-  <p class="section-sub">Supabase mantiene un WebSocket permanente — los cambios en la BD llegan al instante</p>
-
-  <div class="card-grid g3">
-    <div class="card" style="text-align:center;padding:24px 16px;">
-      <span class="card-icon">💬</span>
-      <h4>Chat</h4>
-      <p>Mensajes al instante entre usuario y prestador.</p>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 16px;">
-      <span class="card-icon">📍</span>
-      <h4>Tracking GPS</h4>
-      <p>El punto del prestador se mueve en el mapa en vivo.</p>
-    </div>
-    <div class="card" style="text-align:center;padding:24px 16px;">
-      <span class="card-icon">🔔</span>
-      <h4>Notificaciones</h4>
-      <p>Alertas sin recargar la página.</p>
+    <div class="highlight hl-blue" style="margin:0;border-radius:14px;">
+      <strong>Trigger automático — creación de perfil</strong>
+      <p>Al registrarse, el trigger <code>on_auth_user_created</code> crea automáticamente la fila en <code>users</code>. Si es prestador, también crea su <code>provider_profile</code> vacío.</p>
     </div>
   </div>
 </div>
@@ -371,79 +415,81 @@
 <!-- SEGURIDAD -->
 <div class="section break">
   <div class="section-tag">Seguridad</div>
-  <h2>4 capas de protección</h2>
-  <p class="section-sub">Cada capa asume que la anterior puede fallar</p>
+  <h2>Lo que implementé</h2>
+  <p class="section-sub">Cada medida responde a un vector de ataque real que identificamos en la auditoría</p>
 
-  <div class="card-grid g2">
-    <div class="card" style="border-color:#BFDBFE;">
-      <span class="card-icon">🚦</span>
-      <h4>1 · Middleware</h4>
-      <p>Valida JWT y rol antes de cada página. Sin sesión → login.</p>
-    </div>
-    <div class="card" style="border-color:#C4B5FD;">
-      <span class="card-icon">🔒</span>
-      <h4>2 · RLS en PostgreSQL</h4>
-      <p>La base de datos bloquea accesos cruzados aunque haya bugs en el código.</p>
-    </div>
-    <div class="card" style="border-color:#A7F3D0;">
-      <span class="card-icon">✅</span>
-      <h4>3 · Validación con Zod</h4>
-      <p>Todos los inputs se validan con esquemas estrictos antes de llegar a la BD.</p>
-    </div>
-    <div class="card" style="border-color:#FDE68A;">
-      <span class="card-icon">🔐</span>
-      <h4>4 · JWT en HttpOnly</h4>
-      <p>La cookie de sesión no es legible por JavaScript. Protección contra XSS.</p>
-    </div>
-    <div class="card" style="border-color:#FECACA;">
-      <span class="card-icon">🔏</span>
-      <h4>HMAC-SHA256 en webhooks</h4>
-      <p>Firma criptográfica en cada notificación de pago. Sin firma válida → 401.</p>
-    </div>
-    <div class="card" style="border-color:#E9D5FF;">
-      <span class="card-icon">🛡️</span>
-      <h4>service_role aislada</h4>
-      <p>La clave de admin solo existe en el servidor. El cliente solo tiene la anon key.</p>
-    </div>
+  <div class="highlight hl-blue" style="margin-bottom:22px;">
+    <strong>Filosofía: fail-closed</strong>
+    <p>Si algo falla o no está configurado, el sistema bloquea por defecto. Nunca permite el acceso "por si acaso" o "en modo desarrollo". Esto se aplica en todos los puntos de entrada críticos.</p>
   </div>
 
-  <h3>Validaciones implementadas</h3>
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">1</div>
+      <div class="sec-title">JWT en cookie HttpOnly — protección contra XSS</div>
+    </div>
+    <p class="sec-why">El token de sesión del usuario se guarda en una cookie con el flag <code>HttpOnly</code>. Esto significa que <strong>ningún JavaScript del navegador puede leerlo</strong> — ni el nuestro ni el de un atacante que inyecte código malicioso en la página. Es la defensa básica contra XSS que afecta autenticación.</p>
+  </div>
+
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">2</div>
+      <div class="sec-title">Middleware + RLS — protección de rutas en dos capas</div>
+    </div>
+    <p class="sec-why">El middleware de Next.js verifica el JWT y el rol antes de cargar cualquier página. Si eso fallara, la base de datos tiene RLS activado — PostgreSQL bloquea el acceso a nivel de fila según el usuario autenticado. Un bug en el código de la app no puede exponer datos de otro usuario porque la BD tiene su propia política independiente.</p>
+  </div>
+
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">3</div>
+      <div class="sec-title">Verificación de identidad en tracking GPS</div>
+    </div>
+    <p class="sec-why">Antes de mostrar la pantalla de seguimiento, verifico que el prestador autenticado sea el asignado a esa solicitud específica. Sin esta verificación, cualquier prestador registrado podría ver el seguimiento de servicios de otros. El código compara <code>providerProfile.id === request.provider_id</code> — si no coincide, redirige.</p>
+  </div>
+
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">4</div>
+      <div class="sec-title">Validación de rol con Zod — no se puede escalar a ADMIN</div>
+    </div>
+    <p class="sec-why">La función que cambia roles de usuario acepta solo <code>USER</code> o <code>PROVIDER</code>. Aunque alguien manipule la petición y envíe <code>role: "ADMIN"</code>, Zod rechaza el valor antes de que llegue a la base de datos. El esquema es explícito: <code>z.enum(['USER', 'PROVIDER'])</code>.</p>
+  </div>
+
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">5</div>
+      <div class="sec-title">HMAC-SHA256 en webhooks de Mercado Pago</div>
+    </div>
+    <p class="sec-why">El servidor de Mercado Pago firma cada notificación de pago con una clave secreta. Verifico esa firma antes de actualizar cualquier estado en la base de datos. Si el secreto no está configurado, el sistema rechaza <strong>todas</strong> las peticiones (fail-closed) — no permite pagos sin verificar. Sin esto, cualquiera podría fingir que un pago fue aprobado.</p>
+  </div>
+
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">6</div>
+      <div class="sec-title">Validación del monto antes de crear el pago</div>
+    </div>
+    <p class="sec-why">El monto del pago se valida en el servidor: debe ser un número finito, mayor a $100 COP y menor a $100.000.000 COP. Sin este límite, un atacante podría manipular el valor desde el cliente e intentar crear preferencias de pago con montos absurdos o negativos.</p>
+  </div>
+
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">7</div>
+      <div class="sec-title">Validación de archivos por MIME type real</div>
+    </div>
+    <p class="sec-why">Cuando un prestador sube fotos de perfil o portafolio, verifico el <code>Content-Type</code> real del archivo — no solo la extensión del nombre. Un archivo <code>malware.jpg</code> que en realidad es un ejecutable es rechazado. Solo se aceptan <code>image/jpeg</code>, <code>image/png</code> e <code>image/webp</code>.</p>
+  </div>
+
+  <h3>Resumen de puntos de entrada validados</h3>
   <table>
-    <tr><th>Punto de entrada</th><th>Qué se valida</th></tr>
-    <tr><td><strong>Cambio de rol</strong></td><td>Solo permite USER o PROVIDER — nunca ADMIN por esta vía</td></tr>
-    <tr><td><strong>Monto del pago</strong></td><td>Número finito, mín. $100 · máx. $100.000.000 COP</td></tr>
-    <tr><td><strong>Búsqueda admin</strong></td><td>Se eliminan caracteres <code>( ) ,</code> antes de usarlos en el filtro</td></tr>
-    <tr><td><strong>Subida de archivos</strong></td><td>MIME type real verificado (no solo la extensión del nombre)</td></tr>
-    <tr><td><strong>Tracking GPS</strong></td><td>Solo el prestador asignado puede transmitir ubicación para esa solicitud</td></tr>
+    <tr><th>Punto de entrada</th><th>Qué se valida y por qué</th></tr>
+    <tr><td><strong>Cambio de rol</strong></td><td>Solo USER o PROVIDER — previene escalada de privilegios a ADMIN</td></tr>
+    <tr><td><strong>Monto del pago</strong></td><td>Número finito, $100–$100M COP — previene manipulación de valores desde el cliente</td></tr>
+    <tr><td><strong>Búsqueda admin</strong></td><td>Se eliminan caracteres <code>( ) , %</code> — previene inyección de operadores en filtros PostgREST</td></tr>
+    <tr><td><strong>Subida de archivos</strong></td><td>MIME type real verificado, no la extensión — previene upload de archivos maliciosos</td></tr>
+    <tr><td><strong>Tracking GPS</strong></td><td>Prestador autenticado debe coincidir con el asignado — previene acceso cruzado entre servicios</td></tr>
+    <tr><td><strong>Webhook de pagos</strong></td><td>Firma HMAC verificada, fail-closed sin secreto — previene fraudes de pago falso</td></tr>
+    <tr><td><strong>Sesión de usuario</strong></td><td>JWT en cookie HttpOnly — inaccesible para JavaScript, previene robo de sesión por XSS</td></tr>
   </table>
-</div>
-
-<hr class="divider" />
-
-
-<!-- ESTADO -->
-<div class="section break">
-  <div class="section-tag">Estado</div>
-  <h2>100% funcional</h2>
-  <p class="section-sub">Solo falta configuración del equipo en producción</p>
-
-  <div class="card-grid g2">
-    <div class="highlight hl-green" style="margin:0;border-radius:14px;">
-      <strong>✅ Listo</strong>
-      <p style="margin-top:6px;">Auth · Mapa · Solicitudes · Pagos · Chat · Tracking · Notificaciones · Panel admin · Emails · SEO · Seguridad · Términos y privacidad</p>
-    </div>
-    <div class="highlight hl-amber" style="margin:0;border-radius:14px;">
-      <strong>⏳ Pendiente</strong>
-      <p style="margin-top:6px;">Activar llaves de Mercado Pago en producción · Verificar dominio de email · Configurar webhook con URL final</p>
-    </div>
-  </div>
-
-  <div class="card-grid g4" style="margin-top:20px;">
-    <div class="stat-box"><div class="num">6</div><div class="label">Fases</div></div>
-    <div class="stat-box"><div class="num">12</div><div class="label">Tablas BD</div></div>
-    <div class="stat-box"><div class="num">3</div><div class="label">Roles</div></div>
-    <div class="stat-box"><div class="num">6</div><div class="label">Capas de seguridad</div></div>
-  </div>
 </div>
 
 <hr class="divider" />
