@@ -2,397 +2,402 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Lokro — Presentación de Arquitectura</title>
+<title>Lokro — Arquitectura</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --blue:   #2563EB;
-    --blue-l: #EFF6FF;
-    --dark:   #0F172A;
-    --gray:   #64748B;
-    --border: #E2E8F0;
-    --light:  #F8FAFC;
-    --green:  #059669;
-    --green-l:#D1FAE5;
-    --amber:  #D97706;
-    --amber-l:#FEF3C7;
-    --red:    #DC2626;
-    --red-l:  #FEE2E2;
-    --purple: #7C3AED;
-    --purple-l:#EDE9FE;
+    --blue:#2563EB; --blue-l:#EFF6FF; --dark:#0F172A; --gray:#64748B;
+    --border:#E2E8F0; --light:#F8FAFC; --green:#059669; --green-l:#D1FAE5;
+    --amber:#D97706; --amber-l:#FEF3C7; --red:#DC2626; --red-l:#FEE2E2;
+    --purple:#7C3AED; --purple-l:#EDE9FE;
   }
+  body { font-family:'Plus Jakarta Sans',sans-serif; font-size:11pt; color:var(--dark); background:white; max-width:860px; margin:0 auto; padding:0 36px; line-height:1.6; }
 
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 11pt;
-    color: var(--dark);
-    background: white;
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 36px;
-    line-height: 1.6;
-  }
+  /* PORTADA */
+  .cover { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:60px 0 40px; page-break-after:always; }
+  .cover-logo { font-size:42pt; font-weight:800; margin-bottom:6px; }
+  .cover-logo span { color:var(--blue); }
+  .cover-tagline { font-size:14pt; color:var(--gray); font-weight:500; margin-bottom:36px; }
+  .cover-desc { font-size:13pt; line-height:1.7; max-width:620px; margin-bottom:40px; padding:22px 26px; background:var(--blue-l); border-radius:16px; border-left:5px solid var(--blue); }
+  .pills { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:40px; }
+  .pill { background:var(--light); border:1px solid var(--border); padding:7px 16px; border-radius:99px; font-size:10pt; font-weight:600; }
+  .cover-info { display:flex; gap:40px; padding-top:24px; border-top:1px solid var(--border); font-size:10pt; }
+  .cover-info label { color:var(--gray); display:block; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px; }
+  .cover-info span { font-weight:700; }
 
-  /* ─── PORTADA ─── */
-  .cover {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 60px 0 40px;
-    page-break-after: always;
-  }
-  .cover-logo {
-    font-size: 38pt;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-  .cover-logo span { color: var(--blue); }
-  .cover-tagline {
-    font-size: 14pt;
-    color: var(--gray);
-    font-weight: 500;
-    margin-bottom: 40px;
-  }
-  .cover-desc {
-    font-size: 13pt;
-    line-height: 1.7;
-    color: var(--dark);
-    max-width: 600px;
-    margin-bottom: 48px;
-    padding: 24px 28px;
-    background: var(--blue-l);
-    border-radius: 16px;
-    border-left: 5px solid var(--blue);
-  }
-  .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
-  .pill {
-    background: var(--light);
-    border: 1px solid var(--border);
-    padding: 8px 18px;
-    border-radius: 99px;
-    font-size: 10pt;
-    font-weight: 600;
-    color: var(--dark);
-  }
-  .cover-info {
-    display: flex; gap: 40px;
-    padding-top: 28px;
-    border-top: 1px solid var(--border);
-    font-size: 10pt;
-  }
-  .cover-info div label { color: var(--gray); display: block; font-size: 9pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
-  .cover-info div span { font-weight: 700; font-size: 11pt; }
+  /* SECCIONES */
+  .section { padding:44px 0 16px; }
+  .section-tag { display:inline-block; background:var(--blue-l); color:var(--blue); font-size:8.5pt; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 14px; border-radius:99px; margin-bottom:10px; }
+  h2 { font-size:22pt; font-weight:800; line-height:1.2; margin-bottom:6px; }
+  .section-sub { font-size:11.5pt; color:var(--gray); margin-bottom:22px; }
+  h3 { font-size:12.5pt; font-weight:700; margin:24px 0 10px; }
+  p { color:var(--gray); margin-bottom:8px; }
+  strong { color:var(--dark); }
+  ul { padding-left:18px; color:var(--gray); }
+  ul li { margin-bottom:5px; }
+  code { background:var(--light); border:1px solid var(--border); padding:1px 6px; border-radius:5px; font-size:9.5pt; font-family:monospace; color:var(--dark); }
 
-  /* ─── SECCIONES ─── */
-  .section { padding: 48px 0 20px; }
-  .section-tag {
-    display: inline-block;
-    background: var(--blue-l);
-    color: var(--blue);
-    font-size: 8.5pt;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 4px 14px;
-    border-radius: 99px;
-    margin-bottom: 12px;
-  }
-  h2 {
-    font-size: 22pt;
-    font-weight: 800;
-    color: var(--dark);
-    line-height: 1.2;
-    margin-bottom: 8px;
-  }
-  .section-sub {
-    font-size: 12pt;
-    color: var(--gray);
-    margin-bottom: 28px;
-    font-weight: 400;
-  }
-  h3 {
-    font-size: 13pt;
-    font-weight: 700;
-    color: var(--dark);
-    margin: 28px 0 10px;
-  }
-  p { color: var(--gray); margin-bottom: 10px; }
-  strong { color: var(--dark); }
+  /* CARDS */
+  .card-grid { display:grid; gap:14px; margin:14px 0; }
+  .g2 { grid-template-columns:1fr 1fr; }
+  .g3 { grid-template-columns:1fr 1fr 1fr; }
+  .g4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+  .card { border:1.5px solid var(--border); border-radius:14px; padding:18px; background:white; }
+  .card-icon { font-size:24pt; margin-bottom:8px; display:block; }
+  .card h4 { font-size:11pt; font-weight:700; color:var(--dark); margin-bottom:4px; }
+  .card p { font-size:9.5pt; margin:0; }
 
-  /* ─── CARDS ─── */
-  .card-grid { display: grid; gap: 16px; margin: 16px 0; }
-  .g2 { grid-template-columns: 1fr 1fr; }
-  .g3 { grid-template-columns: 1fr 1fr 1fr; }
-  .g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  /* PERSON CARD */
+  .person-card { border:1.5px solid var(--border); border-radius:16px; padding:22px 20px; background:white; display:flex; gap:16px; align-items:flex-start; }
+  .person-avatar { width:52px; height:52px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; color:white; font-size:20pt; font-weight:800; flex-shrink:0; }
+  .person-avatar.gray { background:#64748B; }
+  .person-name { font-size:13pt; font-weight:700; margin-bottom:2px; }
+  .person-role { font-size:10pt; color:var(--blue); font-weight:600; margin-bottom:8px; }
+  .person-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .person-tag { background:var(--light); border:1px solid var(--border); padding:3px 10px; border-radius:99px; font-size:8.5pt; font-weight:600; color:var(--gray); }
 
-  .card {
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    background: white;
-  }
-  .card-icon {
-    font-size: 26pt;
-    margin-bottom: 10px;
-    display: block;
-  }
-  .card h4 { font-size: 11pt; font-weight: 700; color: var(--dark); margin-bottom: 5px; }
-  .card p { font-size: 9.5pt; margin: 0; }
+  /* STATS */
+  .stat-box { text-align:center; border:1.5px solid var(--border); border-radius:14px; padding:20px 12px; background:var(--light); }
+  .stat-box .num { font-size:28pt; font-weight:800; color:var(--blue); line-height:1; }
+  .stat-box .label { font-size:9.5pt; color:var(--gray); margin-top:4px; font-weight:500; }
 
-  /* ─── STAT BOXES ─── */
-  .stat-box {
-    text-align: center;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 22px 16px;
-    background: var(--light);
-  }
-  .stat-box .num { font-size: 30pt; font-weight: 800; color: var(--blue); line-height: 1; }
-  .stat-box .label { font-size: 9.5pt; color: var(--gray); margin-top: 4px; font-weight: 500; }
+  /* FLOW */
+  .flow { display:flex; flex-direction:column; margin:14px 0; }
+  .step { display:flex; gap:16px; align-items:flex-start; position:relative; }
+  .step:not(:last-child)::after { content:''; position:absolute; left:16px; top:36px; bottom:-4px; width:2px; background:var(--border); }
+  .step-num { width:34px; height:34px; border-radius:50%; background:var(--blue); color:white; font-weight:800; font-size:11pt; display:flex; align-items:center; justify-content:center; flex-shrink:0; z-index:1; position:relative; margin-top:2px; }
+  .step-body { padding-bottom:20px; flex:1; }
+  .step-body strong { display:block; font-size:11pt; margin-bottom:3px; }
+  .step-body span { font-size:10pt; color:var(--gray); }
 
-  /* ─── FLOW ─── */
-  .flow { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
-  .step { display: flex; gap: 18px; align-items: flex-start; position: relative; }
-  .step:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 16px; top: 36px; bottom: -4px;
-    width: 2px; background: var(--border);
-  }
-  .step-num {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--blue); color: white;
-    font-weight: 800; font-size: 11pt;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; z-index: 1; position: relative;
-    margin-top: 2px;
-  }
-  .step-body { padding-bottom: 22px; flex: 1; }
-  .step-body strong { display: block; font-size: 11pt; margin-bottom: 3px; }
-  .step-body span { font-size: 10pt; color: var(--gray); }
+  /* HIGHLIGHT */
+  .highlight { border-radius:14px; padding:18px 22px; margin:14px 0; }
+  .hl-blue   { background:var(--blue-l);   border-left:5px solid var(--blue); }
+  .hl-green  { background:var(--green-l);  border-left:5px solid var(--green); }
+  .hl-amber  { background:var(--amber-l);  border-left:5px solid var(--amber); }
+  .hl-purple { background:var(--purple-l); border-left:5px solid var(--purple); }
+  .hl-red    { background:var(--red-l);    border-left:5px solid var(--red); }
+  .highlight p { margin:0; font-size:10.5pt; }
+  .highlight strong { font-size:11pt; display:block; margin-bottom:4px; }
 
-  /* ─── HIGHLIGHT BOX ─── */
-  .highlight {
-    border-radius: 14px;
-    padding: 20px 24px;
-    margin: 16px 0;
-  }
-  .hl-blue   { background: var(--blue-l);   border-left: 5px solid var(--blue); }
-  .hl-green  { background: var(--green-l);  border-left: 5px solid var(--green); }
-  .hl-amber  { background: var(--amber-l);  border-left: 5px solid var(--amber); }
-  .hl-purple { background: var(--purple-l); border-left: 5px solid var(--purple); }
-  .hl-red    { background: var(--red-l);    border-left: 5px solid var(--red); }
+  /* SERVICE BLOCK */
+  .service-block { border:1.5px solid var(--border); border-radius:16px; padding:20px; margin-bottom:14px; }
+  .service-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .service-badge { font-size:9pt; font-weight:700; padding:3px 12px; border-radius:99px; }
+  .service-name { font-size:13pt; font-weight:800; }
+  .service-desc { font-size:10pt; color:var(--gray); margin-bottom:10px; }
+  .service-uses { display:flex; flex-wrap:wrap; gap:6px; }
+  .service-use { background:var(--light); border:1px solid var(--border); padding:4px 12px; border-radius:8px; font-size:9pt; font-weight:600; }
 
-  .highlight p { margin: 0; font-size: 10.5pt; }
-  .highlight strong { font-size: 11pt; display: block; margin-bottom: 4px; }
+  /* SECURITY MEASURE */
+  .sec-measure { border-radius:14px; border:1.5px solid var(--border); padding:18px; margin-bottom:12px; }
+  .sec-measure-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .sec-num { width:28px; height:28px; border-radius:50%; background:var(--dark); color:white; font-weight:800; font-size:10pt; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .sec-title { font-size:12pt; font-weight:700; }
+  .sec-why { font-size:9.5pt; color:var(--gray); margin-top:4px; }
+  .sec-why strong { color:var(--dark); font-size:9.5pt; }
 
-  /* ─── TABLE ─── */
-  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10pt; }
-  th { background: var(--dark); color: white; padding: 10px 16px; text-align: left; font-size: 9.5pt; font-weight: 600; }
-  th:first-child { border-radius: 8px 0 0 0; }
-  th:last-child  { border-radius: 0 8px 0 0; }
-  td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--gray); vertical-align: top; }
-  tr:nth-child(even) td { background: var(--light); }
-  tr:last-child td { border-bottom: none; }
-  td strong { color: var(--dark); }
+  /* TABLE */
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:10pt; }
+  th { background:var(--dark); color:white; padding:9px 14px; text-align:left; font-size:9.5pt; font-weight:600; }
+  th:first-child { border-radius:8px 0 0 0; } th:last-child { border-radius:0 8px 0 0; }
+  td { padding:9px 14px; border-bottom:1px solid var(--border); color:var(--gray); vertical-align:top; }
+  tr:nth-child(even) td { background:var(--light); }
+  tr:last-child td { border-bottom:none; }
+  td strong { color:var(--dark); }
 
-  /* ─── BADGE ─── */
-  .badge {
-    display: inline-block;
-    padding: 3px 12px; border-radius: 99px;
-    font-size: 8.5pt; font-weight: 700;
-  }
-  .b-green  { background: var(--green-l);  color: var(--green); }
-  .b-blue   { background: var(--blue-l);   color: var(--blue); }
-  .b-amber  { background: var(--amber-l);  color: var(--amber); }
-  .b-red    { background: var(--red-l);    color: var(--red); }
-  .b-purple { background: var(--purple-l); color: var(--purple); }
+  /* ARROW */
+  .arrow-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:14px 0; }
+  .arrow-box { background:var(--light); border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; font-size:10pt; font-weight:600; text-align:center; flex:1; min-width:90px; }
+  .arrow-box small { display:block; font-weight:400; color:var(--gray); font-size:8.5pt; margin-top:2px; }
+  .arrow { font-size:16pt; color:var(--blue); font-weight:700; flex-shrink:0; }
 
-  /* ─── DIVIDER ─── */
-  .divider { border: none; border-top: 2px solid var(--border); margin: 36px 0; }
-
-  /* ─── BREAK ─── */
-  .break { page-break-before: always; }
-
-  /* ─── ARROW ROW ─── */
-  .arrow-row {
-    display: flex; align-items: center; gap: 8px;
-    flex-wrap: wrap; margin: 16px 0;
-  }
-  .arrow-box {
-    background: var(--light); border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 12px 18px;
-    font-size: 10pt; font-weight: 600; text-align: center;
-    flex: 1; min-width: 100px;
-  }
-  .arrow-box small { display: block; font-weight: 400; color: var(--gray); font-size: 8.5pt; margin-top: 2px; }
-  .arrow { font-size: 18pt; color: var(--blue); font-weight: 700; flex-shrink: 0; }
+  .divider { border:none; border-top:2px solid var(--border); margin:32px 0; }
+  .break { page-break-before:always; }
 
   @media print {
-    body { padding: 0 24px; }
-    .cover { page-break-after: always; }
-    h2, h3 { page-break-after: avoid; }
-    .card, .step, .highlight, tr { page-break-inside: avoid; }
+    body { padding:0 24px; }
+    .cover { page-break-after:always; }
+    h2, h3 { page-break-after:avoid; }
+    .card, .step, .highlight, tr, .service-block, .sec-measure { page-break-inside:avoid; }
   }
 </style>
 </head>
 <body>
 
-<!-- ══════════════ PORTADA -->
+<!-- PORTADA -->
 <div class="cover">
   <div class="cover-logo"><span>Lok</span>ro</div>
   <div class="cover-tagline">Marketplace de servicios locales por geolocalización</div>
-
   <div class="cover-desc">
-    Lokro es una aplicación web que conecta a personas con profesionales de servicios cercanos — como plomeros, electricistas o tutores — usando la ubicación GPS en tiempo real.
+    Plataforma web que conecta usuarios con prestadores de servicios cercanos usando GPS en tiempo real. El usuario ve en el mapa quién está disponible, solicita, paga y hace seguimiento en vivo — como un Uber para el hogar.
   </div>
-
   <div class="pills">
-    <span class="pill">🌐 Aplicación Web</span>
-    <span class="pill">📍 Geolocalización</span>
-    <span class="pill">💬 Chat en tiempo real</span>
-    <span class="pill">💳 Pagos en línea</span>
-    <span class="pill">📊 Panel de administración</span>
+    <span class="pill">Next.js 16</span>
+    <span class="pill">React 19</span>
+    <span class="pill">TypeScript</span>
+    <span class="pill">Supabase</span>
+    <span class="pill">Mapbox</span>
+    <span class="pill">Mercado Pago</span>
+    <span class="pill">Vercel</span>
   </div>
-
   <div class="cover-info">
-    <div><label>Versión</label><span>1.0 — Lista para producción</span></div>
+    <div><label>Versión</label><span>1.0 · Producción</span></div>
     <div><label>Fecha</label><span>Mayo 2026</span></div>
-    <div><label>Autor</label><span>Misael Gallo</span></div>
+    <div><label>Equipo</label><span>Misael · Nelson · Andrés · Alejandro</span></div>
   </div>
 </div>
 
 
-<!-- ══════════════ QUÉ ES -->
+<!-- QUIÉNES SOMOS -->
 <div class="section">
-  <div class="section-tag">¿Qué es Lokro?</div>
-  <h2>Una app para conectar personas<br>con profesionales cercanos</h2>
-  <p class="section-sub">Como un Uber, pero para servicios del hogar y el trabajo</p>
+  <div class="section-tag">El equipo</div>
+  <h2>Quiénes somos</h2>
+  <p class="section-sub">Cuatro desarrolladores, un mismo objetivo</p>
 
-  <div class="card-grid g3">
+  <div class="card-grid g2">
+    <div class="person-card" style="border-color:#BFDBFE;background:#F8FBFF;">
+      <div class="person-avatar">M</div>
+      <div>
+        <div class="person-name">Misael Gallo</div>
+        <div class="person-role">Arquitectura · Frontend · <span style="color:#DC2626;font-weight:800;">Seguridad</span></div>
+        <p style="font-size:9.5pt;margin:0 0 4px;">Responsable de la arquitectura del sistema, el frontend y toda la capa de seguridad: auditoría, validaciones, protección de rutas y hardening de la base de datos.</p>
+        <div class="person-tags">
+          <span class="person-tag" style="background:#FEE2E2;border-color:#FECACA;color:#DC2626;font-weight:700;">Seguridad</span>
+          <span class="person-tag">Arquitectura</span>
+          <span class="person-tag">Frontend</span>
+          <span class="person-tag">Base de datos</span>
+          <span class="person-tag">Deploy</span>
+        </div>
+      </div>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar" style="background:#059669;">N</div>
+      <div>
+        <div class="person-name">Nelson Garzón</div>
+        <div class="person-role" style="color:#059669;">Backend & Base de datos</div>
+        <p style="font-size:9.5pt;margin:0 0 4px;">Encargado de la lógica del servidor, el diseño de las tablas en PostgreSQL y las políticas de acceso a los datos.</p>
+        <div class="person-tags">
+          <span class="person-tag">Backend</span>
+          <span class="person-tag">Base de datos</span>
+          <span class="person-tag">PostgreSQL</span>
+        </div>
+      </div>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar" style="background:#D97706;">A</div>
+      <div>
+        <div class="person-name">Andrés Ospina</div>
+        <div class="person-role" style="color:#D97706;">Integración de servicios</div>
+        <p style="font-size:9.5pt;margin:0 0 4px;">Responsable de conectar los servicios externos: pasarela de pagos, envío de emails y configuración del entorno de producción.</p>
+        <div class="person-tags">
+          <span class="person-tag">Mercado Pago</span>
+          <span class="person-tag">Resend</span>
+          <span class="person-tag">Config Vercel</span>
+        </div>
+      </div>
+    </div>
+    <div class="person-card">
+      <div class="person-avatar" style="background:#7C3AED;">A</div>
+      <div>
+        <div class="person-name">Alejandro Marín</div>
+        <div class="person-role" style="color:#7C3AED;">Frontend & UI</div>
+        <p style="font-size:9.5pt;margin:0 0 4px;">Desarrollo de componentes de interfaz, maquetación de vistas y experiencia de usuario en el flujo de solicitud y pago.</p>
+        <div class="person-tags">
+          <span class="person-tag">Frontend</span>
+          <span class="person-tag">UI/UX</span>
+          <span class="person-tag">Componentes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid g3" style="margin-top:20px;">
     <div class="card">
       <span class="card-icon">👤</span>
       <h4>Usuario</h4>
-      <p>Busca un profesional en el mapa, hace la solicitud, paga y hace seguimiento en tiempo real.</p>
+      <p>Busca en el mapa, solicita, paga y hace seguimiento GPS en tiempo real.</p>
     </div>
     <div class="card">
       <span class="card-icon">🔧</span>
       <h4>Prestador</h4>
-      <p>Publica su perfil, recibe solicitudes, acepta trabajos y cobra directamente por la plataforma.</p>
+      <p>Publica su perfil, acepta trabajos y cobra directamente por la plataforma.</p>
     </div>
     <div class="card">
       <span class="card-icon">🛡️</span>
-      <h4>Administrador</h4>
-      <p>Gestiona usuarios, modera solicitudes y controla el funcionamiento de la plataforma.</p>
+      <h4>Admin</h4>
+      <p>Gestiona usuarios, asigna roles y modera solicitudes desde un panel privado.</p>
     </div>
   </div>
 
-  <div class="highlight hl-blue" style="margin-top:20px;">
+  <div class="highlight hl-blue" style="margin-top:18px;">
     <strong>Modelo de negocio</strong>
-    <p>Lokro cobra una <strong>comisión del 10%</strong> sobre cada servicio completado al prestador. Para el usuario siempre es gratis usar la plataforma.</p>
+    <p>Lokro cobra <strong>10% de comisión</strong> sobre cada servicio completado — descontado automáticamente al pagar. Para el usuario siempre es gratis.</p>
   </div>
 </div>
 
 <hr class="divider" />
 
 
-<!-- ══════════════ TECNOLOGÍAS -->
+<!-- CÓMO SE CONSTRUYÓ EL FRONTEND -->
 <div class="section break">
-  <div class="section-tag">Tecnologías</div>
-  <h2>¿Con qué está construido?</h2>
-  <p class="section-sub">Las herramientas que hacen funcionar Lokro</p>
-
-  <div class="card-grid g2">
-    <div class="card">
-      <span class="card-icon">⚡</span>
-      <h4>Next.js — La base de la aplicación</h4>
-      <p>Es el framework principal. Permite que la app funcione rápido, que Google la encuentre fácilmente y que todo el código esté en un solo lugar.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🗄️</span>
-      <h4>Supabase — La base de datos</h4>
-      <p>Guarda toda la información: usuarios, solicitudes, mensajes, pagos. También maneja el inicio de sesión y las notificaciones en tiempo real.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🗺️</span>
-      <h4>Mapbox — Los mapas</h4>
-      <p>Muestra el mapa interactivo donde aparecen los prestadores disponibles y permite hacer seguimiento GPS en tiempo real.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">💳</span>
-      <h4>Mercado Pago — Los pagos</h4>
-      <p>Procesa los pagos de forma segura. El dinero queda retenido hasta que el usuario confirma que el trabajo se hizo bien.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">📧</span>
-      <h4>Resend — Los emails</h4>
-      <p>Envía correos automáticos cuando se acepta una solicitud, cuando se hace el pago o cuando el servicio se completa.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">☁️</span>
-      <h4>Vercel — El servidor</h4>
-      <p>Es donde vive la aplicación en internet. Cada vez que se sube un cambio al repositorio, Vercel lo publica automáticamente.</p>
-    </div>
-  </div>
-</div>
-
-<hr class="divider" />
-
-
-<!-- ══════════════ ARQUITECTURA -->
-<div class="section break">
-  <div class="section-tag">Arquitectura</div>
-  <h2>¿Cómo está organizada la app?</h2>
-  <p class="section-sub">Todo vive en un mismo proyecto, organizado por tipo de usuario</p>
+  <div class="section-tag">Frontend</div>
+  <h2>Cómo se construyó</h2>
+  <p class="section-sub">Un solo proyecto que hace de frontend y de backend al mismo tiempo</p>
 
   <div class="highlight hl-blue">
-    <strong>Tipo de arquitectura: Monolito moderno (JAMstack)</strong>
-    <p>No hay un servidor separado. El frontend y el backend viven juntos en Next.js. La base de datos (Supabase) hace el trabajo pesado de seguridad y datos en tiempo real.</p>
+    <strong>Next.js App Router — monolito moderno</strong>
+    <p>No hay un servidor separado. Next.js unifica el frontend (lo que ve el usuario) y el backend (APIs, autenticación, lógica de negocio) en un solo proyecto. Vercel lo despliega automáticamente con cada push.</p>
   </div>
 
-  <h3>Las 5 zonas de la aplicación</h3>
-  <div class="card-grid g2" style="margin-top:12px;">
+  <h3>Estructura de rutas — 4 zonas</h3>
+  <p style="font-size:10pt;color:var(--gray);margin-bottom:12px;">Next.js permite agrupar rutas entre paréntesis para separar lógica sin afectar la URL. Cada zona tiene su propio layout, middleware y restricciones de acceso.</p>
+
+  <div class="card-grid g2">
     <div class="card" style="border-color:#BFDBFE;">
-      <span class="card-icon">🏠</span>
-      <h4>Zona pública (Landing)</h4>
-      <p>La página de inicio que ve cualquier visitante. No requiere cuenta. Explica qué es Lokro y tiene los botones de registro.</p>
+      <h4 style="font-family:monospace;font-size:11pt;">(marketing)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Landing, registro, login, términos, privacidad. <strong>Sin autenticación.</strong> Accesible por cualquiera.</p>
     </div>
     <div class="card" style="border-color:#A7F3D0;">
-      <span class="card-icon">👤</span>
-      <h4>Zona de Usuario</h4>
-      <p>Mapa, búsqueda de profesionales, solicitar servicio, pagar, chat, tracking y perfil personal.</p>
+      <h4 style="font-family:monospace;font-size:11pt;">(user)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Mapa, solicitudes, pago, chat, tracking GPS. Requiere <strong>rol USER</strong>.</p>
     </div>
     <div class="card" style="border-color:#FDE68A;">
-      <span class="card-icon">🔧</span>
-      <h4>Zona de Prestador</h4>
-      <p>Dashboard de solicitudes, agenda, ingresos, edición de perfil y portafolio.</p>
+      <h4 style="font-family:monospace;font-size:11pt;">(provider)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Dashboard, agenda, ingresos, perfil. Requiere <strong>rol PROVIDER</strong>.</p>
     </div>
     <div class="card" style="border-color:#C4B5FD;">
-      <span class="card-icon">🛡️</span>
-      <h4>Zona de Admin</h4>
-      <p>Panel para ver todos los usuarios, solicitudes y prestadores. Puede cambiar roles y cancelar servicios.</p>
-    </div>
-    <div class="card" style="border-color:#FECACA;grid-column:span 2;">
-      <span class="card-icon">🔌</span>
-      <h4>API interna (conectores)</h4>
-      <p>Rutas internas que conectan con Mercado Pago (crear cobro, recibir confirmación de pago) y con Resend (enviar emails). El usuario nunca las ve directamente.</p>
+      <h4 style="font-family:monospace;font-size:11pt;">(admin)</h4>
+      <p style="margin-top:6px;font-size:9.5pt;">Panel de gestión. Requiere <strong>rol ADMIN</strong>. Solo el equipo accede.</p>
     </div>
   </div>
 
-  <h3>¿Cómo se protege cada zona?</h3>
-  <p>Hay dos capas de protección que trabajan juntas:</p>
+  <h3>Server Components vs. Client Components</h3>
   <div class="card-grid g2">
-    <div class="highlight hl-green" style="margin:0;border-radius:14px;">
-      <strong>🚦 Capa 1 — Middleware</strong>
-      <p>Es el portero de la app. Antes de que cargue cualquier página, verifica si el usuario tiene sesión y si su rol le permite entrar. Si no tiene permiso, lo redirige.</p>
+    <div class="card">
+      <h4>⚙️ Server Components</h4>
+      <p style="font-size:9.5pt;">Corren en el servidor — cargan datos de la BD directamente y envían el HTML listo al navegador. Más rápido, más seguro: las claves API nunca llegan al cliente.</p>
     </div>
-    <div class="highlight hl-purple" style="margin:0;border-radius:14px;">
-      <strong>🔒 Capa 2 — Seguridad en la base de datos (RLS)</strong>
-      <p>Aunque alguien logre bypassear el middleware, la base de datos tiene sus propias reglas. Un usuario nunca puede ver los datos de otro usuario, sin importar qué.</p>
+    <div class="card">
+      <h4>🖥️ Client Components</h4>
+      <p style="font-size:9.5pt;">Corren en el navegador — usados para el mapa interactivo, el chat en tiempo real, el seguimiento GPS y las notificaciones en vivo.</p>
+    </div>
+  </div>
+
+  <h3>Herramientas del frontend</h3>
+  <table>
+    <tr><th>Herramienta</th><th>Qué hace en el proyecto</th></tr>
+    <tr><td><strong>TypeScript</strong></td><td>Tipado estático en todo el proyecto — los errores se detectan antes de ejecutar el código</td></tr>
+    <tr><td><strong>Tailwind CSS v4</strong></td><td>Estilos directamente en el componente, sin archivos CSS separados</td></tr>
+    <tr><td><strong>Zustand</strong></td><td>Estado global compartido entre componentes: sesión del usuario, conteo de notificaciones sin leer, estado del mapa</td></tr>
+    <tr><td><strong>React 19</strong></td><td>Interfaz declarativa con los últimos hooks y optimizaciones de rendering</td></tr>
+    <tr><td><strong>shadcn/ui</strong></td><td>Biblioteca de componentes UI accesibles y reutilizables (botones, formularios, modales)</td></tr>
+  </table>
+</div>
+
+<hr class="divider" />
+
+
+<!-- SERVICIOS IMPLEMENTADOS -->
+<div class="section break">
+  <div class="section-tag">Servicios</div>
+  <h2>Qué servicios usamos y para qué</h2>
+  <p class="section-sub">Cada servicio resuelve un problema concreto del producto</p>
+
+  <!-- SUPABASE -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#D1FAE5;color:#059669;">Base de datos + Auth + Tiempo real</div>
+      <div class="service-name">Supabase</div>
+    </div>
+    <p class="service-desc">Es la columna vertebral del proyecto. Un solo servicio que nos da base de datos, autenticación, WebSockets y almacenamiento de archivos.</p>
+    <div class="card-grid g2" style="margin-top:10px;">
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">PostgreSQL + PostGIS</strong>
+        <p style="font-size:9pt;margin-top:4px;">12 tablas con relaciones. Las coordenadas GPS del prestador se guardan como tipo <code>POINT</code> geográfico, lo que permite hacer consultas de proximidad del tipo "mostrar prestadores a menos de 5 km".</p>
+      </div>
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">Auth (JWT + Google OAuth)</strong>
+        <p style="font-size:9pt;margin-top:4px;">Maneja login con email/contraseña y con Google. El token de sesión se guarda en una cookie <code>HttpOnly</code> — inaccesible para el JavaScript del navegador.</p>
+      </div>
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">Realtime — WebSockets</strong>
+        <p style="font-size:9pt;margin-top:4px;">Mantiene una conexión WebSocket permanente entre el servidor y el navegador. Cualquier cambio en la base de datos (nuevo mensaje, nueva notificación, posición GPS) llega al instante sin que el usuario recargue.</p>
+      </div>
+      <div style="background:var(--light);border-radius:10px;padding:14px;border:1px solid var(--border);">
+        <strong style="font-size:10pt;">Row Level Security (RLS)</strong>
+        <p style="font-size:9pt;margin-top:4px;">Políticas en la base de datos que bloquean accesos cruzados — un usuario no puede leer los datos de otro aunque haya un bug en el código de la aplicación.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAPBOX -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#DBEAFE;color:#1D4ED8;">Mapas + GPS</div>
+      <div class="service-name">Mapbox</div>
+    </div>
+    <p class="service-desc">Renderiza el mapa interactivo donde el usuario ve los prestadores disponibles y sigue su posición en tiempo real.</p>
+    <div class="service-uses">
+      <span class="service-use">Mapa de prestadores disponibles</span>
+      <span class="service-use">Marcadores por categoría de servicio</span>
+      <span class="service-use">Seguimiento GPS en vivo</span>
+      <span class="service-use">Actualización del punto cada 5 segundos</span>
+    </div>
+    <div class="highlight hl-purple" style="margin-top:12px;padding:12px 16px;">
+      <p style="font-size:9.5pt;"><strong>Cómo funciona el tracking:</strong> el prestador transmite sus coordenadas a la tabla <code>provider_locations</code>; el usuario tiene una suscripción Supabase Realtime activa sobre esa fila — cuando cambia, Mapbox mueve el marcador en el mapa.</p>
+    </div>
+  </div>
+
+  <!-- MERCADO PAGO -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#FEF3C7;color:#D97706;">Pagos</div>
+      <div class="service-name">Mercado Pago</div>
+    </div>
+    <p class="service-desc">Procesa todos los pagos de forma segura. Lokro nunca maneja datos de tarjeta directamente.</p>
+    <div class="arrow-row" style="margin:12px 0 8px;">
+      <div class="arrow-box">Usuario<small>Clic en "Pagar"</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">API Route<small>Crea preferencia</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">Mercado Pago<small>Checkout propio</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">Webhook<small>Notificación firmada</small></div>
+      <div class="arrow">→</div>
+      <div class="arrow-box">BD actualizada<small>Estado → PAID</small></div>
+    </div>
+    <p style="font-size:9.5pt;color:var(--gray);">El estado del pago <strong>solo cambia por el webhook</strong> — nunca por la URL de retorno. El webhook está firmado con HMAC-SHA256 y el servidor verifica la firma antes de hacer cualquier cambio.</p>
+  </div>
+
+  <!-- RESEND -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:#F3E8FF;color:#7C3AED;">Emails</div>
+      <div class="service-name">Resend</div>
+    </div>
+    <p class="service-desc">Envío de emails transaccionales con alta tasa de entrega — no llegan a spam.</p>
+    <div class="service-uses">
+      <span class="service-use">Confirmación de registro</span>
+      <span class="service-use">Recuperación de contraseña</span>
+      <span class="service-use">Notificación de nueva solicitud</span>
+      <span class="service-use">Confirmación de pago</span>
+    </div>
+  </div>
+
+  <!-- VERCEL -->
+  <div class="service-block">
+    <div class="service-header">
+      <div class="service-badge" style="background:var(--light);color:var(--gray);">Hosting + CI/CD</div>
+      <div class="service-name">Vercel</div>
+    </div>
+    <p class="service-desc">Hosting optimizado para Next.js. Cada push al repositorio genera un deploy automático en segundos.</p>
+    <div class="service-uses">
+      <span class="service-use">Deploy automático en cada push</span>
+      <span class="service-use">Preview por Pull Request</span>
+      <span class="service-use">CDN global — carga rápida</span>
+      <span class="service-use">Variables de entorno seguras</span>
     </div>
   </div>
 </div>
@@ -400,471 +405,213 @@
 <hr class="divider" />
 
 
-<!-- ══════════════ BASE DE DATOS -->
+<!-- BASE DE DATOS -->
 <div class="section break">
   <div class="section-tag">Base de datos</div>
-  <h2>¿Qué información guarda Lokro?</h2>
-  <p class="section-sub">12 tablas que guardan todo lo que pasa en la plataforma</p>
+  <h2>12 tablas en PostgreSQL</h2>
+  <p class="section-sub">Todas con Row Level Security activado. Los datos de un usuario nunca son visibles para otro.</p>
 
   <table>
-    <tr>
-      <th>Tabla</th>
-      <th>¿Qué guarda?</th>
-    </tr>
-    <tr>
-      <td><strong>users</strong></td>
-      <td>Todos los usuarios: nombre, email, rol (usuario / prestador / admin) y ubicación GPS</td>
-    </tr>
-    <tr>
-      <td><strong>provider_profiles</strong></td>
-      <td>El perfil del prestador: descripción, tarifa por hora, calificación promedio, si está disponible</td>
-    </tr>
-    <tr>
-      <td><strong>service_requests</strong></td>
-      <td>Cada solicitud de servicio: quién la pidió, a quién, qué necesita, dónde, cuándo y en qué estado está</td>
-    </tr>
-    <tr>
-      <td><strong>messages</strong></td>
-      <td>Los mensajes del chat entre usuario y prestador</td>
-    </tr>
-    <tr>
-      <td><strong>payments</strong></td>
-      <td>El pago de cada servicio: monto total, comisión de Lokro (10%) y lo que recibe el prestador</td>
-    </tr>
-    <tr>
-      <td><strong>reviews</strong></td>
-      <td>Las calificaciones que se dejan usuario y prestador mutuamente al terminar</td>
-    </tr>
-    <tr>
-      <td><strong>notifications</strong></td>
-      <td>Las notificaciones dentro de la app (nueva solicitud, pago recibido, etc.)</td>
-    </tr>
-    <tr>
-      <td><strong>provider_locations</strong></td>
-      <td>La ubicación GPS del prestador actualizada en tiempo real durante el servicio</td>
-    </tr>
-    <tr>
-      <td><strong>categories</strong></td>
-      <td>Las categorías de servicio: Plomería, Electricidad, Limpieza, Tutoría, etc.</td>
-    </tr>
+    <tr><th>Tabla</th><th>Qué guarda</th></tr>
+    <tr><td><strong>users</strong></td><td>Perfil del usuario: nombre, email, rol (USER / PROVIDER / ADMIN) y coordenadas</td></tr>
+    <tr><td><strong>provider_profiles</strong></td><td>Datos del prestador: tarifa, bio, categorías, calificación promedio y disponibilidad</td></tr>
+    <tr><td><strong>service_requests</strong></td><td>Solicitudes con su estado completo: PENDING → ACCEPTED → PAID → IN_PROGRESS → COMPLETED</td></tr>
+    <tr><td><strong>payments</strong></td><td>Monto total, comisión del 10% y pago neto al prestador por cada servicio</td></tr>
+    <tr><td><strong>messages</strong></td><td>Mensajes del chat en tiempo real entre usuario y prestador</td></tr>
+    <tr><td><strong>reviews</strong></td><td>Calificaciones mutuas al finalizar el servicio (usuario al prestador y viceversa)</td></tr>
+    <tr><td><strong>notifications</strong></td><td>Alertas en tiempo real dentro de la app, con estado de leído/no leído</td></tr>
+    <tr><td><strong>provider_locations</strong></td><td>Posición GPS del prestador durante el servicio activo — se actualiza cada 5 segundos</td></tr>
   </table>
 
-  <div class="highlight hl-amber" style="margin-top:16px;">
-    <strong>Automatizaciones en la base de datos</strong>
-    <p>Cuando alguien deja una calificación, la base de datos <strong>recalcula automáticamente</strong> el promedio del prestador sin que el código tenga que pedirlo. Cuando un usuario se registra, la base de datos <strong>crea su perfil automáticamente</strong>.</p>
+  <div class="card-grid g2" style="margin-top:16px;">
+    <div class="highlight hl-amber" style="margin:0;border-radius:14px;">
+      <strong>Trigger automático — calificaciones</strong>
+      <p>Cada vez que llega una reseña nueva, un trigger de PostgreSQL recalcula el promedio de calificación del prestador. No hay lógica manual en el código de la app.</p>
+    </div>
+    <div class="highlight hl-blue" style="margin:0;border-radius:14px;">
+      <strong>Trigger automático — creación de perfil</strong>
+      <p>Al registrarse, el trigger <code>on_auth_user_created</code> crea automáticamente la fila en <code>users</code>. Si es prestador, también crea su <code>provider_profile</code> vacío.</p>
+    </div>
   </div>
 </div>
 
 <hr class="divider" />
 
 
-<!-- ══════════════ FLUJOS -->
-<div class="section break">
-  <div class="section-tag">Flujos principales</div>
-  <h2>¿Cómo funciona paso a paso?</h2>
-  <p class="section-sub">Los recorridos más importantes con sus detalles técnicos</p>
-
-  <!-- FLUJO 1 -->
-  <h3>Flujo 1 — Registro e inicio de sesión</h3>
-  <div class="flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <strong>El usuario se registra — email/contraseña o Google OAuth</strong>
-        <span>Supabase Auth gestiona ambos métodos. Con Google, el flujo sigue el protocolo <strong>OAuth 2.0</strong>: redirige a Google, obtiene el token y lo intercambia por una sesión en Lokro. En ambos casos se emite un <strong>JWT</strong> que se guarda en una cookie segura <code>HttpOnly</code>.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <strong>Trigger en la base de datos crea el perfil automáticamente</strong>
-        <span>Supabase tiene un <strong>trigger de PostgreSQL</strong> (<code>on_auth_user_created</code>) que escucha cuando se registra un nuevo usuario en <code>auth.users</code> e inserta automáticamente una fila en la tabla <code>public.users</code> con su nombre y email. Si eligió ser prestador, también inserta una fila en <code>provider_profiles</code>.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <strong>El Middleware de Next.js verifica el JWT y redirige según el rol</strong>
-        <span>En cada request, el <strong>middleware</strong> (<code>middleware.ts</code>) lee la cookie de sesión, valida el JWT contra Supabase y consulta el campo <code>role</code> del usuario. Según el resultado: <strong>USER → /home</strong>, <strong>PROVIDER → /dashboard</strong>, <strong>ADMIN → /panel</strong>. Sin JWT válido, redirige a <code>/login</code>.</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="highlight hl-blue" style="margin-top:4px;">
-    <strong>JWT + RLS — doble capa de seguridad</strong>
-    <p>El JWT identifica al usuario en cada request. Las políticas <strong>RLS</strong> (Row Level Security) de PostgreSQL usan ese mismo JWT para filtrar qué filas puede leer o escribir cada usuario — directamente en la base de datos, sin depender del código.</p>
-  </div>
-
-  <!-- FLUJO 2 -->
-  <h3>Flujo 2 — Solicitar un servicio</h3>
-
-  <div class="highlight hl-purple" style="margin-bottom:12px;">
-    <strong>Máquina de estados de una solicitud</strong>
-    <p>Cada solicitud pasa por estados definidos en la base de datos:</p>
-    <div class="arrow-row" style="margin:10px 0 0;">
-      <div class="arrow-box" style="background:#F5F3FF;border-color:#C4B5FD;flex:none;padding:8px 14px;"><strong>PENDING</strong><small>Esperando respuesta</small></div>
-      <div class="arrow" style="font-size:14pt;">→</div>
-      <div class="arrow-box" style="background:#EFF6FF;border-color:#BFDBFE;flex:none;padding:8px 14px;"><strong>ACCEPTED</strong><small>Prestador aceptó</small></div>
-      <div class="arrow" style="font-size:14pt;">→</div>
-      <div class="arrow-box" style="background:#FEF3C7;border-color:#FDE68A;flex:none;padding:8px 14px;"><strong>PAID</strong><small>Pago confirmado</small></div>
-      <div class="arrow" style="font-size:14pt;">→</div>
-      <div class="arrow-box" style="background:#D1FAE5;border-color:#6EE7B7;flex:none;padding:8px 14px;"><strong>IN_PROGRESS</strong><small>Servicio activo</small></div>
-      <div class="arrow" style="font-size:14pt;">→</div>
-      <div class="arrow-box" style="background:#D1FAE5;border-color:#059669;flex:none;padding:8px 14px;"><strong>COMPLETED</strong><small>Finalizado</small></div>
-    </div>
-  </div>
-
-  <div class="flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <strong>El usuario busca en el mapa (Mapbox + Supabase PostGIS)</strong>
-        <span>El frontend consulta a Supabase filtrando <code>provider_profiles</code> donde <code>available = true</code>. Las coordenadas GPS de cada prestador se almacenan como tipo <strong>POINT</strong> (PostGIS) lo que permite hacer queries de proximidad geográfica eficientemente.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <strong>Envía la solicitud → INSERT en <code>service_requests</code></strong>
-        <span>El formulario llama a un <strong>Server Action</strong> de Next.js que inserta la solicitud con estado <code>PENDING</code> y dispara una notificación al prestador vía <strong>Supabase Realtime</strong>. El prestador la recibe al instante sin recargar.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <strong>El prestador acepta → estado cambia a <code>ACCEPTED</code></strong>
-        <span>El prestador hace un UPDATE en la solicitud. Supabase Realtime emite el cambio por WebSocket al navegador del usuario, quien recibe la notificación al instante y ve el botón de pago habilitarse.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">
-        <strong>Tracking en tiempo real durante el servicio — <code>provider_locations</code></strong>
-        <span>El prestador activa el tracking desde su dispositivo. El navegador envía su posición GPS al servidor cada pocos segundos, que actualiza la tabla <code>provider_locations</code>. El usuario tiene una suscripción Realtime activa a esa tabla y ve el punto moverse en el mapa en vivo.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">5</div>
-      <div class="step-body">
-        <strong>Al completar → trigger recalcula calificación automáticamente</strong>
-        <span>Cuando se inserta una fila en <code>reviews</code>, un <strong>trigger de PostgreSQL</strong> recalcula el promedio (<code>average_rating</code>) del prestador con <code>AVG()</code> y actualiza <code>provider_profiles</code> sin que el código tenga que hacerlo manualmente.</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- FLUJO 3 -->
-  <h3>Flujo 3 — Flujo de pago con Mercado Pago</h3>
-
-  <div class="flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <strong>Usuario hace clic en "Pagar" → API Route <code>POST /api/payments/create</code></strong>
-        <span>El Server Action llama a la API de Mercado Pago con el monto y los datos del servicio. MP responde con una <code>preference_id</code> y una URL de checkout seguro.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <strong>El usuario completa el pago en el checkout de Mercado Pago</strong>
-        <span>PSE, tarjeta débito/crédito o efectivo. Lokro nunca toca los datos bancarios — todo sucede en los servidores de MP bajo protocolo <strong>PCI DSS</strong>.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <strong>MP notifica a Lokro por Webhook → <code>POST /api/payments/webhook</code></strong>
-        <span>Cuando el pago es aprobado, MP envía una llamada HTTP a nuestra URL de webhook con el estado <code>approved</code>. Esta ruta usa la clave <strong>service_role</strong> de Supabase (omite RLS) para actualizar el estado de la solicitud a <code>PAID</code> y crear el registro en la tabla <code>payments</code> con el monto, la comisión (10%) y lo que recibe el prestador.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">
-        <strong>Se dispara el email automático → Resend</strong>
-        <span>El webhook también llama a la API de Resend para enviar un email de confirmación al usuario y otro al prestador indicando que el servicio está listo para comenzar.</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="highlight hl-amber">
-    <strong>¿Por qué el webhook es la única fuente de verdad del pago?</strong>
-    <p>El usuario podría cerrar la pestaña antes de que Lokro confirme el pago en el frontend. Por eso no se confía en la URL de retorno — solo el webhook de Mercado Pago, que llega directamente al servidor, actualiza el estado del pago. Esto evita servicios que parecen pagados pero no lo están.</p>
-  </div>
-</div>
-
-<hr class="divider" />
-
-
-<!-- ══════════════ TIEMPO REAL -->
-<div class="section break">
-  <div class="section-tag">Tiempo real</div>
-  <h2>¿Qué pasa al instante?</h2>
-  <p class="section-sub">Tres cosas en la app se actualizan sin necesidad de recargar la página</p>
-
-  <div class="card-grid g3">
-    <div class="card" style="text-align:center;padding:28px 20px;">
-      <span class="card-icon">💬</span>
-      <h4>Chat</h4>
-      <p>Los mensajes entre usuario y prestador aparecen al instante, como WhatsApp.</p>
-    </div>
-    <div class="card" style="text-align:center;padding:28px 20px;">
-      <span class="card-icon">📍</span>
-      <h4>Tracking GPS</h4>
-      <p>El punto del prestador se mueve en el mapa del usuario mientras se acerca al domicilio.</p>
-    </div>
-    <div class="card" style="text-align:center;padding:28px 20px;">
-      <span class="card-icon">🔔</span>
-      <h4>Notificaciones</h4>
-      <p>Cuando llega una nueva solicitud o hay una actualización, aparece el aviso sin recargar.</p>
-    </div>
-  </div>
-
-  <div class="highlight hl-blue" style="margin-top:16px;">
-    <strong>¿Cómo funciona técnicamente?</strong>
-    <p>Supabase mantiene una conexión permanente entre el servidor y el navegador (WebSocket). Cuando algo cambia en la base de datos, el aviso llega al instante al dispositivo del usuario, como si fuera una app móvil nativa.</p>
-  </div>
-</div>
-
-<hr class="divider" />
-
-
-<!-- ══════════════ DECISIONES -->
-<div class="section break">
-  <div class="section-tag">Decisiones clave</div>
-  <h2>¿Por qué se eligió cada tecnología?</h2>
-  <p class="section-sub">Las razones detrás de las herramientas usadas</p>
-
-  <table>
-    <tr>
-      <th>Decisión</th>
-      <th>¿Por qué?</th>
-      <th>Alternativa descartada</th>
-    </tr>
-    <tr>
-      <td><strong>Next.js como base</strong></td>
-      <td>Permite que Google indexe la app (SEO) y que cargue rápido. Todo en un solo proyecto sin servidor separado.</td>
-      <td>React puro (sin SEO), servidor Express aparte (más complejo)</td>
-    </tr>
-    <tr>
-      <td><strong>Supabase como base de datos</strong></td>
-      <td>Incluye base de datos, login, archivos y tiempo real en un solo servicio. Ahorra mucho tiempo de desarrollo.</td>
-      <td>Firebase (no tan potente), servidor propio (más costoso)</td>
-    </tr>
-    <tr>
-      <td><strong>Mercado Pago</strong></td>
-      <td>Es el método de pago más usado en Colombia y Latinoamérica. Acepta PSE, efectivo y tarjetas locales.</td>
-      <td>Stripe (mejor tecnología pero menos usuarios en Colombia)</td>
-    </tr>
-    <tr>
-      <td><strong>Seguridad en la base de datos (RLS)</strong></td>
-      <td>Aunque haya un error en el código, la base de datos garantiza que ningún usuario vea datos de otro. Es una red de seguridad extra.</td>
-      <td>Solo validar en el código (más frágil)</td>
-    </tr>
-    <tr>
-      <td><strong>Mapbox para los mapas</strong></td>
-      <td>Mapas más personalizables y con mejor rendimiento que Google Maps para este caso de uso.</td>
-      <td>Google Maps (más costoso a escala)</td>
-    </tr>
-  </table>
-</div>
-
-<hr class="divider" />
-
-
-<!-- ══════════════ SEGURIDAD -->
+<!-- SEGURIDAD -->
 <div class="section break">
   <div class="section-tag">Seguridad</div>
-  <h2>¿Cómo se protege la plataforma?</h2>
-  <p class="section-sub">Lokro implementa múltiples capas de seguridad independientes entre sí</p>
+  <h2>Lo que implementé — y por qué importa</h2>
+  <p class="section-sub">Auditoría completa del código: cada vulnerabilidad identificada, corregida y documentada</p>
 
-  <div class="highlight hl-blue" style="margin-bottom:28px;">
-    <strong>Principio de defensa en profundidad</strong>
-    <p>Cada capa asume que la anterior puede fallar. Si el código tiene un bug, la base de datos bloquea el acceso. Si alguien falsifica un token, el middleware lo rechaza. Si alguien manipula un formulario, Zod lo invalida antes de llegar a la base de datos.</p>
+  <div class="highlight hl-red" style="margin-bottom:10px;">
+    <strong>Principio: fail-closed</strong>
+    <p>Cuando algo falla o no está configurado, el sistema bloquea por defecto. En ningún caso se permite el acceso "provisional" o "en modo desarrollo". Si el secreto del webhook no está, se rechazan <em>todas</em> las peticiones. Si el JWT no es válido, se redirige a login. Nunca al revés.</p>
   </div>
 
-  <h3>Capa 1 — Autenticación y sesión</h3>
-  <div class="flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <strong>JWT en cookie HttpOnly — protección contra XSS</strong>
-        <span>Cuando el usuario inicia sesión, Supabase emite un <strong>JWT</strong> (JSON Web Token) firmado que se guarda en una cookie con el flag <code>HttpOnly</code>. Esto significa que JavaScript del navegador <strong>nunca puede leer ni robar la cookie</strong>, eliminando el vector de ataque XSS más común.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <strong>OAuth 2.0 con Google — sin contraseñas que proteger</strong>
-        <span>La opción de "Iniciar con Google" delega completamente la autenticación a Google. Lokro nunca recibe ni almacena la contraseña del usuario. Google emite un token de acceso temporal que se intercambia por una sesión de Supabase.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <strong>Middleware verifica el JWT en cada request</strong>
-        <span>Antes de cargar cualquier página, el <strong>middleware</strong> de Next.js valida el JWT contra Supabase y revisa el campo <code>role</code>. Un usuario sin sesión válida es redirigido a <code>/login</code>. Un usuario con rol incorrecto es redirigido a su zona correspondiente.</span>
-      </div>
+  <div class="highlight hl-blue" style="margin-bottom:22px;">
+    <strong>4 capas de defensa independientes</strong>
+    <p>Cada capa asume que la anterior puede estar comprometida o tener un bug. Si el middleware falla, RLS bloquea en la BD. Si RLS no cubre un caso, Zod rechaza el input. Si Zod pasa algo, el servidor valida de nuevo. Nunca una sola barrera.</p>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <span style="background:#BFDBFE;color:#1D4ED8;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">① Middleware JWT</span>
+      <span style="font-size:14pt;color:#94A3B8;">→</span>
+      <span style="background:#C4B5FD;color:#5B21B6;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">② RLS en PostgreSQL</span>
+      <span style="font-size:14pt;color:#94A3B8;">→</span>
+      <span style="background:#A7F3D0;color:#065F46;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">③ Validación Zod</span>
+      <span style="font-size:14pt;color:#94A3B8;">→</span>
+      <span style="background:#FEE2E2;color:#991B1B;padding:4px 12px;border-radius:8px;font-size:9pt;font-weight:700;">④ Verificación en servidor</span>
     </div>
   </div>
 
-  <h3 style="margin-top:28px;">Capa 2 — Autorización en base de datos (RLS)</h3>
-  <div class="card-grid g2" style="margin-top:12px;">
-    <div class="highlight hl-purple" style="margin:0;border-radius:14px;">
-      <strong>¿Qué es RLS?</strong>
-      <p>Row Level Security son políticas que viven <em>dentro de PostgreSQL</em>. Cada query que llega a la base de datos pasa por estas reglas antes de devolver datos. Es una segunda línea de defensa independiente del código.</p>
+  <!-- 1 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">1</div>
+      <div class="sec-title">JWT en cookie HttpOnly — contra robo de sesión (XSS)</div>
     </div>
-    <div class="highlight hl-green" style="margin:0;border-radius:14px;">
-      <strong>¿Qué garantiza?</strong>
-      <p>Un usuario nunca puede leer mensajes ajenos, ver solicitudes que no son suyas, ni modificar perfiles de otros. Incluso si hay un bug en el código, la base de datos rechaza la operación.</p>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> si un atacante logra inyectar JavaScript en la página (XSS), puede hacer <code>document.cookie</code> y robar el token de sesión. Con ese token puede operar como cualquier usuario sin conocer su contraseña.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el flag <code>HttpOnly</code> hace que el navegador nunca exponga la cookie a JavaScript. <code>document.cookie</code> devuelve vacío. El token solo viaja en la cabecera HTTP — inaccesible para cualquier script.</p>
+      </div>
     </div>
   </div>
 
-  <h3 style="margin-top:28px;">Capa 3 — Validación de inputs con Zod</h3>
-  <p>Todos los datos que entran al sistema son validados con <strong>esquemas Zod</strong> antes de tocar la base de datos:</p>
-  <table style="margin-top:12px;">
-    <tr>
-      <th>Punto de entrada</th>
-      <th>Qué se valida</th>
-    </tr>
-    <tr>
-      <td><strong>Formulario de solicitud</strong></td>
-      <td>UUID del prestador, descripción mín. 20 chars, coordenadas numéricas, fecha futura</td>
-    </tr>
-    <tr>
-      <td><strong>Cambio de rol (admin)</strong></td>
-      <td>El rol solo puede ser <code>USER</code> o <code>PROVIDER</code> — nunca <code>ADMIN</code> por esta vía</td>
-    </tr>
-    <tr>
-      <td><strong>Monto del pago</strong></td>
-      <td>Número finito, mínimo $100 COP, máximo $100.000.000 COP</td>
-    </tr>
-    <tr>
-      <td><strong>Búsqueda en admin</strong></td>
-      <td>Se eliminan caracteres <code>( ) ,</code> que podrían inyectar filtros en PostgREST</td>
-    </tr>
-    <tr>
-      <td><strong>Subida de archivos</strong></td>
-      <td>MIME type verificado contra <code>image/jpeg</code>, <code>image/png</code>, <code>image/webp</code> — no solo la extensión</td>
-    </tr>
+  <!-- 2 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">2</div>
+      <div class="sec-title">Middleware + RLS — dos capas que no dependen la una de la otra</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> si el middleware tiene un bug o alguien accede directamente a la API, puede leer datos de cualquier usuario. Una sola capa de protección es un punto único de falla.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el middleware verifica el JWT antes de cada página. Pero aunque ese código fallara, PostgreSQL aplica sus propias políticas RLS por usuario autenticado — directamente en la base de datos, sin pasar por el código de la app.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">3</div>
+      <div class="sec-title">Escalada de privilegios bloqueada con Zod — nadie se hace ADMIN solo</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> la función <code>setUserRole()</code> tomaba el rol directamente del cuerpo de la petición. Un atacante podía enviar <code>&#123; role: "ADMIN" &#125;</code> desde las DevTools del navegador y darse acceso total al panel de administración.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> antes de tocar la BD, Zod valida con <code>z.enum(['USER', 'PROVIDER'])</code>. Cualquier otro valor — incluyendo <code>"ADMIN"</code> — lanza un error y la función termina sin ejecutar nada.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">4</div>
+      <div class="sec-title">Verificación de identidad en tracking GPS — acceso cruzado bloqueado</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> cualquier prestador autenticado podía ir a <code>/tracking/[cualquier-id]</code> y ver la ubicación GPS en tiempo real de un servicio que no era el suyo — incluyendo los datos del cliente.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el servidor consulta qué prestador está asignado a esa solicitud y compara con el usuario autenticado: <code>providerProfile.id === request.provider_id</code>. Si no coincide, redirige inmediatamente sin mostrar nada.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">5</div>
+      <div class="sec-title">HMAC-SHA256 en webhook de pagos — nadie puede fingir un pago aprobado</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> el endpoint <code>/api/webhooks/mercadopago</code> era público. Cualquiera podía hacer un <code>POST</code> con un payload falso que dijera <code>status: "approved"</code> y desbloquear un servicio sin pagar. El webhook original tenía <code>if (!secret) return true</code> — es decir, si la clave no estaba configurada, dejaba pasar todo.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> cada notificación llega firmada con HMAC-SHA256. El servidor recalcula la firma con la clave secreta compartida y la compara. Si no coinciden → 401. Si la clave no existe → 401 también (fail-closed). Solo Mercado Pago puede producir una firma válida.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">6</div>
+      <div class="sec-title">Validación del monto en servidor — contra manipulación de precios</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> el monto viajaba desde el frontend al servidor sin verificación. Un atacante con DevTools podía interceptar la petición y cambiar el monto a $1 COP antes de que llegara, pagando un servicio a precio arbitrario.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> el servidor valida que el monto sea un número finito entre <strong>$100 y $100.000.000 COP</strong>. Cualquier valor fuera de ese rango — incluyendo negativos, <code>Infinity</code> o <code>NaN</code> — devuelve 400 y no crea la preferencia.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">7</div>
+      <div class="sec-title">Validación de archivos por MIME type — contra upload de ejecutables</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> la validación original miraba solo la extensión del nombre del archivo. Un atacante podía renombrar <code>script.exe</code> a <code>foto.jpg</code> y subirlo al storage. Si ese archivo se servía sin restricción, podía ejecutarse en ciertos contextos.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> se verifica el <code>Content-Type</code> real del archivo — el tipo MIME que el navegador detecta del contenido binario, no del nombre. Solo pasan <code>image/jpeg</code>, <code>image/png</code> e <code>image/webp</code>. La extensión del archivo guardado también se deriva del MIME, no del nombre original.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="sec-measure">
+    <div class="sec-measure-head">
+      <div class="sec-num">8</div>
+      <div class="sec-title">Sanitización de búsquedas en el admin — contra inyección en PostgREST</div>
+    </div>
+    <div class="card-grid g2" style="margin:8px 0 4px;">
+      <div style="background:#FEE2E2;border-radius:10px;padding:12px;border:1px solid #FECACA;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#DC2626;font-size:9pt;">⚠ Sin esta medida:</strong> el parámetro de búsqueda <code>?q=</code> en el panel admin se pasaba directamente al filtro de PostgREST (la capa que convierte URLs en queries SQL). Un input como <code>q=a),(b</code> podía romper la estructura del filtro e inyectar condiciones no previstas en la consulta.</p>
+      </div>
+      <div style="background:#D1FAE5;border-radius:10px;padding:12px;border:1px solid #6EE7B7;">
+        <p style="font-size:9pt;margin:0;"><strong style="color:#059669;font-size:9pt;">✓ Con la medida:</strong> antes de usar el parámetro se eliminan los caracteres especiales <code>( ) , % </code> que tienen significado en la sintaxis de PostgREST, y se limita la longitud a 60 caracteres. Lo que llega al filtro es texto limpio.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Resumen — ataque vs. defensa</h3>
+  <table>
+    <tr><th>Ataque evitado</th><th>Medida implementada</th><th>Dónde aplica</th></tr>
+    <tr><td><strong>Robo de sesión por XSS</strong></td><td>Cookie HttpOnly — JavaScript no puede leer el JWT</td><td>Toda la app</td></tr>
+    <tr><td><strong>Acceso sin autenticación</strong></td><td>Middleware + RLS independiente en PostgreSQL</td><td>Toda la app</td></tr>
+    <tr><td><strong>Escalada de privilegios a ADMIN</strong></td><td>Zod: <code>z.enum(['USER','PROVIDER'])</code> bloquea cualquier otro valor</td><td>Panel admin</td></tr>
+    <tr><td><strong>Acceso cruzado entre servicios GPS</strong></td><td>Comparación <code>providerProfile.id === request.provider_id</code></td><td>Tracking</td></tr>
+    <tr><td><strong>Pago falso sin pagar</strong></td><td>HMAC-SHA256 verificado, fail-closed si falta el secreto</td><td>Webhook MP</td></tr>
+    <tr><td><strong>Manipulación del monto</strong></td><td>Validación servidor: número finito, $100–$100M COP</td><td>Creación de pago</td></tr>
+    <tr><td><strong>Upload de ejecutables</strong></td><td>MIME type real verificado, extensión derivada del tipo</td><td>Subida de archivos</td></tr>
+    <tr><td><strong>Inyección en filtros SQL</strong></td><td>Sanitización de caracteres especiales en búsquedas admin</td><td>Panel admin</td></tr>
   </table>
-
-  <h3 style="margin-top:28px;">Capa 4 — Seguridad en pagos</h3>
-  <div class="flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <strong>Firma HMAC-SHA256 en webhooks de Mercado Pago</strong>
-        <span>Cada notificación de pago que llega al servidor incluye una firma criptográfica generada con <code>HMAC-SHA256</code> usando un secreto compartido. El servidor recalcula la firma y la compara. Si no coincide, el request es rechazado con <code>401 Unauthorized</code>. Si el secreto no está configurado, el sistema <strong>falla cerrado</strong> — rechaza todo en lugar de aceptar todo.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <strong>PCI DSS — Lokro nunca toca datos bancarios</strong>
-        <span>El checkout de pago ocurre completamente en los servidores de Mercado Pago, que están certificados bajo el estándar <strong>PCI DSS</strong>. Lokro solo recibe la confirmación del pago vía webhook, nunca el número de tarjeta ni datos sensibles del usuario.</span>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <strong>service_role solo en el servidor — nunca en el cliente</strong>
-        <span>La clave <code>service_role</code> de Supabase (que omite RLS) solo se usa en las rutas de API del servidor para procesar webhooks. El cliente del navegador solo recibe la clave <code>anon</code>, que está restringida por las políticas RLS.</span>
-      </div>
-    </div>
-  </div>
-
-  <h3 style="margin-top:28px;">Resumen de capas</h3>
-  <div class="card-grid g3" style="margin-top:12px;">
-    <div class="card" style="border-color:#BFDBFE;">
-      <span class="card-icon">🚦</span>
-      <h4>Middleware</h4>
-      <p>Verifica JWT y rol antes de cargar cada página. Primera barrera de acceso.</p>
-    </div>
-    <div class="card" style="border-color:#C4B5FD;">
-      <span class="card-icon">🔒</span>
-      <h4>RLS (PostgreSQL)</h4>
-      <p>Cada query en la base de datos pasa por políticas de acceso por usuario. Independiente del código.</p>
-    </div>
-    <div class="card" style="border-color:#A7F3D0;">
-      <span class="card-icon">✅</span>
-      <h4>Validación Zod</h4>
-      <p>Todo input es validado con esquemas estrictos antes de llegar a la base de datos.</p>
-    </div>
-    <div class="card" style="border-color:#FDE68A;">
-      <span class="card-icon">🔐</span>
-      <h4>JWT + HttpOnly</h4>
-      <p>La sesión vive en una cookie que JavaScript no puede leer. Protección contra XSS.</p>
-    </div>
-    <div class="card" style="border-color:#FECACA;">
-      <span class="card-icon">🔏</span>
-      <h4>HMAC-SHA256</h4>
-      <p>Los webhooks de pago se verifican criptográficamente. Firma inválida = request rechazado.</p>
-    </div>
-    <div class="card" style="border-color:#E9D5FF;">
-      <span class="card-icon">🛡️</span>
-      <h4>service_role aislada</h4>
-      <p>La clave de administrador solo existe en el servidor. El cliente nunca tiene acceso a ella.</p>
-    </div>
-  </div>
 </div>
 
 <hr class="divider" />
 
-
-<!-- ══════════════ ESTADO -->
-<div class="section break">
-  <div class="section-tag">Estado del proyecto</div>
-  <h2>¿Qué está listo?</h2>
-  <p class="section-sub">El desarrollo está 100% completo — solo falta configuración de producción</p>
-
-  <div class="card-grid g2">
-    <div class="highlight hl-green" style="margin:0;border-radius:14px;">
-      <strong>✅ Completado</strong>
-      <p style="margin-top:8px;">Registro y login · Mapa con prestadores · Solicitar servicio · Pago seguro · Chat en tiempo real · Tracking GPS · Notificaciones · Panel de admin · Emails automáticos · SEO · Seguridad RLS · Auditoría de seguridad</p>
-    </div>
-    <div class="highlight hl-amber" style="margin:0;border-radius:14px;">
-      <strong>⏳ Pendiente (configuración del equipo)</strong>
-      <p style="margin-top:8px;">Activar las llaves de Mercado Pago en producción · Verificar el dominio de email · Configurar el webhook de pagos con la URL final · Agregar imagen de previsualización para redes sociales</p>
-    </div>
-  </div>
-
-  <h3>Números del proyecto</h3>
-  <div class="card-grid g4" style="margin-top:12px;">
-    <div class="stat-box">
-      <div class="num">6</div>
-      <div class="label">Fases completadas</div>
-    </div>
-    <div class="stat-box">
-      <div class="num">12</div>
-      <div class="label">Tablas en la base de datos</div>
-    </div>
-    <div class="stat-box">
-      <div class="num">3</div>
-      <div class="label">Roles de usuario</div>
-    </div>
-    <div class="stat-box">
-      <div class="num">6</div>
-      <div class="label">Vulnerabilidades corregidas</div>
-    </div>
-  </div>
-</div>
-
-<hr class="divider" />
-
-
-<!-- ══════════════ CIERRE -->
-<div style="padding:40px 0 60px;text-align:center;">
-  <div style="font-size:28pt;font-weight:800;margin-bottom:8px;"><span style="color:var(--blue);">Lok</span>ro</div>
-  <div style="color:var(--gray);font-size:11pt;margin-bottom:24px;">Servicios locales a un toque de distancia</div>
-  <div style="display:inline-flex;gap:16px;font-size:10pt;color:var(--gray);">
-    <span>🌐 Vercel (producción)</span>
-    <span>·</span>
-    <span>📦 GitHub (repositorio)</span>
-    <span>·</span>
-    <span>🗄️ Supabase (base de datos)</span>
-  </div>
-  <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);color:#94A3B8;font-size:9pt;">
-    Documento de presentación · Mayo 2026 · Misael Gallo
+<div style="padding:36px 0 56px;text-align:center;">
+  <div style="font-size:28pt;font-weight:800;margin-bottom:6px;"><span style="color:var(--blue);">Lok</span>ro</div>
+  <div style="color:var(--gray);font-size:11pt;">Servicios locales a un toque de distancia</div>
+  <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);color:#94A3B8;font-size:9pt;">
+    Mayo 2026 · Misael Gallo · Documento de arquitectura
   </div>
 </div>
 
